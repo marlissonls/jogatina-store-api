@@ -11,6 +11,8 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
+        type:
+          preferred_uuid_jdbc_type: CHAR
       #dialect: org.hibernate.dialect.MySQL8Dialect or MySQLDialect
     show-sql: false
 
