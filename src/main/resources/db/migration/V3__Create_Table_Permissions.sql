@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS permission (
+    id CHAR(36) PRIMARY KEY,
+    description VARCHAR(255) DEFAULT NULL
+) ENGINE=InnoDB;
