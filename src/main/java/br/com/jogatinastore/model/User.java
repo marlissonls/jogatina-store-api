@@ -1,14 +1,16 @@
 package br.com.jogatinastore.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     private UUID id;
@@ -28,6 +30,15 @@ public class User {
 
     @Column(name = "password_hash")
     private String passwordHash;
+
+    @Column(name = "account_non_expired")
+    private Boolean accountNonExpired;
+
+    @Column(name = "account_non_locked")
+    private Boolean accountNonLocked;
+
+    @Column(name = "credentials_non_expired")
+    private Boolean credentialsNonExpired;
 
     private Boolean enabled = true;
 
@@ -51,7 +62,61 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
+    // TODO: Refatorar ManyToMany para OneToMany entidade UserPermission
+    // Motivo: permitir atributos extras (grantedAt, etc) e melhor controle
+    // Quando: após implementação completa do fluxo de login com Spring Security
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_permission",
+        joinColumns = {@JoinColumn (name = "id_user")}, // pode ser um ou mais join columns
+        inverseJoinColumns = {@JoinColumn (name = "id_permission")}
+    )
+    private List<Permission> permissions;
+
     public User() {}
+
+    public List<String> getRoles(){
+        List<String> roles = new ArrayList<>();
+        for (Permission permission : permissions) {
+            roles.add(permission.getDescription());
+        }
+        return roles;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.permissions;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
 
     public UUID getId() {
         return id;
@@ -109,6 +174,30 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
+    public Boolean getAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    public void setAccountNonExpired(Boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public Boolean getAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    public void setAccountNonLocked(Boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public Boolean getCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
     public Boolean getEnabled() {
         return enabled;
     }
@@ -133,15 +222,23 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(getId(), user.getId()) && Objects.equals(getName(), user.getName()) && Objects.equals(getCpf(), user.getCpf()) && Objects.equals(getBirthDate(), user.getBirthDate()) && Objects.equals(getPhoneNumber(), user.getPhoneNumber()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPasswordHash(), user.getPasswordHash()) && Objects.equals(getEnabled(), user.getEnabled()) && Objects.equals(getCreatedAt(), user.getCreatedAt()) && Objects.equals(getUpdatedAt(), user.getUpdatedAt());
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getName(), user.getName()) && Objects.equals(getCpf(), user.getCpf()) && Objects.equals(getBirthDate(), user.getBirthDate()) && Objects.equals(getPhoneNumber(), user.getPhoneNumber()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPasswordHash(), user.getPasswordHash()) && Objects.equals(isAccountNonExpired(), user.isAccountNonExpired()) && Objects.equals(isAccountNonLocked(), user.isAccountNonLocked()) && Objects.equals(isCredentialsNonExpired(), user.isCredentialsNonExpired()) && Objects.equals(isEnabled(), user.isEnabled()) && Objects.equals(getCreatedAt(), user.getCreatedAt()) && Objects.equals(getUpdatedAt(), user.getUpdatedAt()) && Objects.equals(getPermissions(), user.getPermissions());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getCpf(), getBirthDate(), getPhoneNumber(), getEmail(), getPasswordHash(), getEnabled(), getCreatedAt(), getUpdatedAt());
+        return Objects.hash(getId(), getName(), getCpf(), getBirthDate(), getPhoneNumber(), getEmail(), getPasswordHash(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled(), getCreatedAt(), getUpdatedAt(), getPermissions());
     }
 }
