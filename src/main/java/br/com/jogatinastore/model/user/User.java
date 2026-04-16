@@ -1,5 +1,6 @@
-package br.com.jogatinastore.model;
+package br.com.jogatinastore.model.user;
 
+import br.com.jogatinastore.model.Permission;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,6 +1,6 @@
 package br.com.jogatinastore.repository;
 
-import br.com.jogatinastore.model.User;
+import br.com.jogatinastore.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

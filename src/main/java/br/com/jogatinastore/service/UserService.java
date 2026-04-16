@@ -1,6 +1,6 @@
 package br.com.jogatinastore.service;
 
-import br.com.jogatinastore.model.User;
+import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.repository.UserRepository;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Service;

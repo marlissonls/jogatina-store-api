@@ -1,6 +1,6 @@
 package br.com.jogatinastore.controller;
 
-import br.com.jogatinastore.model.User;
+import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
