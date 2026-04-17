@@ -56,6 +56,11 @@ public class User implements UserDetails {
         }
         createdAt = LocalDateTime.now();
         updatedAt = createdAt;
+
+        if (accountNonExpired == null) accountNonExpired = true;
+        if (accountNonLocked == null) accountNonLocked = true;
+        if (credentialsNonExpired == null) credentialsNonExpired = true;
+        if (enabled == null) enabled = true;
     }
 
     @PreUpdate
