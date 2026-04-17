@@ -1,8 +1,11 @@
 package br.com.jogatinastore.service;
 
 import br.com.jogatinastore.model.user.User;
+import br.com.jogatinastore.model.user.dto.CreateUserDTO;
+import br.com.jogatinastore.model.user.dto.UpdateUserDTO;
+import br.com.jogatinastore.model.user.dto.UserResponseDTO;
+import br.com.jogatinastore.model.user.mapper.UserMapper;
 import br.com.jogatinastore.repository.UserRepository;
-import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,42 +16,59 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public UserService(UserRepository repository) {
+    private final UserMapper userMapper;
+
+    public UserService(UserRepository repository, UserMapper userMapper) {
         this.repository = repository;
+        this.userMapper = userMapper;
     }
 
-    public List<User> findAll() {
-        return repository.findAll();
+    public List<UserResponseDTO> findAll() {
+        return userMapper.toResponseList(repository.findAll());
     }
 
-    public User findById(UUID id) {
+    public UserResponseDTO findById(UUID id) {
 
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No records found for this ID!"));
+        return userMapper.toResponse(findEntityById(id));
     }
 
-    public User create(User user) {
+    public UserResponseDTO create(CreateUserDTO dto) {
 
-        return repository.save(user);
+        // TODO: create repository methods
+        //if (repository.existsByEmail(dto.email()))
+        //    throw new RuntimeException("E-mail já cadastrado!");
+
+        //if (repository.existsByCpf(dto.cpf()))
+        //    throw new RuntimeException("CPF já cadastrado!");
+
+        User user = userMapper.toEntity(dto);
+
+        user.setPasswordHash(dto.password());
+
+        User savedUser = repository.save(user);
+
+        return userMapper.toResponse(savedUser);
     }
 
-    public User update(@Nonnull User user) {
+    public UserResponseDTO update( UpdateUserDTO dto) {
 
-        var entity = findById(user.getId());
+        User entity = findEntityById(dto.id());
 
-        entity.setName(user.getName());
-        entity.setCpf(user.getCpf());
-        entity.setBirthDate(user.getBirthDate());
-        entity.setPhoneNumber(user.getPhoneNumber());
-        entity.setEmail(user.getEmail());
+        userMapper.updateEntity(dto, entity);
 
-        return repository.save(entity);
+        return userMapper.toResponse(repository.save(entity));
     }
 
     public void delete(UUID id) {
 
-        var entity = findById(id);
+        User entity = findEntityById(id);
 
         repository.delete(entity);
+    }
+
+    private User findEntityById(UUID id) {
+
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No records found for this ID!"));
     }
 }

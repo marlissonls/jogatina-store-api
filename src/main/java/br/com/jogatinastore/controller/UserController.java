@@ -1,7 +1,10 @@
 package br.com.jogatinastore.controller;
 
-import br.com.jogatinastore.model.user.User;
+import br.com.jogatinastore.model.user.dto.CreateUserDTO;
+import br.com.jogatinastore.model.user.dto.UpdateUserDTO;
+import br.com.jogatinastore.model.user.dto.UserResponseDTO;
 import br.com.jogatinastore.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,27 +22,27 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> findAll() {
+    public List<UserResponseDTO> findAll() {
 
         return services.findAll();
     }
 
     @GetMapping(path="/{id}")
-    public User findById(@PathVariable UUID id) {
+    public UserResponseDTO findById(@PathVariable UUID id) {
 
         return services.findById(id);
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
+    public UserResponseDTO create(@RequestBody @Valid CreateUserDTO dto) {
 
-        return services.create(user);
+        return services.create(dto);
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
+    public UserResponseDTO update(@RequestBody @Valid UpdateUserDTO dto) {
 
-        return services.update(user);
+        return services.update(dto);
     }
 
     @DeleteMapping(path="/{id}")
