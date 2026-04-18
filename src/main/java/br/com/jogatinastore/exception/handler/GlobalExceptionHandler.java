@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.OffsetDateTime;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -22,5 +23,23 @@ public class GlobalExceptionHandler {
                 OffsetDateTime.now()
             )
         );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponse> handleValidation(MethodArgumentNotValidException ex) {
+
+        String details = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.BAD_REQUEST.toString(),
+                "Falha nos dados do usuário. Campos inválidos: " + details,
+                OffsetDateTime.now()
+        );
+
+        return ResponseEntity.status(400).body(response);
     }
 }
