@@ -42,4 +42,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(400).body(response);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleNotFound(Exception ex) {
+        return ResponseEntity.status(400).body(
+            new ExceptionResponse(
+                HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage(),
+                OffsetDateTime.now()
+            )
+        );
+    }
 }

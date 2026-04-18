@@ -23,3 +23,10 @@ spring:
     show-sql: false
 
     open-in-view: false
+
+# server:
+  # error: # Redundant after Global Exceptions Implementation
+    # include-stacktrace: never
+    # include-message: never
+    # include-binding-errors: never
+    # include-exception: false
