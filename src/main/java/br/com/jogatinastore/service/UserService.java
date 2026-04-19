@@ -1,5 +1,6 @@
 package br.com.jogatinastore.service;
 
+import br.com.jogatinastore.exception.ConflictException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
 import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.model.user.dto.CreateUserDTO;
@@ -35,12 +36,11 @@ public class UserService {
 
     public UserResponseDTO create(CreateUserDTO dto) {
 
-        // TODO: create repository methods
-        //if (repository.existsByEmail(dto.email()))
-        //    throw new RuntimeException("E-mail já cadastrado!");
+        if (repository.existsByEmail(dto.email()))
+            throw new ConflictException("Este e-mail já está vinculado a uma conta");
 
-        //if (repository.existsByCpf(dto.cpf()))
-        //    throw new RuntimeException("CPF já cadastrado!");
+        if (repository.existsByCpf(dto.cpf()))
+            throw new ConflictException("O CPF informado já possui cadastro");
 
         User user = userMapper.toEntity(dto);
 

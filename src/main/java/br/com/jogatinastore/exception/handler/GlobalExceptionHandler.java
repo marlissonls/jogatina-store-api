@@ -1,5 +1,6 @@
 package br.com.jogatinastore.exception.handler;
 
+import br.com.jogatinastore.exception.ConflictException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
 import br.com.jogatinastore.exception.response.ExceptionResponse;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(
             new ExceptionResponse(
                 HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage(),
+                OffsetDateTime.now()
+            )
+        );
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ExceptionResponse> handleConflict(Exception ex) {
+        return ResponseEntity.status(409).body(
+            new ExceptionResponse(
+                HttpStatus.CONFLICT.toString(),
                 ex.getMessage(),
                 OffsetDateTime.now()
             )
