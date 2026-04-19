@@ -1,5 +1,6 @@
 package br.com.jogatinastore.service;
 
+import br.com.jogatinastore.exception.ResourceNotFoundException;
 import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.model.user.dto.CreateUserDTO;
 import br.com.jogatinastore.model.user.dto.UpdateUserDTO;
@@ -69,6 +70,6 @@ public class UserService {
     private User findEntityById(UUID id) {
 
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No records found for this ID!"));
+            .orElseThrow(() -> new ResourceNotFoundException("No user found with the given ID"));
     }
 }
