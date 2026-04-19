@@ -9,9 +9,14 @@ import br.com.jogatinastore.model.user.dto.UpdateUserDTO;
 import br.com.jogatinastore.model.user.dto.UserResponseDTO;
 import br.com.jogatinastore.model.user.mapper.UserMapper;
 import br.com.jogatinastore.repository.UserRepository;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -48,14 +53,14 @@ public class UserService {
 
         User user = userMapper.toEntity(dto);
 
-        user.setPasswordHash(dto.password());
+        user.setPasswordHash(generateHashedPassword(dto.password()));
 
         User savedUser = repository.save(user);
 
         return userMapper.toResponse(savedUser);
     }
 
-    public UserResponseDTO update( UpdateUserDTO dto) {
+    public UserResponseDTO update(UpdateUserDTO dto) {
 
         User entity = findEntityById(dto.id());
 
@@ -75,5 +80,23 @@ public class UserService {
 
         return repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("No user found with the given ID"));
+    }
+
+    private String generateHashedPassword(String password) {
+
+        PasswordEncoder pbkdf2Encoder = new Pbkdf2PasswordEncoder(
+            "", 8, 185000,
+            Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256
+        );
+
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+
+        encoders.put("pbkdf2", pbkdf2Encoder);
+
+        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
+
+        passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2Encoder);
+
+        return passwordEncoder.encode(password);
     }
 }
