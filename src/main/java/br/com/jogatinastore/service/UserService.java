@@ -1,6 +1,7 @@
 package br.com.jogatinastore.service;
 
 import br.com.jogatinastore.exception.ConflictException;
+import br.com.jogatinastore.exception.RequiredObjectIsNullException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
 import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.model.user.dto.CreateUserDTO;
@@ -35,6 +36,9 @@ public class UserService {
     }
 
     public UserResponseDTO create(CreateUserDTO dto) {
+
+        if (dto == null)
+            throw new RequiredObjectIsNullException("Os dados do usuário enviados não podem estar vazios");
 
         if (repository.existsByEmail(dto.email()))
             throw new ConflictException("Este e-mail já está vinculado a uma conta");
