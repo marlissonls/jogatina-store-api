@@ -3,12 +3,15 @@ package br.com.jogatinastore.service;
 import br.com.jogatinastore.exception.ConflictException;
 import br.com.jogatinastore.exception.RequiredObjectIsNullException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
+import br.com.jogatinastore.model.user.Permission;
 import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.model.user.dto.CreateUserDTO;
 import br.com.jogatinastore.model.user.dto.UpdateUserDTO;
 import br.com.jogatinastore.model.user.dto.UserResponseDTO;
 import br.com.jogatinastore.model.user.mapper.UserMapper;
+import br.com.jogatinastore.repository.PermissionRepository;
 import br.com.jogatinastore.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -23,11 +26,17 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
+    private final PermissionRepository permissionRepository;
 
     private final UserMapper userMapper;
 
-    public UserService(UserRepository repository, UserMapper userMapper) {
+    public UserService(
+            UserRepository repository,
+            PermissionRepository permissionRepository,
+            UserMapper userMapper
+    ) {
         this.repository = repository;
+        this.permissionRepository = permissionRepository;
         this.userMapper = userMapper;
     }
 
@@ -40,6 +49,7 @@ public class UserService {
         return userMapper.toResponse(findEntityById(id));
     }
 
+    @Transactional
     public UserResponseDTO create(CreateUserDTO dto) {
 
         if (dto == null)
@@ -51,9 +61,13 @@ public class UserService {
         if (repository.existsByCpf(dto.cpf()))
             throw new ConflictException("O CPF informado já possui cadastro");
 
+        Permission defaultPerm = permissionRepository.findByTitle("ROLE_CUSTOMER");
+
         User user = userMapper.toEntity(dto);
 
         user.setPasswordHash(generateHashedPassword(dto.password()));
+
+        user.addPermission(defaultPerm);
 
         User savedUser = repository.save(user);
 
