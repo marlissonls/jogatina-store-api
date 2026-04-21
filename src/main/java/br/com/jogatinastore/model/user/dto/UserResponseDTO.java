@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 public record UserResponseDTO(
@@ -14,6 +15,7 @@ public record UserResponseDTO(
     String phoneNumber,
     LocalDate birthDate,
     Boolean enabled,
+    Set<String> permissions,
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt
 ) {}
