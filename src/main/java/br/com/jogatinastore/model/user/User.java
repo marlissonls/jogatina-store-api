@@ -1,6 +1,5 @@
 package br.com.jogatinastore.model.user;
 
-import br.com.jogatinastore.model.Permission;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -68,30 +68,27 @@ public class User implements UserDetails {
         updatedAt = LocalDateTime.now();
     }
 
-    // TODO: Refatorar ManyToMany para OneToMany entidade UserPermission
-    // Motivo: permitir atributos extras (grantedAt, etc) e melhor controle
-    // Quando: após implementação completa do fluxo de login com Spring Security
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_permission",
-        joinColumns = {@JoinColumn (name = "id_user")}, // pode ser um ou mais join columns
-        inverseJoinColumns = {@JoinColumn (name = "id_permission")}
-    )
-    private List<Permission> permissions;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<UserPermission> userPermissions = new HashSet<>();
 
     public User() {}
 
-    public List<String> getRoles(){
-        List<String> roles = new ArrayList<>();
-        for (Permission permission : permissions) {
-            roles.add(permission.getDescription());
-        }
-        return roles;
+    public void addPermission(Permission permission) {
+        UserPermission userPermission = new UserPermission(this, permission);
+        this.userPermissions.add(userPermission);
+    }
+
+    public List<String> getRoles() {
+        return this.userPermissions.stream()
+            .map(up -> up.getPermission().getTitle())
+            .collect(Collectors.toList());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.permissions;
+        return this.userPermissions.stream()
+            .map(UserPermission::getPermission)
+            .collect(Collectors.toSet());
     }
 
     @Override
@@ -228,23 +225,23 @@ public class User implements UserDetails {
         this.updatedAt = updatedAt;
     }
 
-    public List<Permission> getPermissions() {
-        return permissions;
+    public Set<UserPermission> getUserPermissions() {
+        return userPermissions;
     }
 
-    public void setPermissions(List<Permission> permissions) {
-        this.permissions = permissions;
+    public void setUserPermissions(Set<UserPermission> userPermissions) {
+        this.userPermissions = userPermissions;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(getId(), user.getId()) && Objects.equals(getName(), user.getName()) && Objects.equals(getCpf(), user.getCpf()) && Objects.equals(getBirthDate(), user.getBirthDate()) && Objects.equals(getPhoneNumber(), user.getPhoneNumber()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPasswordHash(), user.getPasswordHash()) && Objects.equals(isAccountNonExpired(), user.isAccountNonExpired()) && Objects.equals(isAccountNonLocked(), user.isAccountNonLocked()) && Objects.equals(isCredentialsNonExpired(), user.isCredentialsNonExpired()) && Objects.equals(isEnabled(), user.isEnabled()) && Objects.equals(getCreatedAt(), user.getCreatedAt()) && Objects.equals(getUpdatedAt(), user.getUpdatedAt()) && Objects.equals(getPermissions(), user.getPermissions());
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return id != null && id.equals(user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getCpf(), getBirthDate(), getPhoneNumber(), getEmail(), getPasswordHash(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled(), getCreatedAt(), getUpdatedAt(), getPermissions());
+        return Objects.hash(id);
     }
 }
