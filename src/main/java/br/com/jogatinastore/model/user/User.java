@@ -68,7 +68,7 @@ public class User implements UserDetails {
         updatedAt = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserPermission> userPermissions = new HashSet<>();
 
     public User() {}

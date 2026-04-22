@@ -42,13 +42,14 @@ public class UserService {
 
     @Transactional
     public List<UserResponseDTO> findAll() {
-        return userMapper.toResponseList(repository.findAll());
+
+        return userMapper.toResponseList(repository.findAllWithPermissions());
     }
 
     @Transactional
     public UserResponseDTO findById(UUID id) {
 
-        return userMapper.toResponse(findEntityById(id));
+        return userMapper.toResponse(findByIdWithPermissions(id));
     }
 
     @Transactional
@@ -79,7 +80,7 @@ public class UserService {
     @Transactional
     public UserResponseDTO update(UpdateUserDTO dto) {
 
-        User entity = findEntityById(dto.id());
+        User entity = findByIdWithPermissions(dto.id());
 
         userMapper.updateEntity(dto, entity);
 
@@ -97,6 +98,12 @@ public class UserService {
     private User findEntityById(UUID id) {
 
         return repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("No user found with the given ID"));
+    }
+
+    private User findByIdWithPermissions(UUID id) {
+
+        return repository.findByIdWithPermissions(id)
             .orElseThrow(() -> new ResourceNotFoundException("No user found with the given ID"));
     }
 
