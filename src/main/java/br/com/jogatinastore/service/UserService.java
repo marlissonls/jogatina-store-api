@@ -40,10 +40,12 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
+    @Transactional
     public List<UserResponseDTO> findAll() {
         return userMapper.toResponseList(repository.findAll());
     }
 
+    @Transactional
     public UserResponseDTO findById(UUID id) {
 
         return userMapper.toResponse(findEntityById(id));
@@ -74,6 +76,7 @@ public class UserService {
         return userMapper.toResponse(savedUser);
     }
 
+    @Transactional
     public UserResponseDTO update(UpdateUserDTO dto) {
 
         User entity = findEntityById(dto.id());
@@ -83,6 +86,7 @@ public class UserService {
         return userMapper.toResponse(repository.save(entity));
     }
 
+    @Transactional
     public void delete(UUID id) {
 
         User entity = findEntityById(id);
