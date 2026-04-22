@@ -11,6 +11,7 @@ import br.com.jogatinastore.model.user.dto.UserResponseDTO;
 import br.com.jogatinastore.model.user.mapper.UserMapper;
 import br.com.jogatinastore.repository.PermissionRepository;
 import br.com.jogatinastore.repository.UserRepository;
+import br.com.jogatinastore.security.permission.RolePermissionEnum;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,7 +65,7 @@ public class UserService {
         if (repository.existsAnyByCpfIncludingDeleted(dto.cpf()) > 0)
             throw new ConflictException("O CPF informado já possui cadastro");
 
-        Permission defaultPerm = permissionRepository.findByTitle("ROLE_CUSTOMER");
+        Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key());
 
         User user = userMapper.toEntity(dto);
 
