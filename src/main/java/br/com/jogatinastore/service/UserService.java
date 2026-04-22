@@ -12,7 +12,7 @@ import br.com.jogatinastore.model.user.mapper.UserMapper;
 import br.com.jogatinastore.repository.PermissionRepository;
 import br.com.jogatinastore.repository.UserRepository;
 import br.com.jogatinastore.security.permission.RolePermissionEnum;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
@@ -45,7 +45,6 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    @Transactional
     public List<UserResponseDTO> findAll() {
 
         logger.info("Finding all User");
@@ -53,7 +52,6 @@ public class UserService {
         return userMapper.toResponseList(repository.findAllWithPermissions());
     }
 
-    @Transactional
     public UserResponseDTO findById(UUID id) {
 
         logger.info("Finding one User");
