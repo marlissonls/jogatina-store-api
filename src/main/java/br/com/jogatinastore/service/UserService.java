@@ -13,6 +13,8 @@ import br.com.jogatinastore.repository.PermissionRepository;
 import br.com.jogatinastore.repository.UserRepository;
 import br.com.jogatinastore.security.permission.RolePermissionEnum;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -25,6 +27,8 @@ import java.util.UUID;
 
 @Service
 public class UserService {
+
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository repository;
     private final PermissionRepository permissionRepository;
@@ -44,17 +48,23 @@ public class UserService {
     @Transactional
     public List<UserResponseDTO> findAll() {
 
+        logger.info("Finding all User");
+
         return userMapper.toResponseList(repository.findAllWithPermissions());
     }
 
     @Transactional
     public UserResponseDTO findById(UUID id) {
 
+        logger.info("Finding one User");
+
         return userMapper.toResponse(findByIdWithPermissions(id));
     }
 
     @Transactional
     public UserResponseDTO create(CreateUserDTO dto) {
+
+        logger.info("Creating one User");
 
         if (dto == null)
             throw new RequiredObjectIsNullException("Os dados do usuário enviados não podem estar vazios");
@@ -79,6 +89,8 @@ public class UserService {
     @Transactional
     public UserResponseDTO update(UpdateUserDTO dto) {
 
+        logger.info("Updating one User");
+
         if (dto == null)
             throw new RequiredObjectIsNullException("Os dados do usuário enviados não podem estar vazios");
 
@@ -91,6 +103,8 @@ public class UserService {
 
     @Transactional
     public void delete(UUID id) {
+
+        logger.info("Deleting one User");
 
         User entity = findEntityById(id);
 
