@@ -15,14 +15,10 @@ import br.com.jogatinastore.security.permission.RolePermissionEnum;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -35,14 +31,18 @@ public class UserService {
 
     private final UserMapper userMapper;
 
+    private final PasswordEncoder passwordEncoder;
+
     public UserService(
             UserRepository repository,
             PermissionRepository permissionRepository,
-            UserMapper userMapper
+            UserMapper userMapper,
+            PasswordEncoder passwordEncoder
     ) {
         this.repository = repository;
         this.permissionRepository = permissionRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UserResponseDTO> findAll() {
@@ -77,7 +77,7 @@ public class UserService {
 
         User user = userMapper.toEntity(dto);
 
-        user.setPasswordHash(generateHashedPassword(dto.password()));
+        user.setPasswordHash(passwordEncoder.encode(dto.password()));
 
         user.addPermission(defaultPerm);
 
@@ -119,23 +119,5 @@ public class UserService {
 
         return repository.findByIdWithPermissions(id)
             .orElseThrow(() -> new ResourceNotFoundException("No user found with the given ID"));
-    }
-
-    private String generateHashedPassword(String password) {
-
-        PasswordEncoder pbkdf2Encoder = new Pbkdf2PasswordEncoder(
-            "", 8, 185000,
-            Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256
-        );
-
-        Map<String, PasswordEncoder> encoders = new HashMap<>();
-
-        encoders.put("pbkdf2", pbkdf2Encoder);
-
-        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
-
-        passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2Encoder);
-
-        return passwordEncoder.encode(password);
     }
 }
