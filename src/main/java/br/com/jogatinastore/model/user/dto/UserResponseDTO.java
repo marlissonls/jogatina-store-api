@@ -16,6 +16,5 @@ public record UserResponseDTO(
     LocalDate birthDate,
     Boolean enabled,
     Set<String> permissions,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt
 ) {}

@@ -8,10 +8,11 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = PermissionMapperUtils.class)
+@Mapper(componentModel = "spring", uses = { PermissionMapperUtils.class, StringUtils.class })
 public interface UserMapper {
 
     @Mapping(target = "permissions", source = "userPermissions")
+    @Mapping(target = "cpf", source = "cpf", qualifiedByName = "formatCpf")
     UserResponseDTO toResponse(User user);
 
     List<UserResponseDTO> toResponseList(List<User> users);
@@ -19,7 +20,7 @@ public interface UserMapper {
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "name", source = "name")
-    @Mapping(target = "cpf", source = "cpf")
+    @Mapping(target = "cpf", source = "cpf", qualifiedByName = "cleanCpf")
     @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "birthDate", source = "birthDate")
     @Mapping(target = "email", source = "email")
