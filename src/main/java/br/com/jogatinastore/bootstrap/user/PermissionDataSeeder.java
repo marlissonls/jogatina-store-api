@@ -2,14 +2,12 @@ package br.com.jogatinastore.bootstrap.user;
 
 import br.com.jogatinastore.model.user.Permission;
 import br.com.jogatinastore.repository.PermissionRepository;
+import br.com.jogatinastore.security.permission.RolePermissionEnum;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -26,21 +24,32 @@ public class PermissionDataSeeder implements CommandLineRunner {
     public void run(String... args) {
 
         List<Permission> existing = repository.findAll();
+
         Set<String> titles = existing
             .stream()
             .map(Permission::getTitle)
             .collect(Collectors.toSet());
 
-        Map<String, String> required = Map.of(
-            "ROLE_ADMIN", "Full access to all system resources and administrative settings.",
-            "ROLE_MANAGER", "Management access to oversee users, reports, and operational workflows.",
-            "ROLE_CUSTOMER", "Standard customer access to view products and manage personal profile."
-        );
+        Map<String, String> required = Arrays.stream(RolePermissionEnum.values())
+            .collect(Collectors.toConcurrentMap(
+                RolePermissionEnum::key,
+                RolePermissionEnum::description
+            ));
 
-        required.forEach((title, desc) -> {
-            if (!titles.contains(title)) {
-                repository.save(new Permission(UUID.randomUUID(), title, desc));
+        List<Permission> toInsert = new ArrayList<>();
+
+        for (var entry : required.entrySet()) {
+            if (!titles.contains(entry.getKey())) {
+                toInsert.add(
+                    new Permission(
+                        UUID.randomUUID(),
+                        entry.getKey(),
+                        entry.getValue()
+                    )
+                );
             }
-        });
+        }
+
+        repository.saveAll(toInsert);
     }
 }
