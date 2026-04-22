@@ -78,6 +78,9 @@ public class UserService {
     @Transactional
     public UserResponseDTO update(UpdateUserDTO dto) {
 
+        if (dto == null)
+            throw new RequiredObjectIsNullException("Os dados do usuário enviados não podem estar vazios");
+
         User entity = findByIdWithPermissions(dto.id());
 
         userMapper.updateEntity(dto, entity);
