@@ -11,9 +11,11 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    boolean existsByEmail(String email);
+    @Query(value = "SELECT COUNT(*) FROM users WHERE email = :email", nativeQuery = true)
+    Long existsAnyByEmailIncludingDeleted(@Param("email") String email);
 
-    boolean existsByCpf(String cpf);
+    @Query(value = "SELECT COUNT(*) FROM users WHERE cpf = :cpf", nativeQuery = true)
+    Long existsAnyByCpfIncludingDeleted(@Param("cpf") String cpf);
 
     @Query("SELECT u FROM User u " +
             "LEFT JOIN FETCH u.userPermissions up " +

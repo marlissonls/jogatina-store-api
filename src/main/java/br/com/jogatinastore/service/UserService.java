@@ -58,10 +58,10 @@ public class UserService {
         if (dto == null)
             throw new RequiredObjectIsNullException("Os dados do usuário enviados não podem estar vazios");
 
-        if (repository.existsByEmail(dto.email()))
+        if (repository.existsAnyByEmailIncludingDeleted(dto.email()) > 0)
             throw new ConflictException("Este e-mail já está vinculado a uma conta");
 
-        if (repository.existsByCpf(dto.cpf()))
+        if (repository.existsAnyByCpfIncludingDeleted(dto.cpf()) > 0)
             throw new ConflictException("O CPF informado já possui cadastro");
 
         Permission defaultPerm = permissionRepository.findByTitle("ROLE_CUSTOMER");
@@ -72,9 +72,7 @@ public class UserService {
 
         user.addPermission(defaultPerm);
 
-        User savedUser = repository.save(user);
-
-        return userMapper.toResponse(savedUser);
+        return userMapper.toResponse(repository.save(user));
     }
 
     @Transactional
