@@ -1,24 +1,25 @@
 package br.com.jogatinastore.model.user.dto;
 
+import br.com.jogatinastore.exception.messages.UserErrorCode;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 public record UpdateUserDTO(
-    @NotNull(message = "O ID é obrigatório para atualização")
-    UUID id,
+        @NotNull(message = UserErrorCode.USER_ID_REQUIRED)
+        UUID id,
 
-    @NotBlank(message = "O nome não pode estar vazio")
-    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
-    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]*$", message = "O nome deve conter apenas letras")
-    String name,
+        @NotBlank(message = UserErrorCode.USER_NAME_REQUIRED)
+        @Size(min = 3, max = 100, message = UserErrorCode.USER_NAME_SIZE)
+        @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]*$", message = UserErrorCode.USER_NAME_INVALID_FORMAT)
+        String name,
 
-    @NotBlank(message = "O telefone é obrigatório")
-    @Pattern(regexp = "\\d{10,13}", message = "O telefone deve ter entre 10 e 13 dígitos com DDD")
-    String phoneNumber,
+        @NotBlank(message = UserErrorCode.USER_PHONE_REQUIRED)
+        @Pattern(regexp = "\\d{10,13}", message = UserErrorCode.USER_PHONE_INVALID)
+        String phoneNumber,
 
-    @NotNull(message = "A data de nascimento é obrigatória")
-    @Past(message = "A data de nascimento deve ser uma data passada")
-    LocalDate birthDate
+        @NotNull(message = UserErrorCode.USER_BIRTHDATE_REQUIRED)
+        @Past(message = UserErrorCode.USER_BIRTHDATE_PAST_REQUIRED)
+        LocalDate birthDate
 ) {}

@@ -3,7 +3,7 @@ package br.com.jogatinastore.service;
 import br.com.jogatinastore.exception.ConflictException;
 import br.com.jogatinastore.exception.RequiredObjectIsNullException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
-import br.com.jogatinastore.exception.messages.ErrorCode;
+import br.com.jogatinastore.exception.messages.UserErrorCode;
 import br.com.jogatinastore.model.user.Permission;
 import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.model.user.dto.CreateUserDTO;
@@ -68,10 +68,10 @@ public class UserService {
         User user = userMapper.toEntity(dto);
 
         if (repository.existsAnyByEmailIncludingDeleted(user.getEmail()) > 0)
-            throw new ConflictException("Este e-mail já está vinculado a uma conta");
+            throw new ConflictException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
 
         if (repository.existsAnyByCpfIncludingDeleted(user.getCpf()) > 0)
-            throw new ConflictException("O CPF informado já possui cadastro");
+            throw new ConflictException(UserErrorCode.USER_CPF_ALREADY_EXISTS);
 
         Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key());
         user.addPermission(defaultPerm);
@@ -104,12 +104,12 @@ public class UserService {
     private User findEntityById(UUID id) {
 
         return repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("No user found with the given ID"));
+            .orElseThrow(() -> new ResourceNotFoundException(UserErrorCode.USER_NOT_FOUND));
     }
 
     private User findByIdWithPermissions(UUID id) {
 
         return repository.findByIdWithPermissions(id)
-            .orElseThrow(() -> new ResourceNotFoundException("No user found with the given ID"));
+            .orElseThrow(() -> new ResourceNotFoundException(UserErrorCode.USER_NOT_FOUND));
     }
 }
