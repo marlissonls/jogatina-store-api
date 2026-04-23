@@ -3,6 +3,7 @@ package br.com.jogatinastore.service;
 import br.com.jogatinastore.exception.ConflictException;
 import br.com.jogatinastore.exception.RequiredObjectIsNullException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
+import br.com.jogatinastore.exception.messages.ErrorCode;
 import br.com.jogatinastore.model.user.Permission;
 import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.model.user.dto.CreateUserDTO;
@@ -64,22 +65,17 @@ public class UserService {
 
         logger.info("Creating one User");
 
-        if (dto == null)
-            throw new RequiredObjectIsNullException("Os dados do usuário enviados não podem estar vazios");
+        User user = userMapper.toEntity(dto);
 
-        if (repository.existsAnyByEmailIncludingDeleted(dto.email()) > 0)
+        if (repository.existsAnyByEmailIncludingDeleted(user.getEmail()) > 0)
             throw new ConflictException("Este e-mail já está vinculado a uma conta");
 
-        if (repository.existsAnyByCpfIncludingDeleted(dto.cpf()) > 0)
+        if (repository.existsAnyByCpfIncludingDeleted(user.getCpf()) > 0)
             throw new ConflictException("O CPF informado já possui cadastro");
 
         Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key());
-
-        User user = userMapper.toEntity(dto);
-
-        user.setPasswordHash(passwordEncoder.encode(dto.password()));
-
         user.addPermission(defaultPerm);
+        user.setPasswordHash(passwordEncoder.encode(dto.password()));
 
         return userMapper.toResponse(repository.save(user));
     }
@@ -89,11 +85,7 @@ public class UserService {
 
         logger.info("Updating one User");
 
-        if (dto == null)
-            throw new RequiredObjectIsNullException("Os dados do usuário enviados não podem estar vazios");
-
         User entity = findByIdWithPermissions(dto.id());
-
         userMapper.updateEntity(dto, entity);
 
         return userMapper.toResponse(repository.save(entity));
