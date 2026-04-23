@@ -1,7 +1,6 @@
 package br.com.jogatinastore.service;
 
 import br.com.jogatinastore.exception.ConflictException;
-import br.com.jogatinastore.exception.RequiredObjectIsNullException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
 import br.com.jogatinastore.exception.messages.UserErrorCode;
 import br.com.jogatinastore.model.user.Permission;
@@ -68,10 +67,10 @@ public class UserService {
         User user = userMapper.toEntity(dto);
 
         if (repository.existsAnyByEmailIncludingDeleted(user.getEmail()) > 0)
-            throw new ConflictException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
+            throw new ConflictException("email", UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
 
         if (repository.existsAnyByCpfIncludingDeleted(user.getCpf()) > 0)
-            throw new ConflictException(UserErrorCode.USER_CPF_ALREADY_EXISTS);
+            throw new ConflictException("cpf", UserErrorCode.USER_CPF_ALREADY_EXISTS);
 
         Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key());
         user.addPermission(defaultPerm);
@@ -104,12 +103,12 @@ public class UserService {
     private User findEntityById(UUID id) {
 
         return repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(UserErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException("id", UserErrorCode.USER_NOT_FOUND));
     }
 
     private User findByIdWithPermissions(UUID id) {
 
         return repository.findByIdWithPermissions(id)
-            .orElseThrow(() -> new ResourceNotFoundException(UserErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException("id", UserErrorCode.USER_NOT_FOUND));
     }
 }
