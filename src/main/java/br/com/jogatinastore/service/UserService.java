@@ -47,22 +47,27 @@ public class UserService {
 
     public List<UserResponseDTO> findAll() {
 
-        logger.info("Finding all User");
+        logger.debug("Finding all User");
 
         return userMapper.toResponseList(repository.findAllWithPermissions());
     }
 
     public UserResponseDTO findById(UUID id) {
 
-        logger.info("Finding one User");
+        logger.debug("Starting findById userId={}", id);
 
-        return userMapper.toResponse(findByIdWithPermissions(id));
+        User user = findByIdWithPermissions(id);
+        UserResponseDTO response = userMapper.toResponse(user);
+
+        logger.info("Successfully retrieved user userId={}", id);
+
+        return response;
     }
 
     @Transactional
     public UserResponseDTO create(CreateUserDTO dto) {
 
-        logger.info("Creating one User");
+        logger.debug("Creating one User");
 
         User user = userMapper.toEntity(dto);
 
@@ -75,40 +80,58 @@ public class UserService {
         Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key());
         user.addPermission(defaultPerm);
         user.setPasswordHash(passwordEncoder.encode(dto.password()));
+        User savedUser = repository.save(user);
 
-        return userMapper.toResponse(repository.save(user));
+        logger.info("Succesfully created one User userId={}", savedUser.getId());
+
+        return userMapper.toResponse(savedUser);
     }
 
     @Transactional
     public UserResponseDTO update(UpdateUserDTO dto) {
 
-        logger.info("Updating one User");
+        logger.debug("Updating user by id: {}", dto.id());
 
         User entity = findByIdWithPermissions(dto.id());
         userMapper.updateEntity(dto, entity);
+        User updatedUser = repository.save(entity);
 
-        return userMapper.toResponse(repository.save(entity));
+        logger.info("Successfully updated user userId={}", entity.getId());
+
+        return userMapper.toResponse(updatedUser);
     }
 
     @Transactional
     public void delete(UUID id) {
 
-        logger.info("Deleting one User");
+        logger.debug("Deleting user by userId={}", id);
 
         User entity = findEntityById(id);
+
+        logger.info("Successfully Deleted user userId={}", id);
 
         repository.delete(entity);
     }
 
     private User findEntityById(UUID id) {
 
+        logger.debug("Fetching user userId={}", id);
+
         return repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("id", UserErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> {
+                logger.warn("User not found userId={}", id);
+                return new ResourceNotFoundException("id", UserErrorCode.USER_NOT_FOUND);
+            });
     }
 
     private User findByIdWithPermissions(UUID id) {
 
+        logger.debug("Fetching user with permissions userId={}", id);
+
         return repository.findByIdWithPermissions(id)
-            .orElseThrow(() -> new ResourceNotFoundException("id", UserErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> {
+                logger.warn("User not found userId={}", id);
+                return new ResourceNotFoundException("id", UserErrorCode.USER_NOT_FOUND);
+            });
     }
 }

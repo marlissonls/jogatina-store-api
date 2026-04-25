@@ -5,6 +5,8 @@ import br.com.jogatinastore.exception.ResourceNotFoundException;
 import br.com.jogatinastore.exception.messages.ErrorType;
 import br.com.jogatinastore.exception.response.ExceptionResponse;
 import br.com.jogatinastore.exception.response.ErrorDetail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,17 +19,21 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex) {
+
+        var errors = List.of(new ErrorDetail("system", "error.internal"));
+
+        logger.error("Unexpected error occurred. Errors={}", errors);
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 ErrorType.INTERNAL_ERROR.name(),
                 "Unexpected error",
                 OffsetDateTime.now(),
-                List.of(
-                    new ErrorDetail("system", "error.internal")
-                )
+                errors
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -36,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
 
-        List<ErrorDetail> errors = ex.getBindingResult()
+        List<ErrorDetail> errorDetails = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(error -> new ErrorDetail(
@@ -45,12 +51,14 @@ public class GlobalExceptionHandler {
                 ))
                 .toList();
 
+        logger.warn("Validation failed. Fields={}", errorDetails);
+
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ErrorType.VALIDATION_ERROR.name(),
                 "Validation failed",
                 OffsetDateTime.now(),
-                errors
+                errorDetails
         );
 
         return ResponseEntity.status(400).body(response);
@@ -58,6 +66,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public final ResponseEntity<ExceptionResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
+
+        logger.warn("Resource not found. Errors={}", ex.getErrors());
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -72,6 +82,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ExceptionResponse> handleConflictException(ConflictException ex) {
+
+        logger.warn("Conflict occurred. Errors={}", ex.getErrors());
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.CONFLICT.value(),
