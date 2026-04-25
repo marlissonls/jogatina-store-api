@@ -69,20 +69,13 @@ public class UserService {
 
         logger.debug("Creating one User");
 
-        User user = userMapper.toEntity(dto);
-
-        if (repository.existsAnyByEmailIncludingDeleted(user.getEmail()) > 0)
-            throw new ConflictException("email", UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
-
-        if (repository.existsAnyByCpfIncludingDeleted(user.getCpf()) > 0)
-            throw new ConflictException("cpf", UserErrorCode.USER_CPF_ALREADY_EXISTS);
-
-        Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key());
-        user.addPermission(defaultPerm);
-        user.setPasswordHash(passwordEncoder.encode(dto.password()));
+        User user = buildUser(dto);
+        validateUserUniqueness(user);
+        assignDefaultPermission(user);
+        encodePassword(dto, user);
         User savedUser = repository.save(user);
 
-        logger.info("Succesfully created one User userId={}", savedUser.getId());
+        logger.info("Successfully created one User userId={}", savedUser.getId());
 
         return userMapper.toResponse(savedUser);
     }
@@ -93,7 +86,7 @@ public class UserService {
         logger.debug("Updating user by id: {}", dto.id());
 
         User entity = findByIdWithPermissions(dto.id());
-        userMapper.updateEntity(dto, entity);
+        applyUpdate(dto, entity);
         User updatedUser = repository.save(entity);
 
         logger.info("Successfully updated user userId={}", entity.getId());
@@ -133,5 +126,32 @@ public class UserService {
                 logger.warn("User not found userId={}", id);
                 return new ResourceNotFoundException("id", UserErrorCode.USER_NOT_FOUND);
             });
+    }
+
+    private User buildUser(CreateUserDTO dto) {
+        return userMapper.toEntity(dto);
+    }
+
+    private void validateUserUniqueness(User user) {
+        if (repository.existsAnyByEmailIncludingDeleted(user.getEmail()) > 0)
+            throw new ConflictException("email", UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
+
+        if (repository.existsAnyByCpfIncludingDeleted(user.getCpf()) > 0)
+            throw new ConflictException("cpf", UserErrorCode.USER_CPF_ALREADY_EXISTS);
+    }
+
+    private void assignDefaultPermission(User user) {
+        Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key());
+        user.addPermission(defaultPerm);
+    }
+
+    private void encodePassword(CreateUserDTO dto, User user) {
+        user.setPasswordHash(passwordEncoder.encode(dto.password()));
+    }
+
+    private static void applyUpdate(UpdateUserDTO dto, User entity) {
+        entity.setName(dto.name());
+        entity.setPhoneNumber(dto.phoneNumber());
+        entity.setBirthDate(dto.birthDate());
     }
 }
