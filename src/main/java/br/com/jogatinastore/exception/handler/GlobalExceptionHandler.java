@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -24,9 +26,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex) {
 
-        var errors = List.of(new ErrorDetail("system", "error.internal"));
+        logger.error("Unexpected error occurred. Errors={}", ex.getMessage(), ex);
 
-        logger.error("Unexpected error occurred. Errors={}", errors);
+        var errors = List.of(new ErrorDetail("system", "error.internal"));
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -37,6 +39,53 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public final ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+
+        String parameterName = ex.getName();
+        String expectedType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+        String receivedType = ex.getValue() != null ? ex.getValue().toString() : "unknown";
+        logger.warn("Url parameter error. Parameter '{}' expects type '{}' but received '{}'", parameterName, expectedType, receivedType);
+
+        var errors = List.of(new ErrorDetail("client.path_parameter." + parameterName, "error.client.path_parameter.invalid"));
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorType.INVALID_PATH_PARAMETER.name(),
+                "Invalid path parameter",
+                OffsetDateTime.now(),
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public final ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+
+        Throwable rootCause = ex.getMostSpecificCause();
+        String detailedMessage = rootCause.getMessage();
+        logger.warn("Fail to read JSON: {}", detailedMessage);
+
+        String userMessage = "JSON formatting error or invalid data type.";
+        if (rootCause.toString().contains("UUID"))
+            userMessage = "UUID invalid format.";
+        else if (rootCause.toString().contains("Date") || detailedMessage.contains("DateTime"))
+            userMessage = "Data/Hour invalid format.";
+
+        var errors = List.of(new ErrorDetail("client.payload", "error.client.payload.invalid_json"));
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorType.INVALID_JSON_BODY.name(),
+                userMessage,
+                OffsetDateTime.now(),
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

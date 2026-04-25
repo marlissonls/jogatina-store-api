@@ -1,8 +1,10 @@
 package br.com.jogatinastore.exception.messages;
 
 public enum ErrorType {
-    INTERNAL_ERROR,
-    VALIDATION_ERROR,
+    INVALID_PATH_PARAMETER,
     BUSINESS_ERROR,
-    NOT_FOUND
+    INTERNAL_ERROR,
+    INVALID_JSON_BODY,
+    NOT_FOUND,
+    VALIDATION_ERROR,
 }
