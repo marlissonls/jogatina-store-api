@@ -2,6 +2,7 @@ package br.com.jogatinastore.service;
 
 import br.com.jogatinastore.exception.ConflictException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
+import br.com.jogatinastore.exception.messages.PermissionErrorCode;
 import br.com.jogatinastore.exception.messages.UserErrorCode;
 import br.com.jogatinastore.model.user.Permission;
 import br.com.jogatinastore.model.user.User;
@@ -141,7 +142,11 @@ public class UserService {
     }
 
     private void assignDefaultPermission(User user) {
-        Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key());
+        Permission defaultPerm = permissionRepository.findByTitle(RolePermissionEnum.ROLE_CUSTOMER.key())
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "permission.title",
+                PermissionErrorCode.PERMISSION_NOT_FOUND
+        ));
         user.addPermission(defaultPerm);
     }
 
