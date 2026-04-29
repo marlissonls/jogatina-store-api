@@ -15,6 +15,9 @@ import br.com.jogatinastore.model.user.mapper.UserMapper;
 import br.com.jogatinastore.repository.PermissionRepository;
 import br.com.jogatinastore.repository.UserRepository;
 import br.com.jogatinastore.security.permission.RolePermissionEnum;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -160,5 +163,11 @@ public class UserService {
         entity.setName(dto.name());
         entity.setPhoneNumber(dto.phoneNumber());
         entity.setBirthDate(dto.birthDate());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Username "+ email +" not found!"));
     }
 }
