@@ -1,7 +1,10 @@
 package br.com.jogatinastore.exception.handler;
 
 import br.com.jogatinastore.exception.ConflictException;
+import br.com.jogatinastore.exception.InvalidJwtTokenException;
 import br.com.jogatinastore.exception.ResourceNotFoundException;
+import br.com.jogatinastore.exception.messages.AuthErrorCode;
+import br.com.jogatinastore.exception.messages.AuthErrorTarget;
 import br.com.jogatinastore.exception.messages.ErrorType;
 import br.com.jogatinastore.exception.response.ExceptionResponse;
 import br.com.jogatinastore.exception.response.ErrorDetail;
@@ -10,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -143,5 +147,39 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ExceptionResponse> handleBadCredentialsException(BadCredentialsException ex) {
+
+        logger.warn("Authentication failed: {}", ex.getMessage());
+
+        var errors = List.of(new ErrorDetail(AuthErrorTarget.CREDENTIALS, AuthErrorCode.CREDENTIALS_INVALID));
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                ErrorType.BAD_CREDENTIALS.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(InvalidJwtTokenException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidJwtTokenException(InvalidJwtTokenException ex) {
+
+        logger.warn("Authentication failed: {}", ex.getMessage());
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                ErrorType.INVALID_TOKEN.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                ex.getErrors()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 }
