@@ -3,6 +3,7 @@ security:
     token:
       secret: ${JWT_SECRET}
       expire-length: ${JWT_EXPIRE_TIME:3600000}
+      refresh-expire-length: ${JWT_REFRESH_EXPIRE_TIME:10800000}
 
 spring:
   application:

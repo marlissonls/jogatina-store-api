@@ -10,11 +10,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
     private final HandlerExceptionResolver resolver;
+
+    private static final List<String> PUBLIC_PATHS = List.of(
+            "/auth/signin"
+    );
 
     public JwtTokenFilter(JwtTokenProvider tokenProvider, HandlerExceptionResolver resolver) {
         this.tokenProvider = tokenProvider;
@@ -22,18 +28,34 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filter) throws ServletException, IOException {
-        try {
-            String headerToken = tokenProvider.resolveToken(request);
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws ServletException, IOException {
 
-            if (headerToken != null) {
-                Authentication auth = tokenProvider.getAuthentication(headerToken, request.getServletPath());
+        SecurityContextHolder.clearContext();
+
+        try {
+            Optional<String> tokenOpt = tokenProvider.resolveToken(request);
+
+            if (tokenOpt.isPresent()) {
+                String token = tokenOpt.get();
+
+                Authentication auth;
+
+                if (isRefreshEndpoint(request)) {
+                    auth = tokenProvider.getRefreshAuthentication(token);
+                } else {
+                    auth = tokenProvider.getAccessAuthentication(token);
+                }
+
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
 
-            filter.doFilter(request, response);
+            chain.doFilter(request, response);
+
         } catch (Exception ex) {
-            // Sends to GlobalExceptionHandler
             resolver.resolveException(request, response, null, ex);
         }
     }
@@ -41,6 +63,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return path.equals("/auth/signin");
+        return PUBLIC_PATHS.contains(path);
+    }
+
+    private boolean isRefreshEndpoint(HttpServletRequest request) {
+        return request.getServletPath().equals("/auth/refresh");
     }
 }
