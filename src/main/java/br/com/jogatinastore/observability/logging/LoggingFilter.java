@@ -27,27 +27,43 @@ public class LoggingFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         try {
-            String correlationId = request.getHeader("X-Correlation-Id");
-            if (correlationId == null) correlationId = UUID.randomUUID().toString();
+            String correlationId = resolveCorrelationId(request);
 
-            MDC.put(CORRELATION_ID, correlationId);
+            if (MDC.get(CORRELATION_ID) == null)
+                MDC.put(CORRELATION_ID, correlationId);
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String user = getUserEmail(auth);
 
-            MDC.put("user", user);
+            MDC.put("user", getUserEmail(auth));
             MDC.put("method", request.getMethod());
             MDC.put("path", request.getRequestURI());
 
             filterChain.doFilter(request, response);
+
+            MDC.put("status", String.valueOf(response.getStatus()));
         } finally {
-            MDC.clear();
+            MDC.remove(CORRELATION_ID);
+            MDC.remove("user");
+            MDC.remove("method");
+            MDC.remove("path");
+            MDC.remove("status");
         }
     }
 
+    private String resolveCorrelationId(HttpServletRequest request) {
+        String id = request.getHeader("X-Correlation-Id");
+        return (id != null) ? id : UUID.randomUUID().toString();
+    }
+
     private String getUserEmail(Authentication auth) {
-        if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof AuthenticatedUser user)
+        if (auth == null || !auth.isAuthenticated())
+            return "anonymous";
+
+        Object principal = auth.getPrincipal();
+
+        if (principal instanceof AuthenticatedUser user)
             return user.email();
+
         return "anonymous";
     }
 }
