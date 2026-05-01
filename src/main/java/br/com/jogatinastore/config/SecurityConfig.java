@@ -1,5 +1,6 @@
 package br.com.jogatinastore.config;
 
+import br.com.jogatinastore.observability.logging.LoggingFilter;
 import br.com.jogatinastore.security.jwt.JwtTokenFilter;
 import br.com.jogatinastore.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,11 +35,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         JwtTokenFilter filter = new JwtTokenFilter(tokenProvider, resolver);
+        LoggingFilter loggingFilter = new LoggingFilter();
 
         return http
             .httpBasic(AbstractHttpConfigurer::disable)
             .csrf(AbstractHttpConfigurer::disable) // Desabilita CSRF para conseguir dar POST/PUT
             .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(loggingFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
