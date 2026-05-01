@@ -1,5 +1,6 @@
 package br.com.jogatinastore.observability.logging;
 
+import br.com.jogatinastore.security.principal.AuthenticatedUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             MDC.put(CORRELATION_ID, correlationId);
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String user = (auth != null && auth.isAuthenticated()) ? auth.getName() : "anonymous";
+            String user = getUserEmail(auth);
 
             MDC.put("user", user);
             MDC.put("method", request.getMethod());
@@ -42,5 +43,11 @@ public class LoggingFilter extends OncePerRequestFilter {
         } finally {
             MDC.clear();
         }
+    }
+
+    private String getUserEmail(Authentication auth) {
+        if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof AuthenticatedUser user)
+            return user.email();
+        return "anonymous";
     }
 }
