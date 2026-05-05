@@ -1,17 +1,19 @@
 package br.com.jogatinastore.controller;
 
 import br.com.jogatinastore.model.user.dto.CreateUserDTO;
+import br.com.jogatinastore.model.PageResponse;
 import br.com.jogatinastore.model.user.dto.UpdateUserDTO;
 import br.com.jogatinastore.model.user.dto.UserResponseDTO;
 import br.com.jogatinastore.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,9 +27,11 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserResponseDTO> findAll() {
-
-        return services.findAll();
+    public ResponseEntity<PageResponse<UserResponseDTO>> findAll(
+            @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok().body(services.findAll(pageable));
     }
 
     @GetMapping(path="/{id}")

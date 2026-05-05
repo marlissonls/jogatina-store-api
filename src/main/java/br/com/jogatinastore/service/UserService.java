@@ -9,12 +9,14 @@ import br.com.jogatinastore.exception.messages.UserErrorTarget;
 import br.com.jogatinastore.model.user.Permission;
 import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.model.user.dto.CreateUserDTO;
+import br.com.jogatinastore.model.PageResponse;
 import br.com.jogatinastore.model.user.dto.UpdateUserDTO;
 import br.com.jogatinastore.model.user.dto.UserResponseDTO;
 import br.com.jogatinastore.model.user.mapper.UserMapper;
 import br.com.jogatinastore.repository.PermissionRepository;
 import br.com.jogatinastore.repository.UserRepository;
 import br.com.jogatinastore.security.permission.RolePermissionEnum;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -51,11 +52,26 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<UserResponseDTO> findAll() {
+    public PageResponse<UserResponseDTO> findAll(Pageable pageable) {
 
         logger.debug("Finding all User");
 
-        return userMapper.toResponseList(repository.findAllWithPermissions());
+        var page = repository.findAll(pageable);
+
+        var users = repository.findAllWithPermissionsByIdIn(
+            page.getContent().stream().map(User::getId).toList()
+        );
+
+        var items = users.stream()
+            .map(userMapper::toResponse)
+            .toList();
+
+        return new PageResponse<>(
+            items,
+            page.getNumber(),
+            page.getSize(),
+            page.getTotalElements()
+        );
     }
 
     public UserResponseDTO findById(UUID id) {

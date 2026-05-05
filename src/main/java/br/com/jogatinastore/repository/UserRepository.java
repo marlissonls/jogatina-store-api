@@ -23,10 +23,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "WHERE u.id = :id")
     Optional<User> findByIdWithPermissions(@Param("id") UUID id);
 
-    @Query("SELECT DISTINCT u FROM User u " +
-            "LEFT JOIN FETCH u.userPermissions up " +
-            "LEFT JOIN FETCH up.permission")
-    List<User> findAllWithPermissions();
+    @Query("""
+        SELECT DISTINCT u FROM User u
+        LEFT JOIN FETCH u.userPermissions up
+        LEFT JOIN FETCH up.permission
+        WHERE u.id IN :ids
+    """)
+    List<User> findAllWithPermissionsByIdIn(List<UUID> ids);
 
     @Query("SELECT u FROM User u " +
             "JOIN FETCH u.userPermissions up " +
