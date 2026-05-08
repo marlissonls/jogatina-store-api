@@ -103,11 +103,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserResponseDTO update(UpdateUserDTO dto) {
+    public UserResponseDTO update(UUID id, UpdateUserDTO dto) {
 
-        logger.debug("Updating user by id: {}", dto.id());
+        logger.debug("Updating user by id: {}", id);
 
-        User entity = findByIdWithPermissions(dto.id());
+        User entity = findByIdWithPermissions(id);
         applyUpdate(dto, entity);
         User updatedUser = repository.save(entity);
 

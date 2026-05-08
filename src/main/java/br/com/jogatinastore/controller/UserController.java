@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,6 +28,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<PageResponse<UserResponseDTO>> findAll(
             @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable
@@ -35,6 +37,7 @@ public class UserController {
     }
 
     @GetMapping(path="/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
     public UserResponseDTO findById(@PathVariable UUID id) {
 
         return services.findById(id);
@@ -53,13 +56,15 @@ public class UserController {
         return ResponseEntity.created(location).body(response);
     }
 
-    @PutMapping
-    public ResponseEntity<UserResponseDTO> update(@RequestBody @Valid UpdateUserDTO dto) {
+    @PutMapping(path="/{id}")
+    @PreAuthorize("hasRole('CUSTOMER') and #id.toString() == authentication.principal.id")
+    public ResponseEntity<UserResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid UpdateUserDTO dto) {
 
-        return ResponseEntity.ok().body(services.update(dto));
+        return ResponseEntity.ok().body(services.update(id, dto));
     }
 
     @DeleteMapping(path="/{id}")
+    @PreAuthorize("hasRole('CUSTOMER') and #id.toString() == authentication.principal.id")
     public ResponseEntity<?> delete(@PathVariable UUID id) {
 
         services.delete(id);

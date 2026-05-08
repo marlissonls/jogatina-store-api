@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -181,5 +182,23 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ExceptionResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+
+        logger.warn("Security restriction: {}", ex.getMessage());
+
+        var errors = List.of(new ErrorDetail("client.authorization", "error.client.authorization.denied"));
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.FORBIDDEN.value(),
+                ErrorType.NOT_AUTHORIZED.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }

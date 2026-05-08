@@ -8,5 +8,6 @@ public enum ErrorType {
     INVALID_JSON_BODY,
     INVALID_TOKEN,
     NOT_FOUND,
+    NOT_AUTHORIZED,
     VALIDATION_ERROR,
 }
