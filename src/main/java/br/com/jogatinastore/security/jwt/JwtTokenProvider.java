@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -100,6 +99,10 @@ public class JwtTokenProvider {
     public Optional<String> resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
+        return extractBearerToken(bearerToken);
+    }
+
+    private static Optional<String> extractBearerToken(String bearerToken) {
         if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
             return Optional.empty();
         }
@@ -133,36 +136,23 @@ public class JwtTokenProvider {
         }
     }
 
-    public Authentication getRefreshAuthentication(String token) {
-        try {
-            DecodedJWT decodedJWT = refreshTokenVerifier.verify(token);
+    public TokenDTO refreshToken(String bearerToken) {
 
-            String id = decodedJWT.getClaim("id").asString();
-            String email = decodedJWT.getSubject();
+        Optional<String> refreshToken = extractBearerToken(bearerToken);
 
-            AuthenticatedUser principal =
-                    new AuthenticatedUser(id, email, List.of());
-
-            return new UsernamePasswordAuthenticationToken(
-                    principal,
-                    null,
-                    List.of()
-            );
-
-        } catch (JWTVerificationException e) {
+        if (refreshToken.isEmpty()) {
             throw new InvalidJwtTokenException(
                     AuthErrorTarget.REFRESH_TOKEN,
                     AuthErrorCode.REFRESH_TOKEN_INVALID
             );
         }
-    }
 
-    public TokenDTO refreshToken() {
+        DecodedJWT decodedJWT = refreshTokenVerifier.verify(refreshToken.get());
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String id = decodedJWT.getClaim("id").asString();
+        String email = decodedJWT.getSubject();
+        var roles = decodedJWT.getClaim("roles").asList(String.class);
 
-        AuthenticatedUser user = (AuthenticatedUser) auth.getPrincipal();
-
-        return createAccessToken(user.id(), user.email(), user.roles());
+        return createAccessToken(id, email, roles);
     }
 }

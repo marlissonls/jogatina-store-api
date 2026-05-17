@@ -2,6 +2,7 @@ package br.com.jogatinastore.service;
 
 import br.com.jogatinastore.model.user.User;
 import br.com.jogatinastore.security.dto.AccountCredentialsDTO;
+import br.com.jogatinastore.security.dto.RefreshTokenDTO;
 import br.com.jogatinastore.security.dto.TokenDTO;
 import br.com.jogatinastore.security.jwt.JwtTokenProvider;
 import org.slf4j.Logger;
@@ -46,12 +47,13 @@ public class AuthService {
         );
     }
 
-    public TokenDTO refreshToken() {
+    public TokenDTO refreshToken(RefreshTokenDTO refresh) {
         logger.debug("Processing token refresh request.");
 
-        TokenDTO tokenDTO = tokenProvider.refreshToken();
+        TokenDTO tokenDTO = tokenProvider.refreshToken(refresh.refreshToken());
 
-        logger.info("Token refresh successfully completed.");
+        logger.info("Access token refreshed successfully.");
+
         return tokenDTO;
     }
 }
