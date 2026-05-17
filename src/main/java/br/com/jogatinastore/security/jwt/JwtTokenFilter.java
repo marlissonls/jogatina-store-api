@@ -19,7 +19,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver resolver;
 
     private static final List<String> PUBLIC_PATHS = List.of(
-            "/auth/signin"
+            "/auth/signin",
+            "/auth/refresh",
+            "/v3/api-docs",
+            "/swagger-ui"
     );
 
     public JwtTokenFilter(JwtTokenProvider tokenProvider, HandlerExceptionResolver resolver) {
@@ -34,21 +37,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             FilterChain chain
     ) throws ServletException, IOException {
 
-        SecurityContextHolder.clearContext();
-
         try {
             Optional<String> tokenOpt = tokenProvider.resolveToken(request);
 
             if (tokenOpt.isPresent()) {
                 String token = tokenOpt.get();
 
-                Authentication auth;
-
-                if (isRefreshEndpoint(request)) {
-                    auth = tokenProvider.getRefreshAuthentication(token);
-                } else {
-                    auth = tokenProvider.getAccessAuthentication(token);
-                }
+                Authentication auth = tokenProvider.getAccessAuthentication(token);
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
@@ -63,10 +58,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return PUBLIC_PATHS.contains(path);
-    }
-
-    private boolean isRefreshEndpoint(HttpServletRequest request) {
-        return request.getServletPath().equals("/auth/refresh");
+        return PUBLIC_PATHS.stream()
+                .anyMatch(path::startsWith);
     }
 }

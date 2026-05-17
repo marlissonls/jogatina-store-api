@@ -2,6 +2,7 @@ package br.com.jogatinastore.controller;
 
 import br.com.jogatinastore.controller.docs.AuthControllerDocs;
 import br.com.jogatinastore.security.dto.AccountCredentialsDTO;
+import br.com.jogatinastore.security.dto.RefreshTokenDTO;
 import br.com.jogatinastore.security.dto.TokenDTO;
 import br.com.jogatinastore.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,8 +32,8 @@ public class AuthController implements AuthControllerDocs {
 
     @PostMapping(path = "/refresh", produces = JSON)
     @Override
-    public ResponseEntity<TokenDTO> refresh() {
+    public ResponseEntity<TokenDTO> refresh(@RequestBody @Valid RefreshTokenDTO refresh) {
 
-        return ResponseEntity.ok().body(service.refreshToken());
+        return ResponseEntity.ok().body(service.refreshToken(refresh));
     }
 }

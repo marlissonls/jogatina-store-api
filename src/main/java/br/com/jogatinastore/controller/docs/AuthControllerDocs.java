@@ -2,6 +2,7 @@ package br.com.jogatinastore.controller.docs;
 
 import br.com.jogatinastore.exception.response.ExceptionResponse;
 import br.com.jogatinastore.security.dto.AccountCredentialsDTO;
+import br.com.jogatinastore.security.dto.RefreshTokenDTO;
 import br.com.jogatinastore.security.dto.TokenDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,5 +38,5 @@ public interface AuthControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<TokenDTO> refresh();
+    ResponseEntity<TokenDTO> refresh(@RequestBody @Valid RefreshTokenDTO refresh);
 }
