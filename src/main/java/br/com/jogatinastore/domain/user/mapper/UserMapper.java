@@ -1,0 +1,40 @@
+package br.com.jogatinastore.domain.user.mapper;
+
+import br.com.jogatinastore.domain.user.entity.User;
+import br.com.jogatinastore.domain.user.dto.CreateUserDTO;
+import br.com.jogatinastore.domain.user.dto.UpdateUserDTO;
+import br.com.jogatinastore.domain.user.dto.UserResponseDTO;
+import org.mapstruct.*;
+
+import java.util.List;
+
+@Mapper(componentModel = "spring", uses = { PermissionMapperUtils.class, StringUtils.class })
+public interface UserMapper {
+
+    @Mapping(target = "permissions", source = "userPermissions")
+    @Mapping(target = "cpf", source = "cpf", qualifiedByName = "formatCpf")
+    UserResponseDTO toResponse(User user);
+
+    List<UserResponseDTO> toResponseList(List<User> users);
+
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "cpf", source = "cpf", qualifiedByName = "cleanCpf")
+    @Mapping(target = "phoneNumber", source = "phoneNumber")
+    @Mapping(target = "birthDate", source = "birthDate")
+    @Mapping(target = "email", source = "email")
+    User toEntity(CreateUserDTO dto);
+
+    List<User> toEntityList(List<CreateUserDTO> dtos);
+
+
+    @BeanMapping(
+        ignoreByDefault = true,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+    )
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "birthDate", source = "birthDate")
+    @Mapping(target = "phoneNumber", source = "phoneNumber")
+    void updateEntity(UpdateUserDTO dto, @MappingTarget User user);
+}
