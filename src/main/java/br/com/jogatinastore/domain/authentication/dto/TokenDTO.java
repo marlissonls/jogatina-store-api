@@ -1,4 +1,4 @@
-package br.com.jogatinastore.infra.security.dto;
+package br.com.jogatinastore.domain.authentication.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

@@ -1,9 +1,8 @@
 package br.com.jogatinastore.infra.security.jwt;
 
 import br.com.jogatinastore.infra.exception.InvalidJwtTokenException;
-import br.com.jogatinastore.domain.authentication.exception.AuthErrorCode;
-import br.com.jogatinastore.domain.authentication.exception.AuthErrorTarget;
-import br.com.jogatinastore.infra.security.dto.TokenDTO;
+import br.com.jogatinastore.domain.authentication.exception.AuthErrors;
+import br.com.jogatinastore.domain.authentication.dto.TokenDTO;
 import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -130,8 +129,8 @@ public class JwtTokenProvider {
 
         } catch (JWTVerificationException e) {
             throw new InvalidJwtTokenException(
-                    AuthErrorTarget.ACCESS_TOKEN,
-                    AuthErrorCode.ACCESS_TOKEN_INVALID
+                    AuthErrors.Target.ACCESS_TOKEN,
+                    AuthErrors.Code.ACCESS_TOKEN_INVALID
             );
         }
     }
@@ -142,8 +141,8 @@ public class JwtTokenProvider {
 
         if (refreshToken.isEmpty()) {
             throw new InvalidJwtTokenException(
-                    AuthErrorTarget.REFRESH_TOKEN,
-                    AuthErrorCode.REFRESH_TOKEN_INVALID
+                    AuthErrors.Target.REFRESH_TOKEN,
+                    AuthErrors.Code.REFRESH_TOKEN_INVALID
             );
         }
 
