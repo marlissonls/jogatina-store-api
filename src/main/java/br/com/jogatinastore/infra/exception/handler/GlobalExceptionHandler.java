@@ -3,9 +3,11 @@ package br.com.jogatinastore.infra.exception.handler;
 import br.com.jogatinastore.infra.exception.ConflictException;
 import br.com.jogatinastore.infra.exception.InvalidJwtTokenException;
 import br.com.jogatinastore.infra.exception.ResourceNotFoundException;
-import br.com.jogatinastore.domain.authentication.exception.AuthErrorCode;
-import br.com.jogatinastore.domain.authentication.exception.AuthErrorTarget;
+import br.com.jogatinastore.domain.authentication.exception.AuthErrors;
+import br.com.jogatinastore.domain.authorization.exception.AuthorizationErrors;
 import br.com.jogatinastore.infra.exception.code.ErrorCode;
+import br.com.jogatinastore.infra.exception.errors.RequestErrors;
+import br.com.jogatinastore.infra.exception.errors.SystemErrors;
 import br.com.jogatinastore.infra.exception.response.ExceptionResponse;
 import br.com.jogatinastore.infra.exception.response.ErrorDetail;
 import org.slf4j.Logger;
@@ -33,7 +35,12 @@ public class GlobalExceptionHandler {
 
         logger.error("Unexpected error occurred. Errors={}", ex.getMessage(), ex);
 
-        var errors = List.of(new ErrorDetail("system", "error.internal"));
+        var errors = List.of(
+            new ErrorDetail(
+                SystemErrors.Target.SYSTEM,
+                SystemErrors.Code.INTERNAL
+            )
+        );
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -54,7 +61,12 @@ public class GlobalExceptionHandler {
         String receivedType = ex.getValue() != null ? ex.getValue().toString() : "unknown";
         logger.warn("Url parameter error. Parameter '{}' expects type '{}' but received '{}'", parameterName, expectedType, receivedType);
 
-        var errors = List.of(new ErrorDetail("client.path_parameter." + parameterName, "error.client.path_parameter.invalid"));
+        var errors = List.of(
+            new ErrorDetail(
+                RequestErrors.Target.PATH_PARAMETER + "." + parameterName,
+                RequestErrors.Code.INVALID_PATH_PARAMETER
+            )
+        );
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -75,12 +87,22 @@ public class GlobalExceptionHandler {
         logger.warn("Fail to read JSON: {}", detailedMessage);
 
         String userMessage = "JSON formatting error or invalid data type.";
-        if (rootCause.toString().contains("UUID"))
+        String field = "";
+        if (rootCause.toString().contains("UUID")) {
             userMessage = "UUID invalid format.";
-        else if (rootCause.toString().contains("Date") || detailedMessage.contains("DateTime"))
+            field = "." + "id";
+        }
+        else if (rootCause.toString().contains("Date") || detailedMessage.contains("DateTime")) {
             userMessage = "Data/Hour invalid format.";
+            field = "." + "birthDate";
+        }
 
-        var errors = List.of(new ErrorDetail("client.payload", "error.client.payload.invalid_json"));
+        var errors = List.of(
+            new ErrorDetail(
+                RequestErrors.Target.PAYLOAD + field,
+                RequestErrors.Code.INVALID_PAYLOAD
+            )
+        );
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -99,10 +121,14 @@ public class GlobalExceptionHandler {
         List<ErrorDetail> errorDetails = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> new ErrorDetail(
-                        error.getField(),
-                        error.getDefaultMessage()
-                ))
+                .map(error -> {
+                    String code = error.getDefaultMessage();
+                    String field = error.getField();
+
+                    String target = extractTarget(code, field);
+
+                    return new ErrorDetail(target, code);
+                })
                 .toList();
 
         logger.warn("Validation failed. Fields={}", errorDetails);
@@ -116,6 +142,17 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(400).body(response);
+    }
+
+    private String extractTarget(String code, String field) {
+        if (code == null || !code.startsWith("error."))
+            return field;
+
+        String[] parts = code.split("\\.");
+
+        if (parts.length >= 3)
+            return parts[1] + "." + field;
+        return field;
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -155,7 +192,12 @@ public class GlobalExceptionHandler {
 
         logger.warn("Authentication failed: {}", ex.getMessage());
 
-        var errors = List.of(new ErrorDetail(AuthErrorTarget.CREDENTIALS, AuthErrorCode.CREDENTIALS_INVALID));
+        var errors = List.of(
+            new ErrorDetail(
+                AuthErrors.Target.CREDENTIALS,
+                AuthErrors.Code.CREDENTIALS_INVALID
+            )
+        );
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.UNAUTHORIZED.value(),
@@ -189,7 +231,12 @@ public class GlobalExceptionHandler {
 
         logger.warn("Security restriction: {}", ex.getMessage());
 
-        var errors = List.of(new ErrorDetail("client.authentication", "error.client.authentication.denied"));
+        var errors = List.of(
+            new ErrorDetail(
+                AuthorizationErrors.Target.AUTHZ,
+                AuthorizationErrors.Code.ACCESS_DENIED
+            )
+        );
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.FORBIDDEN.value(),
