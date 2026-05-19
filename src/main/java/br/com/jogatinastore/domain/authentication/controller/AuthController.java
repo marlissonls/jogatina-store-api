@@ -1,9 +1,9 @@
 package br.com.jogatinastore.domain.authentication.controller;
 
 import br.com.jogatinastore.domain.authentication.docs.AuthControllerDocs;
-import br.com.jogatinastore.infra.security.dto.AccountCredentialsDTO;
-import br.com.jogatinastore.infra.security.dto.RefreshTokenDTO;
-import br.com.jogatinastore.infra.security.dto.TokenDTO;
+import br.com.jogatinastore.domain.authentication.dto.AccountCredentialsDTO;
+import br.com.jogatinastore.domain.authentication.dto.RefreshTokenDTO;
+import br.com.jogatinastore.domain.authentication.dto.TokenDTO;
 import br.com.jogatinastore.domain.authentication.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

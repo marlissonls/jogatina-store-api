@@ -1,9 +1,9 @@
 package br.com.jogatinastore.domain.authentication.docs;
 
 import br.com.jogatinastore.infra.exception.response.ExceptionResponse;
-import br.com.jogatinastore.infra.security.dto.AccountCredentialsDTO;
-import br.com.jogatinastore.infra.security.dto.RefreshTokenDTO;
-import br.com.jogatinastore.infra.security.dto.TokenDTO;
+import br.com.jogatinastore.domain.authentication.dto.AccountCredentialsDTO;
+import br.com.jogatinastore.domain.authentication.dto.RefreshTokenDTO;
+import br.com.jogatinastore.domain.authentication.dto.TokenDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

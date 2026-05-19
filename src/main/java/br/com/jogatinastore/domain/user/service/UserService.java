@@ -1,11 +1,9 @@
 package br.com.jogatinastore.domain.user.service;
 
+import br.com.jogatinastore.domain.authorization.exception.AuthorizationErrors;
 import br.com.jogatinastore.infra.exception.ConflictException;
 import br.com.jogatinastore.infra.exception.ResourceNotFoundException;
-import br.com.jogatinastore.domain.authorization.exception.PermissionErrorCode;
-import br.com.jogatinastore.domain.authorization.exception.PermissionErrorTarget;
-import br.com.jogatinastore.domain.user.exception.UserErrorCode;
-import br.com.jogatinastore.domain.user.exception.UserErrorTarget;
+import br.com.jogatinastore.domain.user.exception.UserErrors;
 import br.com.jogatinastore.domain.authorization.entity.Permission;
 import br.com.jogatinastore.domain.user.entity.User;
 import br.com.jogatinastore.domain.user.dto.CreateUserDTO;
@@ -135,7 +133,7 @@ public class UserService implements UserDetailsService {
         return repository.findById(id)
             .orElseThrow(() -> {
                 logger.warn("User not found userId={}", id);
-                return new ResourceNotFoundException(UserErrorTarget.ID, UserErrorCode.USER_NOT_FOUND);
+                return new ResourceNotFoundException(UserErrors.Target.ID, UserErrors.Code.USER_NOT_FOUND);
             });
     }
 
@@ -146,7 +144,7 @@ public class UserService implements UserDetailsService {
         return repository.findByIdWithPermissions(id)
             .orElseThrow(() -> {
                 logger.warn("User not found userId={}", id);
-                return new ResourceNotFoundException(UserErrorTarget.ID, UserErrorCode.USER_NOT_FOUND);
+                return new ResourceNotFoundException(UserErrors.Target.ID, UserErrors.Code.USER_NOT_FOUND);
             });
     }
 
@@ -156,17 +154,17 @@ public class UserService implements UserDetailsService {
 
     private void validateUserUniqueness(User user) {
         if (repository.existsAnyByEmailIncludingDeleted(user.getEmail()) > 0)
-            throw new ConflictException(UserErrorTarget.EMAIL, UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
+            throw new ConflictException(UserErrors.Target.EMAIL, UserErrors.Code.USER_EMAIL_ALREADY_EXISTS);
 
         if (repository.existsAnyByCpfIncludingDeleted(user.getCpf()) > 0)
-            throw new ConflictException(UserErrorTarget.CPF, UserErrorCode.USER_CPF_ALREADY_EXISTS);
+            throw new ConflictException(UserErrors.Target.CPF, UserErrors.Code.USER_CPF_ALREADY_EXISTS);
     }
 
     private void assignDefaultPermission(User user) {
         Permission defaultPerm = permissionRepository.findByTitle(PermissionCode.ROLE_CUSTOMER.key())
             .orElseThrow(() -> new ResourceNotFoundException(
-                PermissionErrorTarget.TITLE,
-                PermissionErrorCode.PERMISSION_NOT_FOUND
+                AuthorizationErrors.Target.PERMISSION_TITLE,
+                AuthorizationErrors.Code.PERMISSION_NOT_FOUND
         ));
         user.addPermission(defaultPerm);
     }
