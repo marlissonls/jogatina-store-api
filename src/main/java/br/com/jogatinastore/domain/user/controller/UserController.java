@@ -34,7 +34,7 @@ public class UserController implements UserControllerDocs {
     }
 
     @GetMapping(produces = JSON)
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Override
     public ResponseEntity<PageResponse<UserResponseDTO>> findAll(
@@ -45,7 +45,7 @@ public class UserController implements UserControllerDocs {
     }
 
     @GetMapping(path = "/{id}", produces = JSON)
-    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authorization.principal.id")
+    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Override
     public UserResponseDTO findById(@PathVariable UUID id) {
@@ -68,7 +68,7 @@ public class UserController implements UserControllerDocs {
     }
 
     @PutMapping(path = "/{id}", consumes = JSON, produces = JSON)
-    @PreAuthorize("hasRole('CUSTOMER') and #id.toString() == authorization.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     @SecurityRequirement(name = "bearerAuth")
     @Override
     public ResponseEntity<UserResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid UpdateUserDTO dto) {
@@ -77,7 +77,7 @@ public class UserController implements UserControllerDocs {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasRole('CUSTOMER') and #id.toString() == authorization.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     @SecurityRequirement(name = "bearerAuth")
     @Override
     public ResponseEntity<?> delete(@PathVariable UUID id) {
