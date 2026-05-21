@@ -68,7 +68,7 @@ public class UserController implements UserControllerDocs {
     }
 
     @PutMapping(path = "/{id}", consumes = JSON, produces = JSON)
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
     @SecurityRequirement(name = "bearerAuth")
     @Override
     public ResponseEntity<UserResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid UpdateUserDTO dto) {
@@ -77,7 +77,7 @@ public class UserController implements UserControllerDocs {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
     @SecurityRequirement(name = "bearerAuth")
     @Override
     public ResponseEntity<?> delete(@PathVariable UUID id) {
