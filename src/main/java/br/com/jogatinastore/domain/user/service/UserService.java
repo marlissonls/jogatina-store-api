@@ -7,6 +7,7 @@ import br.com.jogatinastore.domain.user.exception.UserErrors;
 import br.com.jogatinastore.domain.authorization.entity.Permission;
 import br.com.jogatinastore.domain.user.entity.User;
 import br.com.jogatinastore.domain.user.dto.CreateUserDTO;
+import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import br.com.jogatinastore.shared.PageResponse;
 import br.com.jogatinastore.domain.user.dto.UpdateUserDTO;
 import br.com.jogatinastore.domain.user.dto.UserResponseDTO;
@@ -84,6 +85,20 @@ public class UserService implements UserDetailsService {
         return response;
     }
 
+    public UserResponseDTO me(AuthenticatedUser auth) {
+
+        UUID userId = UUID.fromString(auth.id());
+
+        logger.debug("Fetching authenticated user profile for userId={}", userId);
+
+        User user = findByIdWithPermissions(userId);
+        UserResponseDTO response = userMapper.toResponse(user);
+
+        logger.info("Successfully retrieved user profile for userId={}", userId);
+
+        return response;
+    }
+
     @Transactional
     public UserResponseDTO create(CreateUserDTO dto) {
 
@@ -124,6 +139,26 @@ public class UserService implements UserDetailsService {
         logger.info("Successfully Deleted user userId={}", id);
 
         repository.delete(entity);
+    }
+
+    @Transactional
+    public void deactivate(UUID id) {
+
+        logger.debug("Deactivating user by userId={}", id);
+
+        repository.deactivate(id);
+
+        logger.info("Successfully deactivated user userId={}", id);
+    }
+
+    @Transactional
+    public void activate(UUID id) {
+
+        logger.debug("Activating user by userId={}", id);
+
+        repository.activate(id);
+
+        logger.info("Successfully activated user userId={}", id);
     }
 
     private User findEntityById(UUID id) {

@@ -2,6 +2,7 @@ package br.com.jogatinastore.domain.user.controller;
 
 import br.com.jogatinastore.domain.user.docs.UserControllerDocs;
 import br.com.jogatinastore.domain.user.dto.CreateUserDTO;
+import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import br.com.jogatinastore.shared.PageResponse;
 import br.com.jogatinastore.domain.user.dto.UpdateUserDTO;
 import br.com.jogatinastore.domain.user.dto.UserResponseDTO;
@@ -15,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -53,6 +55,15 @@ public class UserController implements UserControllerDocs {
         return services.findById(id);
     }
 
+    @GetMapping(path = "/me", produces = JSON)
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @SecurityRequirement(name = "bearerAuth")
+    @Override
+    public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal AuthenticatedUser auth) {
+
+        return ResponseEntity.ok().body(services.me(auth));
+    }
+
     @PostMapping(consumes = JSON, produces = JSON)
     @Override
     public ResponseEntity<UserResponseDTO> create(@RequestBody @Valid CreateUserDTO dto) {
@@ -83,6 +94,26 @@ public class UserController implements UserControllerDocs {
     public ResponseEntity<?> delete(@PathVariable UUID id) {
 
         services.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(path = "/{id}/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @Override
+    public ResponseEntity<?> deactivate(@PathVariable UUID id) {
+
+        services.deactivate(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(path = "/{id}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @Override
+    public ResponseEntity<?> activate(@PathVariable UUID id) {
+
+        services.activate(id);
         return ResponseEntity.noContent().build();
     }
 }
