@@ -1,6 +1,7 @@
 package br.com.jogatinastore.domain.user.docs;
 
 import br.com.jogatinastore.infra.exception.response.ExceptionResponse;
+import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import br.com.jogatinastore.shared.PageResponse;
 import br.com.jogatinastore.domain.user.dto.CreateUserDTO;
 import br.com.jogatinastore.domain.user.dto.UpdateUserDTO;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +56,21 @@ public interface UserControllerDocs {
             }
     )
     UserResponseDTO findById(@PathVariable UUID id);
+
+    @Operation(
+            summary = "Get current authenticated user",
+            description = "Returns the profile data of the currently authenticated user",
+            tags = {"Users"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            }
+    )
+    ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal AuthenticatedUser auth);
 
     @PostMapping
     @Operation(
@@ -96,4 +113,30 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
     ResponseEntity<?> delete(@PathVariable UUID id);
+
+    @Operation(
+            summary = "Deactivate user",
+            description = "Deactivates a user account explicitly by userId. This action is intended for administrative control.",
+            tags = {"Users"},
+            responses = {
+                    @ApiResponse(description = "No content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            })
+    ResponseEntity<?> deactivate(@PathVariable UUID id);
+
+    @Operation(
+            summary = "Activate user",
+            description = "Activates a user account explicitly by userId. This action is intended for administrative control.",
+            tags = {"Users"},
+            responses = {
+                    @ApiResponse(description = "No content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            })
+    ResponseEntity<?> activate(@PathVariable UUID id);
 }
