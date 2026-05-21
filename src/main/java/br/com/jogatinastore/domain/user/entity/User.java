@@ -40,13 +40,13 @@ public class User implements UserDetails {
     private String passwordHash;
 
     @Column(name = "account_non_expired")
-    private Boolean accountNonExpired;
+    private Boolean accountNonExpired = true;
 
     @Column(name = "account_non_locked")
-    private Boolean accountNonLocked;
+    private Boolean accountNonLocked = true;
 
     @Column(name = "credentials_non_expired")
-    private Boolean credentialsNonExpired;
+    private Boolean credentialsNonExpired = true;
 
     private Boolean enabled = true;
 
@@ -66,11 +66,6 @@ public class User implements UserDetails {
         }
         createdAt = LocalDateTime.now();
         updatedAt = createdAt;
-
-        if (accountNonExpired == null) accountNonExpired = true;
-        if (accountNonLocked == null) accountNonLocked = true;
-        if (credentialsNonExpired == null) credentialsNonExpired = true;
-        if (enabled == null) enabled = true;
     }
 
     @PreUpdate
