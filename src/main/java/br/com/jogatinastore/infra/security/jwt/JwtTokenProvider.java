@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class JwtTokenProvider {
@@ -30,6 +32,8 @@ public class JwtTokenProvider {
     private final Algorithm algorithm;
     private final JWTVerifier accessTokenVerifier;
     private final JWTVerifier refreshTokenVerifier;
+    private static final Pattern JWT_PATTERN =
+            Pattern.compile("[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+");
 
     public JwtTokenProvider(
         @Value("${security.jwt.token.secret:secret}") String secret,
@@ -98,17 +102,19 @@ public class JwtTokenProvider {
     public Optional<String> resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
-        return extractBearerToken(bearerToken);
+        return extractToken(bearerToken);
     }
 
-    private static Optional<String> extractBearerToken(String bearerToken) {
-        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+    private static Optional<String> extractToken(String value) {
+        if (value == null || value.isBlank()) {
             return Optional.empty();
         }
 
-        String token = bearerToken.substring(7).trim();
+        Matcher matcher = JWT_PATTERN.matcher(value);
 
-        return token.isEmpty() ? Optional.empty() : Optional.of(token);
+        return matcher.find()
+            ? Optional.of(matcher.group())
+            : Optional.empty();
     }
 
     public Authentication getAccessAuthentication(String token) {
@@ -136,22 +142,28 @@ public class JwtTokenProvider {
     }
 
     public TokenDTO refreshToken(String bearerToken) {
+        try {
+            Optional<String> refreshToken = extractToken(bearerToken);
 
-        Optional<String> refreshToken = extractBearerToken(bearerToken);
+            if (refreshToken.isEmpty()) {
+                throw new InvalidJwtTokenException(
+                        AuthErrors.Target.REFRESH_TOKEN,
+                        AuthErrors.Code.REFRESH_TOKEN_INVALID
+                );
+            }
 
-        if (refreshToken.isEmpty()) {
+            DecodedJWT decodedJWT = refreshTokenVerifier.verify(refreshToken.get());
+
+            String id = decodedJWT.getClaim("id").asString();
+            String email = decodedJWT.getSubject();
+            var roles = decodedJWT.getClaim("roles").asList(String.class);
+
+            return createAccessToken(id, email, roles);
+        } catch (JWTVerificationException e) {
             throw new InvalidJwtTokenException(
                     AuthErrors.Target.REFRESH_TOKEN,
                     AuthErrors.Code.REFRESH_TOKEN_INVALID
             );
         }
-
-        DecodedJWT decodedJWT = refreshTokenVerifier.verify(refreshToken.get());
-
-        String id = decodedJWT.getClaim("id").asString();
-        String email = decodedJWT.getSubject();
-        var roles = decodedJWT.getClaim("roles").asList(String.class);
-
-        return createAccessToken(id, email, roles);
     }
 }
