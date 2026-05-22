@@ -141,7 +141,7 @@ public class JwtTokenProvider {
         }
     }
 
-    public TokenDTO refreshToken(String bearerToken) {
+    public AuthenticatedUser validateRefreshToken(String bearerToken) {
         try {
             Optional<String> refreshToken = extractToken(bearerToken);
 
@@ -158,12 +158,20 @@ public class JwtTokenProvider {
             String email = decodedJWT.getSubject();
             var roles = decodedJWT.getClaim("roles").asList(String.class);
 
-            return createAccessToken(id, email, roles);
+            return new AuthenticatedUser(id, email, roles);
         } catch (JWTVerificationException e) {
             throw new InvalidJwtTokenException(
                     AuthErrors.Target.REFRESH_TOKEN,
                     AuthErrors.Code.REFRESH_TOKEN_INVALID
             );
         }
+    }
+
+    public TokenDTO issueTokens(
+            String id, String email, List<String> roles
+    ) {
+        return createAccessToken(
+            id, email, roles
+        );
     }
 }
