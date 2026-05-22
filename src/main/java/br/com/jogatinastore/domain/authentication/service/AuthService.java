@@ -4,7 +4,9 @@ import br.com.jogatinastore.domain.user.entity.User;
 import br.com.jogatinastore.domain.authentication.dto.AccountCredentialsDTO;
 import br.com.jogatinastore.domain.authentication.dto.RefreshTokenDTO;
 import br.com.jogatinastore.domain.authentication.dto.TokenDTO;
+import br.com.jogatinastore.infra.security.authentication.AuthenticationFacade;
 import br.com.jogatinastore.infra.security.jwt.JwtTokenProvider;
+import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,40 +19,43 @@ public class AuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationFacade authenticationFacade;
     private final JwtTokenProvider tokenProvider;
 
     public AuthService(
-            AuthenticationManager authenticationManager,
+            AuthenticationFacade authenticationFacade,
             JwtTokenProvider tokenProvider
     ) {
-        this.authenticationManager = authenticationManager;
+        this.authenticationFacade = authenticationFacade;
         this.tokenProvider = tokenProvider;
     }
 
     public TokenDTO signIn(AccountCredentialsDTO credentials) {
         logger.debug("Attempting to authenticate user: '{}'", credentials.email());
 
-        Authentication authenticated = authenticateUser(credentials);
-        User user = (User) authenticated.getPrincipal();
+        AuthenticatedUser user =
+                authenticationFacade.authenticate(credentials);
 
-        logger.info("User '{}' successfully authenticated. Generating access tokens.", user.getEmail());
-        return tokenProvider.createAccessToken(user.getId().toString(), user.getEmail(), user.getRoles());
-}
+        logger.info("User '{}' successfully authenticated. Generating access tokens.", user.email());
 
-    private Authentication authenticateUser(AccountCredentialsDTO credentials) {
-
-        logger.debug("Dispatching authorization request to AuthenticationManager for: '{}'", credentials.email());
-
-        return authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(credentials.email(), credentials.password())
+        return tokenProvider.issueTokens(
+            user.id(),
+            user.email(),
+            user.roles()
         );
     }
 
     public TokenDTO refreshToken(RefreshTokenDTO refresh) {
         logger.debug("Processing token refresh request.");
 
-        TokenDTO tokenDTO = tokenProvider.refreshToken(refresh.refreshToken());
+        AuthenticatedUser user =
+                tokenProvider.validateRefreshToken(refresh.refreshToken());
+
+        TokenDTO tokenDTO = tokenProvider.issueTokens(
+            user.id(),
+            user.email(),
+            user.roles()
+        );
 
         logger.info("Access token refreshed successfully.");
 
