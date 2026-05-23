@@ -62,7 +62,7 @@ public class LoggingFilter extends OncePerRequestFilter {
         Object principal = auth.getPrincipal();
 
         if (principal instanceof AuthenticatedUser user)
-            return user.email();
+            return user.getEmail();
 
         return "anonymous";
     }

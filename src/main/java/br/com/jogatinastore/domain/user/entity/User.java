@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP, enabled = false WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
-public class User implements UserDetails {
+public class User {
 
     @Id
     private UUID id;
@@ -88,40 +87,33 @@ public class User implements UserDetails {
             .map(up -> up.getPermission().getTitle())
             .collect(Collectors.toList());
     }
-
-    @Override
+    
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.userPermissions.stream()
             .map(UserPermission::getPermission)
             .collect(Collectors.toSet());
     }
 
-    @Override
     public String getPassword() {
         return this.passwordHash;
     }
 
-    @Override
     public String getUsername() {
         return this.email;
     }
 
-    @Override
     public boolean isAccountNonExpired() {
         return this.accountNonExpired;
     }
 
-    @Override
     public boolean isAccountNonLocked() {
         return this.accountNonLocked;
     }
 
-    @Override
     public boolean isCredentialsNonExpired() {
         return this.credentialsNonExpired;
     }
 
-    @Override
     public boolean isEnabled() {
         return this.enabled;
     }

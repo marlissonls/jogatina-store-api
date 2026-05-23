@@ -1,6 +1,5 @@
 package br.com.jogatinastore.domain.authentication.service;
 
-import br.com.jogatinastore.domain.user.entity.User;
 import br.com.jogatinastore.domain.authentication.dto.AccountCredentialsDTO;
 import br.com.jogatinastore.domain.authentication.dto.RefreshTokenDTO;
 import br.com.jogatinastore.domain.authentication.dto.TokenDTO;
@@ -9,9 +8,6 @@ import br.com.jogatinastore.infra.security.jwt.JwtTokenProvider;
 import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,13 +32,15 @@ public class AuthService {
         AuthenticatedUser user =
                 authenticationFacade.authenticate(credentials);
 
-        logger.info("User '{}' successfully authenticated. Generating access tokens.", user.email());
-
-        return tokenProvider.issueTokens(
-            user.id(),
-            user.email(),
-            user.roles()
+        TokenDTO token = tokenProvider.issueTokens(
+                user.getId(),
+                user.getEmail(),
+                user.getAuthorities()
         );
+
+        logger.info("User '{}' successfully authenticated.", user.getEmail());
+
+        return token;
     }
 
     public TokenDTO refreshToken(RefreshTokenDTO refresh) {
@@ -51,15 +49,15 @@ public class AuthService {
         AuthenticatedUser user =
                 tokenProvider.validateRefreshToken(refresh.refreshToken());
 
-        TokenDTO tokenDTO = tokenProvider.issueTokens(
-            user.id(),
-            user.email(),
-            user.roles()
+        TokenDTO token = tokenProvider.issueTokens(
+            user.getId(),
+            user.getEmail(),
+            user.getAuthorities()
         );
 
         logger.info("Access token refreshed successfully.");
 
-        return tokenDTO;
+        return token;
     }
 }
 

@@ -13,14 +13,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,7 +127,7 @@ public class JwtTokenProvider {
                     .map(SimpleGrantedAuthority::new)
                     .toList();
 
-            AuthenticatedUser principal = new AuthenticatedUser(id, email, roles);
+            AuthenticatedUser principal = new AuthenticatedUser(id, email, authorities);
 
             return new UsernamePasswordAuthenticationToken(principal, null, authorities);
 
@@ -157,8 +155,11 @@ public class JwtTokenProvider {
             String id = decodedJWT.getClaim("id").asString();
             String email = decodedJWT.getSubject();
             var roles = decodedJWT.getClaim("roles").asList(String.class);
+            var authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .toList();
 
-            return new AuthenticatedUser(id, email, roles);
+            return new AuthenticatedUser(id, email, authorities);
         } catch (JWTVerificationException e) {
             throw new InvalidJwtTokenException(
                     AuthErrors.Target.REFRESH_TOKEN,
@@ -168,10 +169,14 @@ public class JwtTokenProvider {
     }
 
     public TokenDTO issueTokens(
-            String id, String email, List<String> roles
+            String id,
+            String email,
+            Collection<? extends GrantedAuthority> authorities
     ) {
-        return createAccessToken(
-            id, email, roles
-        );
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return createAccessToken(id, email, roles);
     }
 }

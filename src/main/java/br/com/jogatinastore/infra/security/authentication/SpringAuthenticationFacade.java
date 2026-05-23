@@ -1,7 +1,6 @@
 package br.com.jogatinastore.infra.security.authentication;
 
 import br.com.jogatinastore.domain.authentication.dto.AccountCredentialsDTO;
-import br.com.jogatinastore.domain.user.entity.User;
 import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,12 +29,6 @@ public class SpringAuthenticationFacade implements AuthenticationFacade {
                 )
             );
 
-        User user = (User) authentication.getPrincipal();
-
-        return new AuthenticatedUser(
-            user.getId().toString(),
-            user.getEmail(),
-            user.getRoles()
-        );
+        return (AuthenticatedUser) authentication.getPrincipal();
     }
 }
