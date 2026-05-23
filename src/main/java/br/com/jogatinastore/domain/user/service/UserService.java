@@ -16,9 +16,6 @@ import br.com.jogatinastore.domain.authorization.repository.PermissionRepository
 import br.com.jogatinastore.domain.user.repository.UserRepository;
 import br.com.jogatinastore.domain.authorization.code.PermissionCode;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService { //implements UserDetailsService {
 
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -87,7 +84,7 @@ public class UserService implements UserDetailsService {
 
     public UserResponseDTO me(AuthenticatedUser auth) {
 
-        UUID userId = UUID.fromString(auth.id());
+        UUID userId = UUID.fromString(auth.getId());
 
         logger.debug("Fetching authenticated user profile for userId={}", userId);
 
@@ -212,11 +209,5 @@ public class UserService implements UserDetailsService {
         entity.setName(dto.name());
         entity.setPhoneNumber(dto.phoneNumber());
         entity.setBirthDate(dto.birthDate());
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Username "+ email +" not found!"));
     }
 }
