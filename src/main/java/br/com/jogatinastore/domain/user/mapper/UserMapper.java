@@ -8,10 +8,10 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = { PermissionMapperUtils.class, StringUtils.class })
+@Mapper(componentModel = "spring", uses = { RoleMapperUtils.class, StringUtils.class })
 public interface UserMapper {
 
-    @Mapping(target = "permissions", source = "userPermissions")
+    @Mapping(target = "roles", source = "userRoles")
     @Mapping(target = "cpf", source = "cpf", qualifiedByName = "formatCpf")
     UserResponseDTO toResponse(User user);
 

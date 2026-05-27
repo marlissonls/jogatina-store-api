@@ -7,19 +7,19 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Embeddable
-public class UserPermissionId implements Serializable {
+public class UserRoleId implements Serializable {
 
-    @Column(name = "id_user")
+    @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "id_permission")
-    private UUID permissionId;
+    @Column(name = "role_id")
+    private UUID roleId;
 
-    public UserPermissionId() {}
+    public UserRoleId() {}
 
-    public UserPermissionId(UUID userId, UUID permissionId) {
+    public UserRoleId(UUID userId, UUID roleId) {
         this.userId = userId;
-        this.permissionId = permissionId;
+        this.roleId = roleId;
     }
 
     public UUID getUserId() {
@@ -30,25 +30,25 @@ public class UserPermissionId implements Serializable {
         this.userId = userId;
     }
 
-    public UUID getPermissionId() {
-        return permissionId;
+    public UUID getRoleId() {
+        return roleId;
     }
 
-    public void setPermissionId(UUID permissionId) {
-        this.permissionId = permissionId;
+    public void setRoleId(UUID roleId) {
+        this.roleId = roleId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserPermissionId that = (UserPermissionId) o;
+        UserRoleId that = (UserRoleId) o;
         return Objects.equals(userId, that.userId) &&
-                Objects.equals(permissionId, that.permissionId);
+                Objects.equals(roleId, that.roleId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, permissionId);
+        return Objects.hash(userId, roleId);
     }
 }

@@ -19,22 +19,22 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Long existsAnyByCpfIncludingDeleted(@Param("cpf") String cpf);
 
     @Query("SELECT u FROM User u " +
-            "LEFT JOIN FETCH u.userPermissions up " +
-            "LEFT JOIN FETCH up.permission " +
+            "LEFT JOIN FETCH u.userRoles up " +
+            "LEFT JOIN FETCH up.role " +
             "WHERE u.id = :id")
-    Optional<User> findByIdWithPermissions(@Param("id") UUID id);
+    Optional<User> findByIdWithRoles(@Param("id") UUID id);
 
     @Query("""
         SELECT DISTINCT u FROM User u
-        LEFT JOIN FETCH u.userPermissions up
-        LEFT JOIN FETCH up.permission
+        LEFT JOIN FETCH u.userRoles up
+        LEFT JOIN FETCH up.role
         WHERE u.id IN :ids
     """)
-    List<User> findAllWithPermissionsByIdIn(List<UUID> ids);
+    List<User> findAllWithRolesByIdIn(List<UUID> ids);
 
     @Query("SELECT u FROM User u " +
-            "JOIN FETCH u.userPermissions up " +
-            "JOIN FETCH up.permission " +
+            "JOIN FETCH u.userRoles up " +
+            "JOIN FETCH up.role " +
             "WHERE u.email = :email")
     Optional<User> findByEmail(@Param("email") String email);
 
