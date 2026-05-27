@@ -185,10 +185,10 @@ public class UserService { //implements UserDetailsService {
     }
 
     private void validateUserUniqueness(User user) {
-        if (repository.existsAnyByEmailIncludingDeleted(user.getEmail()) > 0)
+        if (repository.existsByEmail(user.getEmail()))
             throw new ConflictException(UserErrors.Target.EMAIL, UserErrors.Code.USER_EMAIL_ALREADY_EXISTS);
 
-        if (repository.existsAnyByCpfIncludingDeleted(user.getCpf()) > 0)
+        if (repository.existsByCpf(user.getCpf()))
             throw new ConflictException(UserErrors.Target.CPF, UserErrors.Code.USER_CPF_ALREADY_EXISTS);
     }
 
