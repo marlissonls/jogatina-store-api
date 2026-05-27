@@ -16,6 +16,6 @@ public record UserResponseDTO(
     String phoneNumber,
     LocalDate birthDate,
     Boolean enabled,
-    Set<String> permissions,
+    Set<String> roles,
     LocalDateTime createdAt
 ) {}

@@ -7,8 +7,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "permission")
-public class Permission implements GrantedAuthority {
+@Table(name = "roles")
+public class Role implements GrantedAuthority {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -20,9 +20,9 @@ public class Permission implements GrantedAuthority {
     @Column(nullable = true)
     private String description;
 
-    public Permission() {}
+    public Role() {}
 
-    public Permission(
+    public Role(
         UUID id,
         String title,
         String description
@@ -32,7 +32,7 @@ public class Permission implements GrantedAuthority {
         this.description = description;
     }
 
-    public Permission(UUID id, String title) {
+    public Role(UUID id, String title) {
         this(id, title, null);
     }
 
@@ -68,7 +68,7 @@ public class Permission implements GrantedAuthority {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Permission that)) return false;
+        if (!(o instanceof Role that)) return false;
         return Objects.equals(id, that.id);
     }
 

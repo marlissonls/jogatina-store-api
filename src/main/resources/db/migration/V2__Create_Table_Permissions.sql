@@ -1,5 +1,0 @@
-CREATE TABLE IF NOT EXISTS permission (
-    id CHAR(36) PRIMARY KEY,
-    title VARCHAR(50) NOT NULL UNIQUE,
-    description VARCHAR(255) DEFAULT NULL
-) ENGINE=InnoDB;

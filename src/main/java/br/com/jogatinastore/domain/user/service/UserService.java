@@ -1,10 +1,10 @@
 package br.com.jogatinastore.domain.user.service;
 
+import br.com.jogatinastore.domain.authorization.entity.Role;
 import br.com.jogatinastore.domain.authorization.exception.AuthorizationErrors;
 import br.com.jogatinastore.infra.exception.ConflictException;
 import br.com.jogatinastore.infra.exception.ResourceNotFoundException;
 import br.com.jogatinastore.domain.user.exception.UserErrors;
-import br.com.jogatinastore.domain.authorization.entity.Permission;
 import br.com.jogatinastore.domain.user.entity.User;
 import br.com.jogatinastore.domain.user.dto.CreateUserDTO;
 import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
@@ -12,9 +12,9 @@ import br.com.jogatinastore.shared.PageResponse;
 import br.com.jogatinastore.domain.user.dto.UpdateUserDTO;
 import br.com.jogatinastore.domain.user.dto.UserResponseDTO;
 import br.com.jogatinastore.domain.user.mapper.UserMapper;
-import br.com.jogatinastore.domain.authorization.repository.PermissionRepository;
+import br.com.jogatinastore.domain.authorization.repository.RoleRepository;
 import br.com.jogatinastore.domain.user.repository.UserRepository;
-import br.com.jogatinastore.domain.authorization.code.PermissionCode;
+import br.com.jogatinastore.domain.authorization.code.RoleCode;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class UserService { //implements UserDetailsService {
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository repository;
-    private final PermissionRepository permissionRepository;
+    private final RoleRepository roleRepository;
 
     private final UserMapper userMapper;
 
@@ -38,12 +38,12 @@ public class UserService { //implements UserDetailsService {
 
     public UserService(
             UserRepository repository,
-            PermissionRepository permissionRepository,
+            RoleRepository roleRepository,
             UserMapper userMapper,
             PasswordEncoder passwordEncoder
     ) {
         this.repository = repository;
-        this.permissionRepository = permissionRepository;
+        this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
     }
@@ -54,7 +54,7 @@ public class UserService { //implements UserDetailsService {
 
         var page = repository.findAll(pageable);
 
-        var users = repository.findAllWithPermissionsByIdIn(
+        var users = repository.findAllWithRolesByIdIn(
             page.getContent().stream().map(User::getId).toList()
         );
 
@@ -74,7 +74,7 @@ public class UserService { //implements UserDetailsService {
 
         logger.debug("Starting findById userId={}", id);
 
-        User user = findByIdWithPermissions(id);
+        User user = findByIdWithRoles(id);
         UserResponseDTO response = userMapper.toResponse(user);
 
         logger.info("Successfully retrieved user userId={}", id);
@@ -88,7 +88,7 @@ public class UserService { //implements UserDetailsService {
 
         logger.debug("Fetching authenticated user profile for userId={}", userId);
 
-        User user = findByIdWithPermissions(userId);
+        User user = findByIdWithRoles(userId);
         UserResponseDTO response = userMapper.toResponse(user);
 
         logger.info("Successfully retrieved user profile for userId={}", userId);
@@ -103,7 +103,7 @@ public class UserService { //implements UserDetailsService {
 
         User user = buildUser(dto);
         validateUserUniqueness(user);
-        assignDefaultPermission(user);
+        assignDefaultRole(user);
         encodePassword(dto, user);
         User savedUser = repository.save(user);
 
@@ -117,7 +117,7 @@ public class UserService { //implements UserDetailsService {
 
         logger.debug("Updating user by id: {}", id);
 
-        User entity = findByIdWithPermissions(id);
+        User entity = findByIdWithRoles(id);
         applyUpdate(dto, entity);
         User updatedUser = repository.save(entity);
 
@@ -169,11 +169,11 @@ public class UserService { //implements UserDetailsService {
             });
     }
 
-    private User findByIdWithPermissions(UUID id) {
+    private User findByIdWithRoles(UUID id) {
 
-        logger.debug("Fetching user with permissions userId={}", id);
+        logger.debug("Fetching user with roles userId={}", id);
 
-        return repository.findByIdWithPermissions(id)
+        return repository.findByIdWithRoles(id)
             .orElseThrow(() -> {
                 logger.warn("User not found userId={}", id);
                 return new ResourceNotFoundException(UserErrors.Target.ID, UserErrors.Code.USER_NOT_FOUND);
@@ -192,13 +192,13 @@ public class UserService { //implements UserDetailsService {
             throw new ConflictException(UserErrors.Target.CPF, UserErrors.Code.USER_CPF_ALREADY_EXISTS);
     }
 
-    private void assignDefaultPermission(User user) {
-        Permission defaultPerm = permissionRepository.findByTitle(PermissionCode.ROLE_CUSTOMER.key())
+    private void assignDefaultRole(User user) {
+        Role defaultPerm = roleRepository.findByTitle(RoleCode.ROLE_CUSTOMER.key())
             .orElseThrow(() -> new ResourceNotFoundException(
-                AuthorizationErrors.Target.PERMISSION_TITLE,
-                AuthorizationErrors.Code.PERMISSION_NOT_FOUND
+                AuthorizationErrors.Target.ROLE_TITLE,
+                AuthorizationErrors.Code.ROLE_NOT_FOUND
         ));
-        user.addPermission(defaultPerm);
+        user.addRole(defaultPerm);
     }
 
     private void encodePassword(CreateUserDTO dto, User user) {

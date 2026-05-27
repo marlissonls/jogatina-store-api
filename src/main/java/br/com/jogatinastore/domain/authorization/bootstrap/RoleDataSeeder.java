@@ -1,8 +1,8 @@
 package br.com.jogatinastore.domain.authorization.bootstrap;
 
-import br.com.jogatinastore.domain.authorization.entity.Permission;
-import br.com.jogatinastore.domain.authorization.repository.PermissionRepository;
-import br.com.jogatinastore.domain.authorization.code.PermissionCode;
+import br.com.jogatinastore.domain.authorization.entity.Role;
+import br.com.jogatinastore.domain.authorization.repository.RoleRepository;
+import br.com.jogatinastore.domain.authorization.code.RoleCode;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,36 +12,36 @@ import java.util.stream.Collectors;
 
 @Component
 @Transactional
-public class PermissionDataSeeder implements CommandLineRunner {
+public class RoleDataSeeder implements CommandLineRunner {
 
-    private final PermissionRepository repository;
+    private final RoleRepository repository;
 
-    public PermissionDataSeeder(PermissionRepository repository) {
+    public RoleDataSeeder(RoleRepository repository) {
         this.repository = repository;
     }
 
     @Override
     public void run(String... args) {
 
-        List<Permission> existing = repository.findAll();
+        List<Role> existing = repository.findAll();
 
         Set<String> titles = existing
             .stream()
-            .map(Permission::getTitle)
+            .map(Role::getTitle)
             .collect(Collectors.toSet());
 
-        Map<String, String> required = Arrays.stream(PermissionCode.values())
+        Map<String, String> required = Arrays.stream(RoleCode.values())
             .collect(Collectors.toConcurrentMap(
-                PermissionCode::key,
-                PermissionCode::description
+                RoleCode::key,
+                RoleCode::description
             ));
 
-        List<Permission> toInsert = new ArrayList<>();
+        List<Role> toInsert = new ArrayList<>();
 
         for (var entry : required.entrySet()) {
             if (!titles.contains(entry.getKey())) {
                 toInsert.add(
-                    new Permission(
+                    new Role(
                         UUID.randomUUID(),
                         entry.getKey(),
                         entry.getValue()

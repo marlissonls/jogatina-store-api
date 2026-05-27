@@ -1,7 +1,7 @@
 package br.com.jogatinastore.domain.user.entity;
 
-import br.com.jogatinastore.domain.authorization.entity.Permission;
-import br.com.jogatinastore.domain.authorization.entity.UserPermission;
+import br.com.jogatinastore.domain.authorization.entity.Role;
+import br.com.jogatinastore.domain.authorization.entity.UserRole;
 import jakarta.persistence.*;
 
 import org.hibernate.annotations.SQLDelete;
@@ -73,24 +73,24 @@ public class User {
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<UserPermission> userPermissions = new HashSet<>();
+    private Set<UserRole> userRoles = new HashSet<>();
 
     public User() {}
 
-    public void addPermission(Permission permission) {
-        UserPermission userPermission = new UserPermission(this, permission);
-        this.userPermissions.add(userPermission);
+    public void addRole(Role role) {
+        UserRole userRole = new UserRole(this, role);
+        this.userRoles.add(userRole);
     }
 
     public List<String> getRoles() {
-        return this.userPermissions.stream()
-            .map(up -> up.getPermission().getTitle())
+        return this.userRoles.stream()
+            .map(up -> up.getRole().getTitle())
             .collect(Collectors.toList());
     }
     
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.userPermissions.stream()
-            .map(UserPermission::getPermission)
+        return this.userRoles.stream()
+            .map(UserRole::getRole)
             .collect(Collectors.toSet());
     }
 
@@ -230,12 +230,12 @@ public class User {
         this.deletedAt = deletedAt;
     }
 
-    public Set<UserPermission> getUserPermissions() {
-        return userPermissions;
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
-    public void setUserPermissions(Set<UserPermission> userPermissions) {
-        this.userPermissions = userPermissions;
+    public void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
     @Override
