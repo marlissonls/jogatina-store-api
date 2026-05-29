@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS categories (
     title VARCHAR(255) NOT NULL,
     description VARCHAR(255),
 
+    active BOOLEAN DEFAULT TRUE,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -24,9 +26,10 @@ CREATE TABLE IF NOT EXISTS products (
     tags JSON,
     rating DECIMAL(3,2) NOT NULL DEFAULT 0.00,
 
+    active BOOLEAN DEFAULT TRUE,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP DEFAULT NULL,
 
     CONSTRAINT fk_product_category
     FOREIGN KEY (category_id) REFERENCES categories (id)
@@ -45,7 +48,6 @@ CREATE TABLE IF NOT EXISTS product_images (
     sort_order SMALLINT DEFAULT 0,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP DEFAULT NULL,
 
     CONSTRAINT fk_product_images_product
     FOREIGN KEY (product_id) REFERENCES products (id)
@@ -61,7 +63,6 @@ CREATE TABLE IF NOT EXISTS inventories (
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP DEFAULT NULL,
 
     CONSTRAINT fk_inventories_product
     FOREIGN KEY (product_id) REFERENCES products (id)
@@ -73,7 +74,6 @@ CREATE TABLE IF NOT EXISTS favorites (
     product_id CHAR(36) NOT NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP DEFAULT NULL,
 
     PRIMARY KEY(user_id, product_id),
 
@@ -94,9 +94,10 @@ CREATE TABLE IF NOT EXISTS reviews (
     rating DECIMAL(3,2) NOT NULL DEFAULT 0.00,
     comment TEXT,
 
+    hidden BOOLEAN DEFAULT FALSE,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP DEFAULT NULL,
 
     PRIMARY KEY(user_id, product_id),
 
