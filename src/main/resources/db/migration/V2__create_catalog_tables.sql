@@ -1,10 +1,25 @@
 CREATE TABLE IF NOT EXISTS categories (
     id CHAR(36) PRIMARY KEY,
 
-    title VARCHAR(255) NOT NULL,
-    description VARCHAR(255),
+    title VARCHAR(255) NOT NULL UNIQUE,
+    slug VARCHAR(255) NOT NULL UNIQUE,
 
-    active BOOLEAN DEFAULT TRUE,
+    description VARCHAR(255),
+    active BOOLEAN DEFAULT FALSE,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+--
+CREATE TABLE IF NOT EXISTS brands (
+    id CHAR(36) PRIMARY KEY,
+
+    title VARCHAR(255) NOT NULL UNIQUE,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+
+    description VARCHAR(255),
+    active BOOLEAN DEFAULT FALSE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -15,24 +30,32 @@ CREATE TABLE IF NOT EXISTS products (
     id CHAR(36) PRIMARY KEY,
 
     category_id CHAR(36) NOT NULL,
+    brand_id CHAR(36) NOT NULL,
 
-    description VARCHAR(255),
-    is_available BOOLEAN NOT NULL DEFAULT TRUE,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
-    sale_price DECIMAL(10,2) NOT NULL,
+    sale_price DECIMAL(10,2) NULL,
     cost_price DECIMAL(10,2) NOT NULL,
-    barcode VARCHAR(50) NOT NULL UNIQUE,
-    sku VARCHAR(100) NOT NULL UNIQUE,
+    barcode VARCHAR(50) NOT NULL,
+    sku VARCHAR(100) NOT NULL,
     tags JSON,
     rating DECIMAL(3,2) NOT NULL DEFAULT 0.00,
 
     active BOOLEAN DEFAULT TRUE,
+    featured BOOLEAN DEFAULT FALSE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_product_category
-    FOREIGN KEY (category_id) REFERENCES categories (id)
+    CONSTRAINT uk_product_title UNIQUE(title),
+    CONSTRAINT uk_product_slug UNIQUE(slug),
+    CONSTRAINT uk_product_barcode UNIQUE(barcode),
+    CONSTRAINT uk_product_sku UNIQUE(sku);
+
+    CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES categories (id),
+    CONSTRAINT fk_product_brand FOREIGN KEY (brand_id) REFERENCES brands (id);
 ) ENGINE=InnoDB;
 
 --
@@ -55,17 +78,30 @@ CREATE TABLE IF NOT EXISTS product_images (
 
 --
 CREATE TABLE IF NOT EXISTS inventories (
-    product_id CHAR(36) PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
 
-    quantity SMALLINT NOT NULL DEFAULT 0,
-    reserved_quantity SMALLINT NOT NULL DEFAULT 0,
-    min_quantity SMALLINT NOT NULL DEFAULT 0,
+    product_id CHAR(36) NOT NULL,
+    -- warehouse_id CHAR(36) NOT NULL,
+    -- location VARCHAR(255),
+
+    available_quantity INTEGER NOT NULL DEFAULT 0,
+    reserved_quantity INTEGER NOT NULL DEFAULT 0,
+    min_quantity INTEGER NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_inventories_product
-    FOREIGN KEY (product_id) REFERENCES products (id)
+    CONSTRAINT chk_inventory_available_quantity CHECK (available_quantity >= 0),
+    CONSTRAINT chk_inventory_reserved_quantity CHECK (reserved_quantity >= 0),
+    CONSTRAINT chk_inventory_min_quantity CHECK (min_quantity >= 0),
+
+    CONSTRAINT fk_inventory_product FOREIGN KEY (product_id) REFERENCES products(id),
+
+    CONSTRAINT uk_product UNIQUE(product_id); --will change to CONSTRAINT uk_inventory_product_warehouse UNIQUE(product_id, warehouse_id)
+
+    -- CONSTRAINT fk_inventory_warehouse FOREIGN KEY (warehouse_id) REFERENCES warehouses(id),
+
+    -- CONSTRAINT uk_inventory_product_warehouse UNIQUE(product_id, warehouse_id)
 ) ENGINE=InnoDB;
 
 --
