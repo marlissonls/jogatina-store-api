@@ -1,0 +1,203 @@
+package br.com.jogatinastore.domain.catalog.product.specification;
+
+import br.com.jogatinastore.domain.catalog.brand.entity.Brand;
+import br.com.jogatinastore.domain.catalog.category.entity.Category;
+import br.com.jogatinastore.domain.inventory.stock.entity.Stock;
+import br.com.jogatinastore.domain.catalog.product.entity.Product;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public class ProductSpecifications {
+
+    public static Specification<Product> search(String search) {
+        return (root, query, cb) -> {
+
+            if (search == null || search.isBlank()) {
+                return null;
+            }
+
+            String term = "%" + search.toLowerCase().trim() + "%";
+
+            Join<Product, Brand> brand = root.join("brand", JoinType.LEFT);
+            Join<Product, Category> category = root.join("category", JoinType.LEFT);
+
+            return cb.or(
+                    cb.like(cb.lower(root.get("title")), term),
+                    cb.like(cb.lower(root.get("slug")), term),
+                    cb.like(cb.lower(root.get("description")), term),
+                    cb.like(cb.lower(root.get("sku")), term),
+                    cb.like(cb.lower(brand.get("title")), term),
+                    cb.like(cb.lower(category.get("title")), term)
+            );
+        };
+    }
+
+    public static Specification<Product> active(Boolean active) {
+        return (root, query, cb) ->
+                active == null
+                        ? null
+                        : cb.equal(root.get("active"), active);
+    }
+
+    public static Specification<Product> featured(Boolean featured) {
+        return (root, query, cb) ->
+                featured == null
+                        ? null
+                        : cb.equal(root.get("featured"), featured);
+    }
+
+    public static Specification<Product> isNew(Boolean isNew) {
+        return (root, query, cb) -> {
+
+            if (isNew == null) {
+                return null;
+            }
+
+            LocalDateTime limit = LocalDateTime.now().minusDays(30);
+
+            return isNew
+                    ? cb.greaterThanOrEqualTo(root.get("createdAt"), limit)
+                    : cb.lessThan(root.get("createdAt"), limit);
+        };
+    }
+
+    public static Specification<Product> category(UUID categoryId) {
+        return (root, query, cb) ->
+                categoryId == null
+                        ? null
+                        : cb.equal(root.join("category").get("id"), categoryId);
+    }
+
+    public static Specification<Product> brand(UUID brandId) {
+        return (root, query, cb) ->
+                brandId == null
+                        ? null
+                        : cb.equal(root.join("brand").get("id"), brandId);
+    }
+
+    public static Specification<Product> minPrice(BigDecimal minPrice) {
+        return (root, query, cb) ->
+                minPrice == null
+                        ? null
+                        : cb.greaterThanOrEqualTo(root.get("price"), minPrice);
+    }
+
+    public static Specification<Product> maxPrice(BigDecimal maxPrice) {
+        return (root, query, cb) ->
+                maxPrice == null
+                        ? null
+                        : cb.lessThanOrEqualTo(root.get("price"), maxPrice);
+    }
+
+    public static Specification<Product> minCost(BigDecimal minCost) {
+        return (root, query, cb) ->
+                minCost == null
+                        ? null
+                        : cb.greaterThanOrEqualTo(root.get("costPrice"), minCost);
+    }
+
+    public static Specification<Product> maxCost(BigDecimal maxCost) {
+        return (root, query, cb) ->
+                maxCost == null
+                        ? null
+                        : cb.lessThanOrEqualTo(root.get("costPrice"), maxCost);
+    }
+
+    public static Specification<Product> availableForSale(Boolean availableForSale) {
+        return (root, query, cb) -> {
+
+            if (availableForSale == null) {
+                return null;
+            }
+
+            Join<Product, Stock> stock = root.join("stocks");
+
+            Predicate isActive = cb.isTrue(root.get("active"));
+            Predicate hasAvailableStock = cb.gt(stock.get("availableQuantity"), 0);
+
+            Predicate isInactive = cb.isFalse(root.get("active"));
+            Predicate hasNoAvailableStock = cb.le(stock.get("availableQuantity"), 0);
+
+            return availableForSale
+                    ? cb.and(isActive, hasAvailableStock)
+                    : cb.or(isInactive, hasNoAvailableStock);
+        };
+    }
+
+    public static Specification<Product> hasAvailableStock(Boolean hasStock) {
+        return (root, query, cb) -> {
+
+            if (hasStock == null) {
+                return null;
+            }
+
+            var stock = root.join("stocks");
+
+            return hasStock
+                    ? cb.greaterThan(stock.get("availableQuantity"), 0)
+                    : cb.lessThanOrEqualTo(stock.get("availableQuantity"), 0);
+        };
+    }
+
+    public static Specification<Product> onSale(Boolean onSale) {
+        return (root, query, cb) -> {
+            if (onSale == null) {
+                return null;
+            }
+
+            return onSale
+                    ? cb.lessThan(root.get("salePrice"), root.get("price"))
+                    : cb.or(
+                            cb.isNull(root.get("salePrice")),
+                            cb.greaterThanOrEqualTo(root.get("salePrice"), root.get("price"))
+                    );
+        };
+    }
+
+    public static Specification<Product> createdFrom(LocalDateTime createdFrom) {
+        return (root, query, cb) ->
+            createdFrom == null
+                ? null
+                : cb.greaterThanOrEqualTo(
+                    root.get("createdAt"),
+                    createdFrom
+                );
+    }
+
+    public static Specification<Product> createdTo(LocalDateTime createdTo) {
+        return (root, query, cb) ->
+            createdTo == null
+                ? null
+                : cb.lessThanOrEqualTo(
+                    root.get("createdAt"),
+                    createdTo
+                );
+    }
+
+    public static Specification<Product> updatedFrom(LocalDateTime updatedFrom) {
+        return (root, query, cb) ->
+            updatedFrom == null
+                ? null
+                : cb.greaterThanOrEqualTo(
+                    root.get("updatedAt"),
+                    updatedFrom
+                );
+    }
+
+    public static Specification<Product> updatedTo(LocalDateTime updatedTo) {
+        return (root, query, cb) ->
+            updatedTo == null
+                ? null
+                : cb.lessThanOrEqualTo(
+                    root.get("updatedAt"),
+                    updatedTo
+                );
+    }
+}
+
