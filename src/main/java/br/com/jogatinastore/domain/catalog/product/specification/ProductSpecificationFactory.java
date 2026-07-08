@@ -24,7 +24,7 @@ public class ProductSpecificationFactory {
         spec = spec.and(ProductSpecifications.minPrice(filter.minPrice()));
         spec = spec.and(ProductSpecifications.maxPrice(filter.maxPrice()));
 
-        //spec = spec.and(ProductSpecifications.availableForSale(true));
+        spec = spec.and(ProductSpecifications.availableForSale(true));
 
         return spec;
     }
@@ -47,7 +47,7 @@ public class ProductSpecificationFactory {
         spec = spec.and(ProductSpecifications.maxCost(filter.maxCost()));
 
         spec = spec.and(ProductSpecifications.active(filter.active()));
-//        spec = spec.and(ProductSpecifications.hasAvailableStock(filter.hasAvailableStock()));
+        spec = spec.and(ProductSpecifications.hasAvailableStock(filter.hasAvailableStock()));
 
         spec = spec.and(ProductSpecifications.createdFrom(filter.createdFrom()));
         spec = spec.and(ProductSpecifications.createdTo(filter.createdTo()));
