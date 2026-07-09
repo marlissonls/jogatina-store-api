@@ -1,9 +1,6 @@
 package br.com.jogatinastore.domain.catalog.product.controller;
 
-import br.com.jogatinastore.domain.catalog.product.dto.ProductPublicResponseDTO;
-import br.com.jogatinastore.domain.catalog.product.dto.ProductCreateDTO;
-import br.com.jogatinastore.domain.catalog.product.dto.ProductResponseDTO;
-import br.com.jogatinastore.domain.catalog.product.dto.ProductUpdateDTO;
+import br.com.jogatinastore.domain.catalog.product.dto.*;
 import br.com.jogatinastore.domain.catalog.product.filter.ProductManagerFilter;
 import br.com.jogatinastore.domain.catalog.product.filter.ProductPublicFilter;
 import br.com.jogatinastore.domain.catalog.product.service.ProductService;
@@ -56,7 +53,7 @@ public class ProductController {
     // searchManagerViewProducts
     @GetMapping(produces = JSON)
     @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<PageResponse<ProductResponseDTO>> searchManagerViewProducts(
+    public ResponseEntity<PageResponse<ProductWithStockResponseDTO>> searchManagerViewProducts(
             @ParameterObject @ModelAttribute ProductManagerFilter filter,
             @PageableDefault(size = 12, sort = "title") Pageable pageable
     ) {
@@ -68,21 +65,21 @@ public class ProductController {
     // findById
     @GetMapping(path = "/{id}", produces = JSON)
     @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<ProductResponseDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<ProductWithStockResponseDTO> findById(@PathVariable UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
     // findByBarcode
     @GetMapping(path = "/barcode/{barcode}", produces = JSON)
     @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<ProductResponseDTO> findByBarcode(@PathVariable String barcode) {
+    public ResponseEntity<ProductWithStockResponseDTO> findByBarcode(@PathVariable String barcode) {
         return ResponseEntity.ok().body(service.findByBarcode(barcode));
     }
 
     // findBySku
     @GetMapping(path = "/sku/{sku}", produces = JSON)
     @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<ProductResponseDTO> findBySku(@PathVariable String sku) {
+    public ResponseEntity<ProductWithStockResponseDTO> findBySku(@PathVariable String sku) {
         return ResponseEntity.ok().body(service.findBySku(sku));
     }
 

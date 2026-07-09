@@ -5,7 +5,8 @@ import br.com.jogatinastore.domain.inventory.stock.dto.StockResponseDTO;
 import br.com.jogatinastore.domain.inventory.stock.dto.StockMinimumQuantityUpdateDTO;
 import br.com.jogatinastore.domain.inventory.stock.dto.StockAvailableQuantityUpdateDTO;
 import br.com.jogatinastore.domain.inventory.stock.filter.StockManagerFilter;
-import br.com.jogatinastore.domain.inventory.stock.service.StockService;
+import br.com.jogatinastore.domain.inventory.stock.service.StockCommandService;
+import br.com.jogatinastore.domain.inventory.stock.service.StockQueryService;
 import br.com.jogatinastore.shared.PageResponse;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
@@ -25,16 +26,20 @@ import java.util.UUID;
 @PreAuthorize("hasRole('MANAGER')")
 public class StockController {
 
-    private final StockService service;
+    private final StockCommandService commandService;
+    private final StockQueryService queryService;
     private final String JSON = MediaType.APPLICATION_JSON_VALUE;
 
-    public StockController(StockService service) {
-        this.service = service;
+    public StockController(
+            StockQueryService queryService,
+            StockCommandService commandService) {
+        this.queryService = queryService;
+        this.commandService = commandService;
     }
 
     @PostMapping(consumes = JSON, produces = JSON)
     public ResponseEntity<StockResponseDTO> create(@RequestBody @Valid StockCreateDTO dto) {
-        var response = service.create(dto);
+        var response = commandService.create(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -50,14 +55,14 @@ public class StockController {
             @ParameterObject @ModelAttribute StockManagerFilter filter,
             @PageableDefault(size = 12, sort = "availableQuantity") Pageable pageable
     ) {
-        return ResponseEntity.ok().body(service.findAll(
+        return ResponseEntity.ok().body(queryService.findAll(
                 filter, pageable
         ));
     }
 
     @GetMapping(path = "/{id}", produces = JSON)
     public ResponseEntity<StockResponseDTO> findById(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(service.findById(id));
+        return ResponseEntity.ok().body(queryService.findById(id));
     }
 
     @PatchMapping(path = "/{id}/minimum-stock", produces = JSON)
@@ -65,7 +70,7 @@ public class StockController {
             @PathVariable UUID id,
             @RequestBody @Valid StockMinimumQuantityUpdateDTO dto) {
 
-        service.updateMinimumQuantity(id, dto);
+        commandService.updateMinimumQuantity(id, dto);
         return ResponseEntity.noContent().build();
     }
 
@@ -74,7 +79,7 @@ public class StockController {
             @PathVariable UUID id,
             @RequestBody @Valid StockAvailableQuantityUpdateDTO dto) {
 
-        service.increase(id, dto);
+        commandService.increase(id, dto);
         return ResponseEntity.noContent().build();
     }
 
@@ -83,7 +88,7 @@ public class StockController {
             @PathVariable UUID id,
             @RequestBody @Valid StockAvailableQuantityUpdateDTO dto) {
 
-        service.writeOff(id, dto);
+        commandService.writeOff(id, dto);
         return ResponseEntity.noContent().build();
     }
 
@@ -92,7 +97,7 @@ public class StockController {
             @PathVariable UUID id,
             @RequestBody @Valid StockAvailableQuantityUpdateDTO dto) {
 
-        service.reserve(id, dto);
+        commandService.reserve(id, dto);
         return ResponseEntity.noContent().build();
     }
 
@@ -101,7 +106,7 @@ public class StockController {
             @PathVariable UUID id,
             @RequestBody @Valid StockAvailableQuantityUpdateDTO dto) {
 
-        service.release(id, dto);
+        commandService.release(id, dto);
         return ResponseEntity.noContent().build();
     }
 
