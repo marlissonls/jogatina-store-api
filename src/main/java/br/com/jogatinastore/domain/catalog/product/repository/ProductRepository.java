@@ -1,6 +1,7 @@
 package br.com.jogatinastore.domain.catalog.product.repository;
 
 import br.com.jogatinastore.domain.catalog.product.entity.Product;
+import br.com.jogatinastore.domain.catalog.product.snapshot.ProductSnapshot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -17,6 +18,21 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
     Optional<Product> findByBarcode(String barcode);
 
     Optional<Product> findBySku(String sku);
+
+    @Query("""
+        SELECT new br.com.jogatinastore.domain.catalog.product.snapshot.ProductSnapshot(
+            p.id,
+            p.price,
+            p.salePrice,
+            s.availableQuantity
+        )
+        FROM Stock s
+        JOIN s.product p
+        WHERE p.id = :id
+           AND p.active
+           AND s.availableQuantity > 0
+    """)
+    Optional<ProductSnapshot> findAvailableProduct(UUID id);
 
     @Modifying
     @Query("UPDATE Product p " +
