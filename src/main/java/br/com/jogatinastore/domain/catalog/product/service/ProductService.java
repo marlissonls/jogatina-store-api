@@ -12,6 +12,7 @@ import br.com.jogatinastore.domain.catalog.product.exception.ProductErrors;
 import br.com.jogatinastore.domain.catalog.product.filter.ProductManagerFilter;
 import br.com.jogatinastore.domain.catalog.product.filter.ProductPublicFilter;
 import br.com.jogatinastore.domain.catalog.product.repository.ProductRepository;
+import br.com.jogatinastore.domain.catalog.product.snapshot.ProductSnapshot;
 import br.com.jogatinastore.domain.catalog.product.specification.ProductSpecificationFactory;
 import br.com.jogatinastore.domain.inventory.stock.entity.Stock;
 import br.com.jogatinastore.domain.inventory.stock.service.StockQueryService;
@@ -57,76 +58,6 @@ public class ProductService {
         this.brandService = brandService;
     }
 
-//    public PageResponse<ProductPublicResponseDTO> getPublicViewProducts(
-//            ProductPublicFilter filter, Pageable pageable
-//    ) {
-//        logger.info("Search public products. filter={}", filter);
-//
-//        Specification<Product> spec = ProductSpecificationFactory.publicView(filter);
-//
-//        Page<Product> page = repository.findAll(spec, pageable);
-//
-//        List<UUID> ids = page.getContent()
-//                .stream()
-//                .map(Product::getId)
-//                .toList();
-//
-//        var stocksByProductId = stockRepository.findByProductIdIn(ids)
-//                .stream()
-//                .collect(Collectors.toMap(
-//                        Stock::getProductId,
-//                        Function.identity()
-//                ));
-//
-//        var items = page.map(product -> new ProductPublicResponseDTO(
-//                product,
-//                stocksByProductId.get(product.getId())
-//        )).getContent();
-//
-//        return new PageResponse<>(
-//                items,
-//                page.getNumber(),
-//                page.getSize(),
-//                page.getTotalElements()
-//        );
-//    }
-//
-//    public PageResponse<ProductResponseDTO> getManagerViewProducts(
-//            ProductManagerFilter filter, Pageable pageable
-//    ) {
-//        logger.debug("Fetching filtered products");
-//
-//        Specification<Product> spec = ProductSpecificationFactory.managerView(filter);
-//
-//        Page<Product> page = repository.findAll(spec, pageable);
-//
-//        List<UUID> ids = page.getContent()
-//                .stream()
-//                .map(Product::getId)
-//                .toList();
-//
-//        //var images = imageRepository.findByProductIdIn(ids);
-//
-//        var stocksByProductId = stockRepository.findByProductIdIn(ids)
-//                .stream()
-//                .collect(Collectors.toMap(
-//                        Stock::getProductId,
-//                        Function.identity()
-//                ));
-//
-//        var items = page.map(product -> new ProductResponseDTO(
-//                product,
-//                stocksByProductId.get(product.getId())
-//        )).getContent();
-//
-//        return new PageResponse<>(
-//                items,
-//                page.getNumber(),
-//                page.getSize(),
-//                page.getTotalElements()
-//        );
-//    }
-
     public PageResponse<ProductPublicResponseDTO> getPublicViewProducts(
             ProductPublicFilter filter, Pageable pageable
     ) {
@@ -138,13 +69,6 @@ public class ProductService {
         );
 
         var stocksByProductId = findStocksByProductIds(page);
-
-//        var items = page.stream()
-//                .map(product -> new ProductPublicResponseDTO(
-//                        product,
-//                        stocksByProductId.get(product.getId())
-//                ))
-//                .toList();
 
         var items = page.map(product -> new ProductPublicResponseDTO(
                 product,
@@ -171,13 +95,6 @@ public class ProductService {
 
         var stocksByProductId = findStocksByProductIds(page);
 
-//        var items = page.stream()
-//                .map(product -> new ProductWithStockResponseDTO(
-//                        product,
-//                        stocksByProductId.get(product.getId())
-//                ))
-//                .toList();
-
         var items = page.map(product -> new ProductWithStockResponseDTO(
                 product,
                 stocksByProductId.get(product.getId())
@@ -199,6 +116,16 @@ public class ProductService {
         var stock = getStock(product);
 
         return new ProductWithStockResponseDTO(product, stock);
+    }
+
+    public ProductSnapshot getAvailableProduct(UUID id) {
+        return repository.findAvailableProduct(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                ProductErrors.Target.ID,
+                                ProductErrors.Code.PRODUCT_NOT_FOUND
+                        )
+                );
     }
 
     public ProductPublicResponseDTO findBySlug(String slug) {
@@ -240,9 +167,6 @@ public class ProductService {
 
         try {
             String slug = SlugUtils.toSlug(dto.title());
-
-//        var category = categoryService.getValidCategory(dto.categoryId());
-//        var brand = brandService.getValidBrand(dto.brandId());
 
             var category = categoryService.getValidReference(dto.categoryId());
             var brand = brandService.getValidReference(dto.brandId());
