@@ -2,9 +2,11 @@ package br.com.jogatinastore.infra.exception.handler;
 
 import br.com.jogatinastore.infra.exception.ResourceNotFoundException;
 import br.com.jogatinastore.infra.exception.code.ErrorCode;
+import br.com.jogatinastore.infra.exception.handler.order.ExceptionHandlerOrder;
 import br.com.jogatinastore.infra.exception.response.ExceptionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.OffsetDateTime;
 
 @RestControllerAdvice
+@Order(ExceptionHandlerOrder.RESOURCE)
 public class ResourceExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceExceptionHandler.class);
