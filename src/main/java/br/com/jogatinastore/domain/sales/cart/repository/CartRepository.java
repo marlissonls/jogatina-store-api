@@ -23,9 +23,10 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
     @Query(value = """
         SELECT
             ci.product_id AS productId,
-            p.title AS title,
+            p.title AS productTitle,
             ci.unit_price AS unitPrice,
-            ci.quantity AS quantity
+            ci.quantity AS quantity,
+            ci.unit_price * ci.quantity AS totalPrice
         FROM cart_item ci
         JOIN products p
             ON p.id = ci.product_id

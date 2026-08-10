@@ -1,10 +1,14 @@
 package br.com.jogatinastore.domain.sales.cart.entity;
 
+import br.com.jogatinastore.domain.sales.cart.exception.CartErrors;
 import br.com.jogatinastore.domain.sales.cart.status.CartStatus;
 import br.com.jogatinastore.domain.sales.cart.valueobject.CartItem;
+import br.com.jogatinastore.infra.exception.CartItemNotFoundException;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,38 +36,31 @@ public class Cart {
     @Column(name = "subtotal_amount", nullable = false)
     private BigDecimal subtotalAmount = BigDecimal.ZERO;
 
-    @PositiveOrZero
-    @Column(name = "total_amount", nullable = false)
-    private BigDecimal totalAmount = BigDecimal.ZERO;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private CartStatus status = CartStatus.OPEN;
+    private CartStatus status = CartStatus.ACTIVE;
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     protected Cart() {}
 
     public Cart(UUID userId) {
+        this.id = UUID.randomUUID();
         this.userId = userId;
     }
 
-    @PrePersist
-    protected void onCreate() {
-        if (id == null)
-            id = UUID.randomUUID();
-
-        createdAt = LocalDateTime.now();
-        updatedAt = createdAt;
+    public static Cart createFrom(UUID userId) {
+        return new Cart(userId);
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    public void markAsConverted() {
+        this.status = CartStatus.CONVERTED;
     }
 
     public void addItem(
@@ -92,10 +89,16 @@ public class Cart {
     }
 
     public void removeItem(UUID productId) {
-
-        items.removeIf(
+        boolean removed = items.removeIf(
                 item -> item.getProductId().equals(productId)
         );
+
+        if (!removed) {
+            throw new CartItemNotFoundException(
+                    CartErrors.Target.ITEM,
+                    CartErrors.Code.CART_ITEM_NOT_FOUND
+            );
+        }
 
         recalculateTotals();
     }
@@ -108,8 +111,6 @@ public class Cart {
                         BigDecimal.ZERO,
                         BigDecimal::add
                 );
-
-        totalAmount = subtotalAmount;
     }
 
     public UUID getId() {
@@ -126,10 +127,6 @@ public class Cart {
 
     public BigDecimal getSubtotalAmount() {
         return subtotalAmount;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
     }
 
     public CartStatus getStatus() {

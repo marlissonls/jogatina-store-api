@@ -5,10 +5,8 @@ import java.util.UUID;
 
 public interface CartItemSnapshot {
     UUID getProductId();
-
-    String getTitle();
-
+    String getProductTitle();
     BigDecimal getUnitPrice();
-
     Integer getQuantity();
+    BigDecimal getTotalPrice();
 }
