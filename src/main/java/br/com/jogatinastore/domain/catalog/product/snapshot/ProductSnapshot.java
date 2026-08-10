@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public record ProductSnapshot(
         UUID id,
+        Boolean active,
         BigDecimal price,
         BigDecimal salePrice,
         Integer stock
