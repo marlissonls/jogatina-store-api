@@ -1,6 +1,7 @@
 package br.com.jogatinastore.infra.exception.handler;
 
 import br.com.jogatinastore.infra.exception.ConflictException;
+import br.com.jogatinastore.infra.exception.InsufficientStockException;
 import br.com.jogatinastore.infra.exception.code.ErrorCode;
 import br.com.jogatinastore.infra.exception.handler.order.ExceptionHandlerOrder;
 import br.com.jogatinastore.infra.exception.response.ExceptionResponse;
@@ -28,6 +29,22 @@ public class ConflictExceptionHandler {
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.CONFLICT.value(),
                 ErrorCode.ALREADY_EXISTS.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                ex.getErrors()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public final ResponseEntity<ExceptionResponse> handleInsufficientStockException(InsufficientStockException ex) {
+
+        logger.warn("Cart Item unavailable. Errors={}", ex.getErrors());
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.CONFLICT.value(),
+                ErrorCode.INSUFFICIENT_STOCK.name(),
                 ex.getMessage(),
                 OffsetDateTime.now(),
                 ex.getErrors()

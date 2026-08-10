@@ -1,19 +1,20 @@
 package br.com.jogatinastore.domain.inventory.stock.service;
 
-import br.com.jogatinastore.domain.inventory.stock.dto.StockCreateDTO;
-import br.com.jogatinastore.domain.inventory.stock.dto.StockMinimumQuantityUpdateDTO;
-import br.com.jogatinastore.domain.inventory.stock.dto.StockResponseDTO;
-import br.com.jogatinastore.domain.inventory.stock.dto.StockAvailableQuantityUpdateDTO;
+import br.com.jogatinastore.domain.inventory.stock.dto.*;
 import br.com.jogatinastore.domain.inventory.stock.entity.Stock;
+import br.com.jogatinastore.domain.inventory.stock.movement.StockMovementItem;
 import br.com.jogatinastore.domain.inventory.stock.exception.StockErrors;
 import br.com.jogatinastore.domain.inventory.stock.repository.StockRepository;
 import br.com.jogatinastore.domain.catalog.product.service.ProductService;
+import br.com.jogatinastore.infra.exception.InsufficientStockException;
 import br.com.jogatinastore.infra.exception.ResourceNotFoundException;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -126,5 +127,57 @@ public class StockCommandService {
         }
 
         logger.info("Reserved stock quantity committed successfully. id={}, quantity={}", id, dto.amount());
+    }
+
+    public void reserveItems(@Valid List<StockMovementItem> items) {
+        for (StockMovementItem item : items) {
+            Stock stock = repository.findByProductId(item.productId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            StockErrors.Target.PRODUCT,
+                            StockErrors.Code.STOCK_NOT_FOUND
+                    ));
+
+            if (stock.getAvailableQuantity() < item.quantity()) {
+                throw new InsufficientStockException(
+                        StockErrors.Target.QUANTITY,
+                        StockErrors.Code.STOCK_QUANTITY_INSUFFICIENT
+                );
+            }
+
+            int updatedRows = repository.reserve(stock.getId(), item.quantity());
+
+            if (updatedRows == 0) {
+                throw new InsufficientStockException(
+                        StockErrors.Target.QUANTITY,
+                        StockErrors.Code.STOCK_QUANTITY_INSUFFICIENT
+                );
+            }
+        }
+    }
+
+    public void releaseItems(@Valid List<StockMovementItem> items) {
+        for (StockMovementItem item: items) {
+            Stock stock = repository.findByProductId(item.productId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            StockErrors.Target.PRODUCT,
+                            StockErrors.Code.STOCK_NOT_FOUND
+                    ));
+
+            if (stock.getReservedQuantity() < item.quantity()) {
+                throw new InsufficientStockException(
+                        StockErrors.Target.RESERVED_QUANTITY,
+                        StockErrors.Code.STOCK_RESERVED_QUANTITY_INSUFFICIENT
+                );
+            }
+
+            int updatedRows = repository.release(stock.getId(), item.quantity());
+
+            if (updatedRows == 0) {
+                throw new InsufficientStockException(
+                        StockErrors.Target.RESERVED_QUANTITY,
+                        StockErrors.Code.STOCK_RESERVED_QUANTITY_INSUFFICIENT
+                );
+            }
+        }
     }
 }

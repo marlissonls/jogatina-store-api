@@ -10,7 +10,7 @@ import java.util.List;
 public class InsufficientStockException extends ApplicationException {
 
     public InsufficientStockException(String target, String code) {
-        super("Insufficient stock",
+        super("Not enough stock available",
             List.of(new ErrorDetail(target, code))
         );
     }
