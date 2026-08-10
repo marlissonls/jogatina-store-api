@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class InsufficientStockException extends ApplicationException {
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class CartItemUnavailableException extends ApplicationException {
 
-    public InsufficientStockException(String target, String code) {
-        super("Not enough stock available",
+    public CartItemUnavailableException(String target, String code) {
+        super("Item unavailable",
             List.of(new ErrorDetail(target, code))
         );
     }

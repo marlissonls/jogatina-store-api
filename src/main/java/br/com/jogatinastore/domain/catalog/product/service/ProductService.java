@@ -128,6 +128,10 @@ public class ProductService {
                 );
     }
 
+    public List<ProductSnapshot> getProductsForAvailabilityCheck(List<UUID> ids) {
+        return repository.findProductsForAvailabilityCheck(ids);
+    }
+
     public ProductPublicResponseDTO findBySlug(String slug) {
         logger.debug("Fetching product slug={}", slug);
 

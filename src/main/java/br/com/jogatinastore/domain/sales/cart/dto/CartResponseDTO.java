@@ -11,7 +11,6 @@ public record CartResponseDTO(
         UUID id,
         UUID userId,
         BigDecimal subTotalAmount,
-        BigDecimal totalAmount,
         List<CartItemSnapshot> items
 ) {
     public CartResponseDTO(Cart cart, List<CartItemSnapshot> items) {
@@ -19,7 +18,6 @@ public record CartResponseDTO(
                 cart.getId(),
                 cart.getUserId(),
                 cart.getSubtotalAmount(),
-                cart.getTotalAmount(),
                 items
         );
     }

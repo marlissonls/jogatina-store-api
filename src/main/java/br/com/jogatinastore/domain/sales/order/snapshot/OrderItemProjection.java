@@ -1,12 +1,12 @@
-package br.com.jogatinastore.domain.sales.cart.snapshot;
+package br.com.jogatinastore.domain.sales.order.snapshot;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public interface CartItemSnapshot {
+public interface OrderItemProjection {
     UUID getProductId();
     String getProductTitle();
-    BigDecimal getUnitPrice();
     Integer getQuantity();
+    BigDecimal getUnitPrice();
     BigDecimal getTotalPrice();
 }

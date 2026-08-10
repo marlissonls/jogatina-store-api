@@ -1,8 +1,10 @@
 package br.com.jogatinastore.domain.sales.cart.status;
 
 public enum CartStatus {
-    OPEN,
-    CHECKOUT,
-    COMPLETED,
+    ACTIVE,
+    LOCKED,
+    CONVERTED,
+    MERGED,
+    EXPIRED,
     CANCELLED
 }

@@ -28,9 +28,10 @@ public final class StockErrors {
         public static final String STOCK_RESERVED_QUANTITY_REQUIRED = "error.stock.reserved_quantity.required";
         public static final String STOCK_RESERVED_QUANTITY_INVALID = "error.stock.reserved_quantity.invalid";
         public static final String STOCK_RESERVED_QUANTITY_EXCEEDS_STOCK = "error.stock.reserved_quantity.exceeds_stock";
+        public static final String STOCK_RESERVED_QUANTITY_INSUFFICIENT = "error.stock.reserved_quantity.exceeds_stock";
 
         public static final String STOCK_MINIMUM_QUANTITY_REQUIRED = "error.stock.min_quantity.required";
         public static final String STOCK_MINIMUM_QUANTITY_INVALID = "error.stock.min_quantity.invalid";
-        public static final String STOCK_MIN_QUANTITY_EXCEEDED = "error.stock.min_quantity.exceeded";
+        public static final String STOCK_MINIMUM_QUANTITY_EXCEEDED = "error.stock.min_quantity.exceeded";
     }
 }

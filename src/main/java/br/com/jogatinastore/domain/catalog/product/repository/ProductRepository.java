@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
     @Query("""
         SELECT new br.com.jogatinastore.domain.catalog.product.snapshot.ProductSnapshot(
             p.id,
+            p.active,
             p.price,
             p.salePrice,
             s.availableQuantity
@@ -33,6 +36,20 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
            AND s.availableQuantity > 0
     """)
     Optional<ProductSnapshot> findAvailableProduct(UUID id);
+
+    @Query("""
+    SELECT new br.com.jogatinastore.domain.catalog.product.snapshot.ProductSnapshot(
+        p.id,
+        p.active,
+        p.price,
+        p.salePrice,
+        s.availableQuantity
+    )
+    FROM Stock s
+    JOIN s.product p
+    WHERE p.id IN :ids
+""")
+    List<ProductSnapshot> findProductsForAvailabilityCheck(Collection<UUID> ids);
 
     @Modifying
     @Query("UPDATE Product p " +
