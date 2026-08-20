@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public record CheckoutResponseDTO(
         UUID id,
-        UUID userId,
+        UUID customerId,
         BigDecimal subTotalAmount,
         BigDecimal discountAmount,
         BigDecimal shippingAmount,
@@ -23,7 +23,7 @@ public record CheckoutResponseDTO(
     public CheckoutResponseDTO(Order order, List<CartItemSnapshot> items) {
         this(
                 order.getId(),
-                order.getUserId(),
+                order.getCustomerId(),
                 order.getSubtotalAmount(),
                 order.getDiscountAmount(),
                 order.getShippingAmount(),

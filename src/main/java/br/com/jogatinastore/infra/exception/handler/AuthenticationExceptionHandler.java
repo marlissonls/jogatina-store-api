@@ -1,6 +1,6 @@
 package br.com.jogatinastore.infra.exception.handler;
 
-import br.com.jogatinastore.domain.authentication.exception.AuthErrors;
+import br.com.jogatinastore.domain.iam.authentication.exception.AuthErrors;
 import br.com.jogatinastore.infra.exception.InvalidJwtTokenException;
 import br.com.jogatinastore.infra.exception.code.ErrorCode;
 import br.com.jogatinastore.infra.exception.handler.order.ExceptionHandlerOrder;

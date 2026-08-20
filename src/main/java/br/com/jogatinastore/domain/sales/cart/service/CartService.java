@@ -2,6 +2,7 @@ package br.com.jogatinastore.domain.sales.cart.service;
 
 import br.com.jogatinastore.domain.catalog.product.service.ProductService;
 import br.com.jogatinastore.domain.catalog.product.snapshot.ProductSnapshot;
+import br.com.jogatinastore.domain.customer.customer.service.CustomerService;
 import br.com.jogatinastore.domain.inventory.stock.exception.StockErrors;
 import br.com.jogatinastore.domain.sales.cart.dto.CartAddProductRequestDTO;
 import br.com.jogatinastore.domain.sales.cart.dto.CartResponseDTO;
@@ -35,15 +36,18 @@ public class CartService {
     private final CartRepository repository;
     private final ProductService productService;
 
-    public CartService(CartRepository repository, ProductService productService) {
+    public CartService(
+            CartRepository repository,
+            ProductService productService
+    ) {
         this.repository = repository;
         this.productService = productService;
     }
 
     public CartResponseDTO getCart(UUID userId) {
-        logger.debug("Fetching open cart for userId={}", userId);
+        logger.debug("Fetching open cart for customerId={}", userId);
 
-        Optional<Cart> cartOpt =  repository.findByUserIdAndStatus(userId, CartStatus.ACTIVE);
+        Optional<Cart> cartOpt =  repository.findByCustomerIdAndStatus(userId, CartStatus.ACTIVE);
 
         Cart cart;
         List<CartItemSnapshot> items;
@@ -61,7 +65,7 @@ public class CartService {
 
     @Transactional
     public void addProduct(UUID userId, CartAddProductRequestDTO dto) {
-        logger.debug("Adding product to cart. userId={}, productId={}, quantity={}",
+        logger.debug("Adding product to cart. customerId={}, productId={}, quantity={}",
                 userId, dto.productId(), dto.quantity());
 
         ProductSnapshot product = productService.getAvailableProduct(dto.productId());
@@ -73,7 +77,7 @@ public class CartService {
             );
         }
 
-        Cart cart = repository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+        Cart cart = repository.findByCustomerIdAndStatus(userId, CartStatus.ACTIVE)
                 .orElseGet(() -> repository.save(Cart.createFrom(userId)));
 
         cart.addItem(
@@ -82,33 +86,33 @@ public class CartService {
                 dto.quantity()
         );
 
-        logger.info("Product added to cart successfully. cartId={}, userId={}, productId={}, quantity={}",
+        logger.info("Product added to cart successfully. cartId={}, customerId={}, productId={}, quantity={}",
                 cart.getId(), userId, dto.productId(), dto.quantity());
     }
 
     @Transactional
     public void removeProduct(UUID userId, UUID productId) {
-        logger.debug("Removing product from cart. userId={}, productId={}",
+        logger.debug("Removing product from cart. customerId={}, productId={}",
                 userId, productId);
 
         Cart cart = findOpenCartOrThrow(userId);
 
         cart.removeItem(productId);
 
-        logger.info("Product removed from cart successfully. cartId={}, userId={}, productId={}",
+        logger.info("Product removed from cart successfully. cartId={}, customerId={}, productId={}",
                 cart.getId(), userId, productId);
     }
 
-    public CartSnapshot getCartSnapshot(UUID userId) {
-        Cart cart = findOpenCartOrThrow(userId);
+    public CartSnapshot getCartSnapshot(UUID customerId) {
+        Cart cart = findOpenCartOrThrow(customerId);
 
         List<CartItemSnapshot> items = repository.findCartItems(cart.getId());
 
         return new CartSnapshot(cart, items);
     }
 
-    private Cart findOpenCartOrThrow(UUID userId) {
-        return repository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+    private Cart findOpenCartOrThrow(UUID customerId) {
+        return repository.findByCustomerIdAndStatus(customerId, CartStatus.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         CartErrors.Target.CART,
                         CartErrors.Code.CART_NOT_FOUND

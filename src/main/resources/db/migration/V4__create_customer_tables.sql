@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS customers (
+    id CHAR(36) PRIMARY KEY,
+
+    name VARCHAR(255) NOT NULL,
+    cpf VARCHAR(20) NOT NULL UNIQUE,
+    birth_date DATE,
+    phone_number VARCHAR(20),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL,
+
+    CONSTRAINT fk_customers_user
+    FOREIGN KEY (id)
+    REFERENCES users(id)
+) ENGINE=InnoDB;
