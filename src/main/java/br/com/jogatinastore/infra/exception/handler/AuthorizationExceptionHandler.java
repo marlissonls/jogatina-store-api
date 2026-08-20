@@ -1,6 +1,6 @@
 package br.com.jogatinastore.infra.exception.handler;
 
-import br.com.jogatinastore.domain.authorization.exception.AuthorizationErrors;
+import br.com.jogatinastore.domain.iam.authorization.exception.AuthorizationErrors;
 import br.com.jogatinastore.infra.exception.code.ErrorCode;
 import br.com.jogatinastore.infra.exception.handler.order.ExceptionHandlerOrder;
 import br.com.jogatinastore.infra.exception.response.ErrorDetail;

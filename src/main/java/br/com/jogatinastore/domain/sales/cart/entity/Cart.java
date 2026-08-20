@@ -21,13 +21,13 @@ public class Cart {
     @Column
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "customer_id", nullable = false)
+    private UUID customerId;
 
     @Valid
     @ElementCollection
     @CollectionTable(
-            name = "cart_item",
+            name = "cart_items",
             joinColumns = @JoinColumn(name = "cart_id")
     )
     private Set<CartItem> items = new HashSet<>();
@@ -50,13 +50,13 @@ public class Cart {
 
     protected Cart() {}
 
-    public Cart(UUID userId) {
+    public Cart(UUID customerId) {
         this.id = UUID.randomUUID();
-        this.userId = userId;
+        this.customerId = customerId;
     }
 
-    public static Cart createFrom(UUID userId) {
-        return new Cart(userId);
+    public static Cart createFrom(UUID customerId) {
+        return new Cart(customerId);
     }
 
     public void markAsConverted() {
@@ -117,8 +117,8 @@ public class Cart {
         return id;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getCustomerId() {
+        return customerId;
     }
 
     public Set<CartItem> getItems() {

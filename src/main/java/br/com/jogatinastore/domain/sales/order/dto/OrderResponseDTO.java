@@ -13,7 +13,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record OrderResponseDTO(
         UUID id,
-        UUID userId,
+        UUID customerId,
         BigDecimal subTotalAmount,
         BigDecimal discountAmount,
         BigDecimal shippingAmount,
@@ -25,7 +25,7 @@ public record OrderResponseDTO(
     public OrderResponseDTO(Order order, List<OrderItemSnapshot> items) {
         this(
                 order.getId(),
-                order.getUserId(),
+                order.getCustomerId(),
                 order.getSubtotalAmount(),
                 order.getDiscountAmount(),
                 order.getShippingAmount(),

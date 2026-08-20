@@ -3,7 +3,6 @@ package br.com.jogatinastore.domain.catalog.product.entity;
 import br.com.jogatinastore.domain.catalog.brand.entity.Brand;
 import br.com.jogatinastore.domain.catalog.category.entity.Category;
 import br.com.jogatinastore.domain.catalog.product.dto.ProductUpdateDTO;
-import br.com.jogatinastore.domain.images.entity.ProductImage;
 import br.com.jogatinastore.domain.inventory.stock.entity.Stock;
 import br.com.jogatinastore.domain.catalog.product.dto.ProductCreateDTO;
 import jakarta.persistence.*;
@@ -78,8 +77,8 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Stock> stocks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<ProductImage> productImages = new HashSet<>();
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private Set<ProductImage> productImages = new HashSet<>();
 
     protected Product() {}
 
@@ -332,13 +331,13 @@ public class Product {
         this.stocks = stocks;
     }
 
-    public Set<ProductImage> getProductImages() {
-        return productImages;
-    }
-
-    public void setProductImages(Set<ProductImage> productImages) {
-        this.productImages = productImages;
-    }
+//    public Set<ProductImage> getProductImages() {
+//        return productImages;
+//    }
+//
+//    public void setProductImages(Set<ProductImage> productImages) {
+//        this.productImages = productImages;
+//    }
 
     @Override
     public boolean equals(Object o) {

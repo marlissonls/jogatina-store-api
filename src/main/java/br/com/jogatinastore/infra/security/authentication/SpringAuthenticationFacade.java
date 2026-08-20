@@ -1,6 +1,6 @@
 package br.com.jogatinastore.infra.security.authentication;
 
-import br.com.jogatinastore.domain.authentication.dto.AccountCredentialsDTO;
+import br.com.jogatinastore.domain.iam.authentication.dto.AccountCredentialsDTO;
 import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

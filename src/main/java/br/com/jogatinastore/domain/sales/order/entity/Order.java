@@ -27,13 +27,13 @@ public class Order {
     @Column
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "customer_id", nullable = false)
+    private UUID customerId;
 
     @Valid
     @ElementCollection
     @CollectionTable(
-            name = "order_item",
+            name = "order_items",
             joinColumns = @JoinColumn(name = "order_id")
     )
     private Set<OrderItem> items = new HashSet<>();
@@ -68,9 +68,9 @@ public class Order {
 
     protected Order() {}
 
-    public Order(UUID userId, BigDecimal subtotalAmount) {
+    public Order(UUID customerId, BigDecimal subtotalAmount) {
         this.id = UUID.randomUUID();
-        this.userId = userId;
+        this.customerId = customerId;
         this.subtotalAmount = subtotalAmount;
 
         recalculateTotal();
@@ -78,7 +78,7 @@ public class Order {
 
     public static Order createFrom(OrderCreationData data) {
         Order order = new Order(
-                data.userId(),
+                data.customerId(),
                 data.subtotalAmount()
         );
 
@@ -112,8 +112,8 @@ public class Order {
         return id;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getCustomerId() {
+        return customerId;
     }
 
     public @Valid Set<OrderItem> getItems() {

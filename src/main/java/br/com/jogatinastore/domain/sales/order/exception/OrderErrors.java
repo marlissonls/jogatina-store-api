@@ -8,7 +8,7 @@ public final class OrderErrors {
 
         public static final String ORDER = "order";
         public static final String ID = "order.id";
-        public static final String USER_ID = "order.user.id";
+        public static final String CUSTOMER_ID = "order.customer.id";
         public static final String STATUS = "order.status";
         public static final String SUBTOTAL_AMOUNT = "order.subtotal_amount";
         public static final String DISCOUNT_AMOUNT = "order.discount_amount";
@@ -21,7 +21,7 @@ public final class OrderErrors {
 
         public static final String ORDER_NOT_FOUND = "error.order.not_found";
         public static final String ORDER_ID_REQUIRED = "error.order.id.required";
-        public static final String ORDER_USER_ID_REQUIRED = "error.order.user.id.required";
+        public static final String ORDER_CUSTOMER_ID_REQUIRED = "error.order.customer.id.required";
 
         public static final String ORDER_ITEM_NOT_FOUND = "error.order.item.not_found";
         public static final String ORDER_ITEM_PRODUCT_ID_REQUIRED = "error.order.item.product.id.required";

@@ -111,7 +111,7 @@ public class ProductService {
     public ProductWithStockResponseDTO findById(UUID id) {
         logger.debug("Fetching product id={}", id);
 
-        var product =  findEntityById(id);
+        var product = findEntityById(id);
 
         var stock = getStock(product);
 

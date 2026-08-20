@@ -15,10 +15,10 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
     @Query("""
         SELECT c
         FROM Cart c
-        WHERE c.userId = :userId
+        WHERE c.customerId = :customerId
            AND c.status = :status
     """)
-    Optional<Cart> findByUserIdAndStatus(UUID userId, CartStatus status);
+    Optional<Cart> findByCustomerIdAndStatus(UUID customerId, CartStatus status);
 
     @Query(value = """
         SELECT
@@ -27,7 +27,7 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
             ci.unit_price AS unitPrice,
             ci.quantity AS quantity,
             ci.unit_price * ci.quantity AS totalPrice
-        FROM cart_item ci
+        FROM cart_items ci
         JOIN products p
             ON p.id = ci.product_id
         WHERE ci.cart_id = :cartId

@@ -1,8 +1,8 @@
 package br.com.jogatinastore.infra.security.jwt;
 
 import br.com.jogatinastore.infra.exception.InvalidJwtTokenException;
-import br.com.jogatinastore.domain.authentication.exception.AuthErrors;
-import br.com.jogatinastore.domain.authentication.dto.TokenDTO;
+import br.com.jogatinastore.domain.iam.authentication.exception.AuthErrors;
+import br.com.jogatinastore.domain.iam.authentication.dto.TokenDTO;
 import br.com.jogatinastore.infra.security.principal.AuthenticatedUser;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

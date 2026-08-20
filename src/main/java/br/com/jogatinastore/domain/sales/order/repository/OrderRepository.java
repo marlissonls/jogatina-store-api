@@ -2,7 +2,6 @@ package br.com.jogatinastore.domain.sales.order.repository;
 
 import br.com.jogatinastore.domain.sales.order.entity.Order;
 import br.com.jogatinastore.domain.sales.order.snapshot.OrderItemProjection;
-import br.com.jogatinastore.domain.sales.order.snapshot.OrderItemSnapshot;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,11 +17,11 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
         SELECT o
         FROM Order o
         WHERE o.id = :id
-          AND o.userId = :userId
+          AND o.customerId = :customerId
     """)
-    Optional<Order> findByIdAndUserId(UUID id, UUID userId);
+    Optional<Order> findByIdAndCustomerId(UUID id, UUID customerId);
 
-    Page<Order> findAllByUserId(UUID userId, Pageable pageable);
+    Page<Order> findAllByCustomerId(UUID customerId, Pageable pageable);
 
     @Query(value = """
         SELECT
@@ -31,7 +30,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             oi.unit_price AS unitPrice,
             oi.quantity AS quantity,
             oi.unit_price * oi.quantity AS totalPrice
-        FROM order_item oi
+        FROM order_items oi
         JOIN products p
             ON p.id = oi.product_id
         WHERE oi.order_id = :orderId

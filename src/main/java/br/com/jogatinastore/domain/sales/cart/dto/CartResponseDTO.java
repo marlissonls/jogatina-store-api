@@ -9,14 +9,14 @@ import java.util.UUID;
 
 public record CartResponseDTO(
         UUID id,
-        UUID userId,
+        UUID customerId,
         BigDecimal subTotalAmount,
         List<CartItemSnapshot> items
 ) {
     public CartResponseDTO(Cart cart, List<CartItemSnapshot> items) {
         this(
                 cart.getId(),
-                cart.getUserId(),
+                cart.getCustomerId(),
                 cart.getSubtotalAmount(),
                 items
         );

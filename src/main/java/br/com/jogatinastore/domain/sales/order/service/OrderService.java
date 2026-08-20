@@ -1,5 +1,6 @@
 package br.com.jogatinastore.domain.sales.order.service;
 
+import br.com.jogatinastore.domain.customer.customer.service.CustomerService;
 import br.com.jogatinastore.domain.inventory.stock.movement.StockMovementItem;
 import br.com.jogatinastore.domain.inventory.stock.service.StockCommandService;
 import br.com.jogatinastore.domain.sales.order.contract.OrderCreationData;
@@ -30,15 +31,19 @@ public class OrderService {
 
     private final StockCommandService stockService;
 
-    public OrderService(OrderRepository repository, StockCommandService stockService) {
+    public OrderService(
+            OrderRepository repository,
+            StockCommandService stockService,
+            CustomerService customerService
+    ) {
         this.repository = repository;
         this.stockService = stockService;
     }
 
     public OrderResponseDTO getOrder(UUID id, UUID userId) {
-        logger.debug("Fetching order for orderId={}, userId={}", id, userId);
+        logger.debug("Fetching order for orderId={}, customerId={}", id, userId);
 
-        Order order = repository.findByIdAndUserId(id, userId)
+        Order order = repository.findByIdAndCustomerId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         OrderErrors.Target.ID,
                         OrderErrors.Code.ORDER_NOT_FOUND
@@ -53,9 +58,9 @@ public class OrderService {
     }
 
     public PageResponse<OrderResponseDTO> getOrders(UUID userId, Pageable pageable) {
-        logger.debug("Fetching orders for userId={}", userId);
+        logger.debug("Fetching orders for customerId={}", userId);
 
-        Page<Order> page = repository.findAllByUserId(userId, pageable);
+        Page<Order> page = repository.findAllByCustomerId(userId, pageable);
 
         List<OrderResponseDTO> orders = page
                 .map(order -> new OrderResponseDTO(order, null))
@@ -77,9 +82,9 @@ public class OrderService {
 
     @Transactional
     public void cancel(UUID id, UUID userId) {
-        logger.debug("Cancelling order. orderId={}, userId={}", id, userId);
+        logger.debug("Cancelling order. orderId={}, customerId={}", id, userId);
 
-        Order order = repository.findByIdAndUserId(id, userId)
+        Order order = repository.findByIdAndCustomerId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         OrderErrors.Target.ID,
                         OrderErrors.Code.ORDER_NOT_FOUND

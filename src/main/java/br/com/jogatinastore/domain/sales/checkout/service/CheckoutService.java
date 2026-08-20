@@ -1,5 +1,6 @@
 package br.com.jogatinastore.domain.sales.checkout.service;
 
+import br.com.jogatinastore.domain.customer.customer.service.CustomerService;
 import br.com.jogatinastore.domain.inventory.stock.movement.StockMovementItem;
 import br.com.jogatinastore.domain.inventory.stock.service.StockCommandService;
 import br.com.jogatinastore.domain.sales.cart.service.CartService;
@@ -21,23 +22,23 @@ import java.util.UUID;
 public class CheckoutService {
     private final Logger logger = LoggerFactory.getLogger(CheckoutService.class);
 
+    private final StockCommandService stockService;
+    private final CartService cartService;
     private final OrderService orderService;
 
-    private final CartService cartService;
-    private final StockCommandService stockService;
-
     public CheckoutService(
-            OrderService orderService,
+            StockCommandService stockService,
             CartService cartService,
-            StockCommandService stockService) {
-        this.orderService = orderService;
-        this.cartService = cartService;
+            OrderService orderService
+    ) {
         this.stockService = stockService;
+        this.cartService = cartService;
+        this.orderService = orderService;
     }
 
     @Transactional
     public CheckoutResponseDTO checkout(UUID userId) {
-        logger.debug("Checkout started. userId={}", userId);
+        logger.debug("Checkout started. customerId={}", userId);
 
         CartSnapshot snapshot = cartService.getCartSnapshot(userId);
 
@@ -50,7 +51,7 @@ public class CheckoutService {
         cartService.markAsConverted(snapshot.cart());
 
         logger.info(
-                "Checkout completed. userId={}, orderId={}, items={}, total={}",
+                "Checkout completed. customerId={}, orderId={}, items={}, total={}",
                 userId, order.getId(), snapshot.items().size(), order.getTotalAmount()
         );
 
@@ -69,7 +70,7 @@ public class CheckoutService {
 
     private OrderCreationData buildOrderCreationData(CartSnapshot snapshot) {
         return new OrderCreationData(
-                snapshot.cart().getUserId(),
+                snapshot.cart().getCustomerId(),
                 snapshot.cart().getSubtotalAmount(),
                 snapshot.items().stream()
                         .map(i -> new OrderItemData(
