@@ -1,6 +1,6 @@
 package br.com.jogatinastore.infra.exception.handler;
 
-import br.com.jogatinastore.domain.iam.authorization.exception.AuthorizationErrors;
+import br.com.jogatinastore.domain.iam.role.exception.RoleErrors;
 import br.com.jogatinastore.infra.exception.code.ErrorCode;
 import br.com.jogatinastore.infra.exception.handler.order.ExceptionHandlerOrder;
 import br.com.jogatinastore.infra.exception.response.ErrorDetail;
@@ -30,8 +30,8 @@ public class AuthorizationExceptionHandler {
 
         var errors = List.of(
                 new ErrorDetail(
-                        AuthorizationErrors.Target.AUTHZ,
-                        AuthorizationErrors.Code.ACCESS_DENIED
+                        RoleErrors.Target.PERMISSION,
+                        RoleErrors.Code.PERMISSION_DENIED
                 )
         );
 

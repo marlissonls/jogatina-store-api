@@ -1,6 +1,6 @@
 package br.com.jogatinastore.domain.iam.user.mapper;
 
-import br.com.jogatinastore.domain.iam.authorization.entity.UserRole;
+import br.com.jogatinastore.domain.iam.user.entity.UserRole;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;

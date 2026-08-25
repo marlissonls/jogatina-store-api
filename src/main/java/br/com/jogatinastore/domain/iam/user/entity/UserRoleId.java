@@ -1,4 +1,4 @@
-package br.com.jogatinastore.domain.iam.authorization.entity;
+package br.com.jogatinastore.domain.iam.user.entity;
 
 import jakarta.persistence.*;
 
