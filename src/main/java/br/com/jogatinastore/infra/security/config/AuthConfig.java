@@ -35,12 +35,4 @@ public class AuthConfig {
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-
-    @Bean
-    static RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl.withDefaultRolePrefix()
-            .role("ADMIN").implies("MANAGER")
-            .role("MANAGER").implies("CUSTOMER")
-            .build();
-    }
 }
