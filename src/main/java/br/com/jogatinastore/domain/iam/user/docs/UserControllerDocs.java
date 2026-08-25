@@ -1,5 +1,7 @@
 package br.com.jogatinastore.domain.iam.user.docs;
 
+import br.com.jogatinastore.domain.iam.user.dto.CreateEmployeeDTO;
+import br.com.jogatinastore.domain.iam.user.dto.UpdateUserRoleDTO;
 import br.com.jogatinastore.infra.exception.response.ExceptionResponse;
 import br.com.jogatinastore.shared.PageResponse;
 import br.com.jogatinastore.domain.iam.user.dto.CreateUserDTO;
@@ -68,6 +70,47 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
     ResponseEntity<UserResponseDTO> create(@RequestBody @Valid CreateUserDTO dto);
+
+    @PostMapping
+    @Operation(
+            summary = "Add a new User Employee",
+            description = "Adds a new User Employee by passing a JSON representation of the User Employee.",
+            tags = {"Users"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "201"),
+                    @ApiResponse(description = "No content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            })
+    ResponseEntity<UserResponseDTO> createEmployee(@RequestBody @Valid CreateEmployeeDTO dto);
+
+    @Operation(
+            summary = "Assign role to User",
+            description = "Assigns a role to the specified User",
+            tags = {"Users"},
+            responses = {
+                    @ApiResponse(description = "No content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            })
+    ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UpdateUserRoleDTO dto);
+
+    @Operation(
+            summary = "Remove role from User",
+            description = "Removes a role from the specified User",
+            tags = {"Users"},
+            responses = {
+                    @ApiResponse(description = "No content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            })
+    ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UpdateUserRoleDTO dto);
 
     @Operation(
             summary = "Delete one User",

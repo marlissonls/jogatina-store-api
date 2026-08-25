@@ -1,18 +1,19 @@
 package br.com.jogatinastore.domain.iam.user.service;
 
-import br.com.jogatinastore.domain.iam.authorization.entity.Role;
-import br.com.jogatinastore.domain.iam.authorization.exception.AuthorizationErrors;
-import br.com.jogatinastore.infra.exception.ConflictException;
-import br.com.jogatinastore.infra.exception.ResourceNotFoundException;
+import br.com.jogatinastore.domain.iam.role.code.RoleCode;
+import br.com.jogatinastore.domain.iam.role.entity.Role;
+import br.com.jogatinastore.domain.iam.role.service.RoleService;
+import br.com.jogatinastore.domain.iam.user.dto.CreateEmployeeDTO;
+import br.com.jogatinastore.domain.iam.user.dto.CreateUserDTO;
+import br.com.jogatinastore.domain.iam.user.dto.UpdateUserRoleDTO;
+import br.com.jogatinastore.domain.iam.user.dto.UserResponseDTO;
 import br.com.jogatinastore.domain.iam.user.exception.UserErrors;
 import br.com.jogatinastore.domain.iam.user.entity.User;
-import br.com.jogatinastore.domain.iam.user.dto.CreateUserDTO;
-import br.com.jogatinastore.shared.PageResponse;
-import br.com.jogatinastore.domain.iam.user.dto.UserResponseDTO;
 import br.com.jogatinastore.domain.iam.user.mapper.UserMapper;
-import br.com.jogatinastore.domain.iam.authorization.repository.RoleRepository;
 import br.com.jogatinastore.domain.iam.user.repository.UserRepository;
-import br.com.jogatinastore.domain.iam.authorization.code.RoleCode;
+import br.com.jogatinastore.infra.exception.ConflictException;
+import br.com.jogatinastore.infra.exception.ResourceNotFoundException;
+import br.com.jogatinastore.shared.PageResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,7 +30,8 @@ public class UserService {
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository repository;
-    private final RoleRepository roleRepository;
+
+    private final RoleService roleService;
 
     private final UserMapper mapper;
 
@@ -36,12 +39,12 @@ public class UserService {
 
     public UserService(
             UserRepository repository,
-            RoleRepository roleRepository,
+            RoleService roleService,
             UserMapper mapper,
             PasswordEncoder passwordEncoder
     ) {
         this.repository = repository;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
         this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;
     }
@@ -85,13 +88,42 @@ public class UserService {
 
         logger.debug("Creating new user entity. data={}", dto);
 
-        User user = buildUser(dto);
-        validateUserUniqueness(user);
-        assignDefaultRole(user);
-        encodePassword(dto, user);
+        validateUniquenessByEmail(dto.email());
+
+        User user = mapper.toEntity(dto);
+
+        Role defaultRole = roleService.getByTitle(RoleCode.ROLE_CUSTOMER.name());
+
+        user.assignRole(defaultRole);
+
+        setEncodedPassword(user, dto.password());
+
         User savedUser = repository.save(user);
 
         logger.info("User created successfully. userId={}", savedUser.getId());
+
+        return mapper.toResponse(savedUser);
+    }
+
+    @Transactional
+    public UserResponseDTO createEmployee(CreateEmployeeDTO dto) {
+
+        logger.debug("Creating new user employee entity. data={}", dto);
+
+        validateUniquenessByEmail(dto.email());
+
+        User user = mapper.toEmployeeEntity(dto);
+
+        List<Role> roles = roleService.findAllByIdIn(dto.roleIds());
+
+        user.assignRoles(roles);
+
+        setEncodedPassword(user, dto.password());
+
+        User savedUser = repository.save(user);
+
+        logger.info("User employee created successfully. userId={}, roles={}",
+                savedUser.getId(), dto.roleIds());
 
         return mapper.toResponse(savedUser);
     }
@@ -128,6 +160,30 @@ public class UserService {
         logger.info("User activated successfully. userId={}", id);
     }
 
+    @Transactional
+    public void assignRoleToUser(UpdateUserRoleDTO dto) {
+        logger.debug("Assigning role to user. userId={}, roleId={}", dto.userId(), dto.roleId());
+
+        User user =  findByIdWithRoles(dto.userId());
+
+        Role role = roleService.getEntityById(dto.roleId());
+
+        user.assignRole(role);
+
+        logger.info("Role Assigned to user successfully. userId={}, roleId={}", dto.userId(), dto.roleId());
+    }
+
+    @Transactional
+    public void removeRoleFromUser(UpdateUserRoleDTO dto) {
+        logger.debug("Removing role fom user. userId={}, roleId={}", dto.userId(), dto.roleId());
+
+        User user =  findByIdWithRoles(dto.userId());
+
+        user.removeRole(dto.roleId());
+
+        logger.info("Role removed from User successfully. userId={}, roleId={}", dto.userId(), dto.roleId());
+    }
+
     private User findEntityById(UUID id) {
         return repository.findById(id)
             .orElseThrow(() -> {
@@ -152,26 +208,15 @@ public class UserService {
             });
     }
 
-    private User buildUser(CreateUserDTO dto) {
-        return mapper.toEntity(dto);
+    private void validateUniquenessByEmail(String email) {
+        if (repository.existsByEmail(email))
+            throw new ConflictException(
+                    UserErrors.Target.EMAIL,
+                    UserErrors.Code.USER_EMAIL_ALREADY_EXISTS);
     }
 
-    private void validateUserUniqueness(User user) {
-        if (repository.existsByEmail(user.getEmail()))
-            throw new ConflictException(UserErrors.Target.EMAIL, UserErrors.Code.USER_EMAIL_ALREADY_EXISTS);
-    }
-
-    private void assignDefaultRole(User user) {
-        Role defaultPerm = roleRepository.findByTitle(RoleCode.ROLE_CUSTOMER.key())
-            .orElseThrow(() -> new ResourceNotFoundException(
-                AuthorizationErrors.Target.ROLE_TITLE,
-                AuthorizationErrors.Code.ROLE_NOT_FOUND
-        ));
-        user.addRole(defaultPerm);
-    }
-
-    private void encodePassword(CreateUserDTO dto, User user) {
-        user.setPasswordHash(passwordEncoder.encode(dto.password()));
+    private void setEncodedPassword(User user, String password) {
+        user.setPasswordHash(passwordEncoder.encode(password));
     }
 
     public User getValidReference(UUID id) {

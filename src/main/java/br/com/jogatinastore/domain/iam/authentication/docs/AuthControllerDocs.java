@@ -16,7 +16,7 @@ public interface AuthControllerDocs {
 
     @Operation(
             summary = "Authenticates a user and returns a token",
-            description = "Validates user credentials and generates an access token for authorization.",
+            description = "Validates user credentials and generates an access token for role.",
             tags = {"Authentication"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200"),

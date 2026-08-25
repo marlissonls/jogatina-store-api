@@ -1,8 +1,6 @@
 package br.com.jogatinastore.infra.exception.handler;
 
-import br.com.jogatinastore.infra.exception.CartItemUnavailableException;
-import br.com.jogatinastore.infra.exception.ConflictException;
-import br.com.jogatinastore.infra.exception.InsufficientStockException;
+import br.com.jogatinastore.infra.exception.*;
 import br.com.jogatinastore.infra.exception.code.ErrorCode;
 import br.com.jogatinastore.infra.exception.handler.order.ExceptionHandlerOrder;
 import br.com.jogatinastore.infra.exception.response.ExceptionResponse;
@@ -62,6 +60,38 @@ public class ConflictExceptionHandler {
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.CONFLICT.value(),
                 ErrorCode.ITEM_UNAVAILABLE.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                ex.getErrors()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(CannotRemoveLastRoleException.class)
+    public final ResponseEntity<ExceptionResponse> handleCannotRemoveLastRoleException(CannotRemoveLastRoleException ex) {
+
+        logger.warn("Cannot remove last role. Errors={}", ex.getErrors());
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.CONFLICT.value(),
+                ErrorCode.CANNOT_REMOVE_LAST_ROLE.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                ex.getErrors()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(RoleNotAssignedException.class)
+    public final ResponseEntity<ExceptionResponse> handleRoleNotAssignedException(RoleNotAssignedException ex) {
+
+        logger.warn("Role is not assigned. Errors={}", ex.getErrors());
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.CONFLICT.value(),
+                ErrorCode.ROLE_NOT_ASSIGNED.name(),
                 ex.getMessage(),
                 OffsetDateTime.now(),
                 ex.getErrors()

@@ -1,9 +1,12 @@
 package br.com.jogatinastore.domain.iam.user.entity;
 
-import br.com.jogatinastore.domain.iam.authorization.entity.Role;
-import br.com.jogatinastore.domain.iam.authorization.entity.UserRole;
+import br.com.jogatinastore.domain.iam.role.entity.Role;
+import br.com.jogatinastore.domain.iam.user.exception.UserErrors;
+import br.com.jogatinastore.infra.exception.CannotRemoveLastRoleException;
+import br.com.jogatinastore.infra.exception.RoleNotAssignedException;
 import jakarta.persistence.*;
 
+import jakarta.validation.Valid;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -21,7 +24,7 @@ import java.util.stream.Collectors;
 public class User {
 
     @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @Column(unique = true)
     private String email;
@@ -51,20 +54,46 @@ public class User {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Valid
+    @ElementCollection
+    @CollectionTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"})
+    )
     private Set<UserRole> userRoles = new HashSet<>();
 
     public User() {}
 
-    @PrePersist
-    protected void onCreate() {
-        if (id == null)
-            id = UUID.randomUUID();
+    public void assignRole(Role role) {
+        this.userRoles.add(new UserRole(role));
     }
 
-    public void addRole(Role role) {
-        UserRole userRole = new UserRole(this, role);
-        this.userRoles.add(userRole);
+    public void assignRoles(Collection<Role> roles) {
+        roles.forEach(this::assignRole);
+    }
+
+    public void removeRole(UUID roleId) {
+        boolean isPresent = userRoles.stream()
+                .anyMatch(userRole -> userRole.getRole().getId().equals(roleId));
+
+        if (!isPresent) {
+            throw new RoleNotAssignedException(
+                    UserErrors.Target.USER_ROLE,
+                    UserErrors.Code.USER_ROLE_NOT_ASSIGNED
+            );
+        }
+
+        if (userRoles.size() == 1) {
+            throw new CannotRemoveLastRoleException(
+                    UserErrors.Target.USER_ROLE,
+                    UserErrors.Code.USER_ROLE_CANNOT_REMOVE_LAST
+            );
+        }
+
+        userRoles.removeIf(
+                userRole -> userRole.getRole().getId().equals(roleId)
+        );
     }
 
     public List<String> getRoles() {

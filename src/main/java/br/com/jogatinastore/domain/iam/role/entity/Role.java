@@ -1,5 +1,7 @@
-package br.com.jogatinastore.domain.iam.authorization.entity;
+package br.com.jogatinastore.domain.iam.role.entity;
 
+import br.com.jogatinastore.domain.iam.role.dto.RoleCreateDTO;
+import br.com.jogatinastore.domain.iam.role.dto.RoleUpdateDTO;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -17,23 +19,30 @@ public class Role implements GrantedAuthority {
     @Column(nullable = false, length = 50)
     private String title;
 
-    @Column(nullable = true)
+    @Column
     private String description;
 
-    public Role() {}
+    protected Role() {}
 
     public Role(
-        UUID id,
         String title,
         String description
     ) {
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.title = title;
         this.description = description;
     }
 
-    public Role(UUID id, String title) {
-        this(id, title, null);
+    public static Role createFrom(RoleCreateDTO dto) {
+        return new Role(
+                dto.title(),
+                dto.description()
+        );
+    }
+
+    public void applyUpdate(RoleUpdateDTO dto) {
+        this.title = dto.title();
+        this.description = dto.description();
     }
 
     @Override

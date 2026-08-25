@@ -1,5 +1,6 @@
 package br.com.jogatinastore.domain.iam.user.mapper;
 
+import br.com.jogatinastore.domain.iam.user.dto.CreateEmployeeDTO;
 import br.com.jogatinastore.domain.iam.user.entity.User;
 import br.com.jogatinastore.domain.iam.user.dto.CreateUserDTO;
 import br.com.jogatinastore.domain.iam.user.dto.UserResponseDTO;
@@ -19,6 +20,10 @@ public interface UserMapper {
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "email", source = "email")
     User toEntity(CreateUserDTO dto);
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "email", source = "email")
+    User toEmployeeEntity(CreateEmployeeDTO dto);
 
     List<User> toEntityList(List<CreateUserDTO> dtos);
 }
