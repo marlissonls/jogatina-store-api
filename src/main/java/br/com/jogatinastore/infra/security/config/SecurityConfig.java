@@ -1,13 +1,13 @@
 package br.com.jogatinastore.infra.security.config;
 
+import br.com.jogatinastore.infra.web.PublicEndpoints;
 import br.com.jogatinastore.infra.observability.logging.LoggingFilter;
-import br.com.jogatinastore.infra.security.jwt.JwtTokenFilter;
+import br.com.jogatinastore.infra.web.RequestAuthenticationFilter;
 import br.com.jogatinastore.infra.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,7 +45,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        JwtTokenFilter filter = new JwtTokenFilter(tokenProvider, resolver);
+        RequestAuthenticationFilter filter = new RequestAuthenticationFilter(tokenProvider, resolver);
         LoggingFilter loggingFilter = new LoggingFilter();
 
         return http
@@ -59,13 +59,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(
                 authorizeHttpRequests -> authorizeHttpRequests
-                    .requestMatchers(
-                        "/auth/signin",
-                        "/auth/refresh/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**"
-                    ).permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/user/v1").permitAll()
+                    .requestMatchers(PublicEndpoints.matcher()).permitAll()
                     .requestMatchers("/api/**").authenticated()
                     .requestMatchers("/users").denyAll()
 
