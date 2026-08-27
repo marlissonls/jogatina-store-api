@@ -1,0 +1,17 @@
+package br.com.jogatinastore.shared.exception.code;
+
+public enum ErrorCode {
+    ALREADY_EXISTS,
+    BAD_CREDENTIALS,
+    CANNOT_REMOVE_LAST_ROLE,
+    INTERNAL_ERROR,
+    ITEM_UNAVAILABLE,
+    INSUFFICIENT_STOCK,
+    INVALID_JSON_BODY,
+    INVALID_PATH_PARAMETER,
+    INVALID_TOKEN,
+    NOT_FOUND,
+    NOT_AUTHORIZED,
+    ROLE_NOT_ASSIGNED,
+    VALIDATION_ERROR,
+}
