@@ -1,9 +1,9 @@
 package br.com.jogatinastore.customer.customer.presentation.http;
 
 import br.com.jogatinastore.customer.customer.presentation.docs.CustomerControllerDocs;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerCreateDTO;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerResponseDTO;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerUpdateDTO;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerCreateDto;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerResponseDto;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerUpdateDto;
 import br.com.jogatinastore.customer.customer.application.service.CustomerService;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import br.com.jogatinastore.shared.pagination.PageResponse;
@@ -38,7 +38,7 @@ public class CustomerController implements CustomerControllerDocs {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<PageResponse<CustomerResponseDTO>> findAll(
+    public ResponseEntity<PageResponse<CustomerResponseDto>> findAll(
             @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable
     ) {
@@ -49,7 +49,7 @@ public class CustomerController implements CustomerControllerDocs {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CustomerResponseDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<CustomerResponseDto> findById(@PathVariable UUID id) {
 
         return ResponseEntity.ok().body(service.findById(id));
     }
@@ -58,18 +58,18 @@ public class CustomerController implements CustomerControllerDocs {
     @GetMapping(path = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CUSTOMER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CustomerResponseDTO> me(@AuthenticationPrincipal AuthenticatedUser auth) {
+    public ResponseEntity<CustomerResponseDto> me(@AuthenticationPrincipal AuthenticatedUser auth) {
 
         return ResponseEntity.ok().body(service.me(UUID.fromString(auth.getId())));
     }
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CustomerResponseDTO> create(
+    public ResponseEntity<CustomerResponseDto> create(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @RequestBody @Valid CustomerCreateDTO dto
+            @RequestBody @Valid CustomerCreateDto dto
     ) {
-        CustomerResponseDTO response = service.create(UUID.fromString(auth.getId()), dto);
+        CustomerResponseDto response = service.create(UUID.fromString(auth.getId()), dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -84,9 +84,9 @@ public class CustomerController implements CustomerControllerDocs {
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.getId()")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CustomerResponseDTO> update(
+    public ResponseEntity<CustomerResponseDto> update(
             @PathVariable UUID id,
-            @RequestBody @Valid CustomerUpdateDTO dto)
+            @RequestBody @Valid CustomerUpdateDto dto)
     {
         return ResponseEntity.ok().body(service.update(id, dto));
     }

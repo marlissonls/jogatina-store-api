@@ -1,6 +1,6 @@
 package br.com.jogatinastore.sales.order.presentation.http;
 
-import br.com.jogatinastore.sales.order.application.dto.OrderResponseDTO;
+import br.com.jogatinastore.sales.order.application.dto.OrderResponseDto;
 import br.com.jogatinastore.sales.order.application.service.OrderService;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import br.com.jogatinastore.shared.pagination.PageResponse;
@@ -29,7 +29,7 @@ public class OrderController implements br.com.jogatinastore.sales.order.present
 
     @Override
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderResponseDTO> getOrder(
+    public ResponseEntity<OrderResponseDto> getOrder(
             @AuthenticationPrincipal AuthenticatedUser auth,
             @PathVariable UUID id
     ) {
@@ -38,7 +38,7 @@ public class OrderController implements br.com.jogatinastore.sales.order.present
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PageResponse<OrderResponseDTO>> getOrders(
+    public ResponseEntity<PageResponse<OrderResponseDto>> getOrders(
             @AuthenticationPrincipal AuthenticatedUser auth,
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable

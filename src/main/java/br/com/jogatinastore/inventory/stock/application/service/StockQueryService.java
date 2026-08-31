@@ -1,6 +1,6 @@
 package br.com.jogatinastore.inventory.stock.application.service;
 
-import br.com.jogatinastore.inventory.stock.application.dto.StockResponseDTO;
+import br.com.jogatinastore.inventory.stock.application.dto.StockResponseDto;
 import br.com.jogatinastore.inventory.stock.domain.model.Stock;
 import br.com.jogatinastore.inventory.stock.domain.exception.StockErrors;
 import br.com.jogatinastore.inventory.stock.presentation.filter.StockManagerFilter;
@@ -29,7 +29,7 @@ public class StockQueryService {
         this.repository = repository;
     }
 
-    public PageResponse<StockResponseDTO> findAll(
+    public PageResponse<StockResponseDto> findAll(
             StockManagerFilter filter,
             Pageable pageable
     ) {
@@ -37,8 +37,8 @@ public class StockQueryService {
 
         Specification<Stock> spec = StockSpecificationFactory.managerView(filter);
 
-        Page<StockResponseDTO> page = repository.findAll(spec, pageable)
-                .map(StockResponseDTO::new);
+        Page<StockResponseDto> page = repository.findAll(spec, pageable)
+                .map(StockResponseDto::new);
 
         return new PageResponse<>(
                 page.getContent(),
@@ -48,10 +48,10 @@ public class StockQueryService {
         );
     }
 
-    public StockResponseDTO findById(UUID id) {
+    public StockResponseDto findById(UUID id) {
         logger.debug("Loading stock. id={}", id);
 
-        return new StockResponseDTO(findEntityById(id));
+        return new StockResponseDto(findEntityById(id));
     }
 
     public List<Stock> findByProductIdIn(List<UUID> ids) {

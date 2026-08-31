@@ -1,8 +1,8 @@
 package br.com.jogatinastore.sales.cart.presentation.docs;
 
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
-import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDTO;
-import br.com.jogatinastore.sales.cart.application.dto.CartResponseDTO;
+import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDto;
+import br.com.jogatinastore.sales.cart.application.dto.CartResponseDto;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,7 +32,7 @@ public interface CartControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CartResponseDTO> getCart(
+    ResponseEntity<CartResponseDto> getCart(
             @AuthenticationPrincipal AuthenticatedUser auth
     );
 
@@ -56,7 +56,7 @@ public interface CartControllerDocs {
     )
     ResponseEntity<Void> addProduct(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @RequestBody @Valid CartAddProductRequestDTO dto
+            @RequestBody @Valid CartAddProductRequestDto dto
     );
 
 

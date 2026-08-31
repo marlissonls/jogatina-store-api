@@ -1,9 +1,9 @@
 package br.com.jogatinastore.inventory.stock.presentation.http;
 
-import br.com.jogatinastore.inventory.stock.application.dto.StockCreateDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockResponseDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockMinimumQuantityUpdateDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockAvailableQuantityUpdateDTO;
+import br.com.jogatinastore.inventory.stock.application.dto.StockCreateDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockResponseDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockMinimumQuantityUpdateDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockAvailableQuantityUpdateDto;
 import br.com.jogatinastore.inventory.stock.presentation.docs.StockControllerDocs;
 import br.com.jogatinastore.inventory.stock.presentation.filter.StockManagerFilter;
 import br.com.jogatinastore.inventory.stock.application.service.StockCommandService;
@@ -43,7 +43,7 @@ public class StockController implements StockControllerDocs {
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<StockResponseDTO> create(@RequestBody @Valid StockCreateDTO dto) {
+    public ResponseEntity<StockResponseDto> create(@RequestBody @Valid StockCreateDto dto) {
         var response = commandService.create(dto);
 
         URI location = ServletUriComponentsBuilder
@@ -57,7 +57,7 @@ public class StockController implements StockControllerDocs {
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PageResponse<StockResponseDTO>> findAll(
+    public ResponseEntity<PageResponse<StockResponseDto>> findAll(
             @ParameterObject @ModelAttribute StockManagerFilter filter,
             @PageableDefault(size = 12, sort = "availableQuantity") Pageable pageable
     ) {
@@ -68,7 +68,7 @@ public class StockController implements StockControllerDocs {
 
     @Override
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<StockResponseDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<StockResponseDto> findById(@PathVariable UUID id) {
         return ResponseEntity.ok().body(queryService.findById(id));
     }
 
@@ -76,7 +76,7 @@ public class StockController implements StockControllerDocs {
     @PatchMapping(path = "/{id}/minimum-stock", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateMinimumQuantity(
             @PathVariable UUID id,
-            @RequestBody @Valid StockMinimumQuantityUpdateDTO dto) {
+            @RequestBody @Valid StockMinimumQuantityUpdateDto dto) {
 
         commandService.updateMinimumQuantity(id, dto);
         return ResponseEntity.noContent().build();
@@ -86,7 +86,7 @@ public class StockController implements StockControllerDocs {
     @PatchMapping(path = "/{id}/increase", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> increase(
             @PathVariable UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDTO dto) {
+            @RequestBody @Valid StockAvailableQuantityUpdateDto dto) {
 
         commandService.increase(id, dto);
         return ResponseEntity.noContent().build();
@@ -96,7 +96,7 @@ public class StockController implements StockControllerDocs {
     @PatchMapping(path = "/{id}/write-off", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> writeOff(
             @PathVariable UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDTO dto) {
+            @RequestBody @Valid StockAvailableQuantityUpdateDto dto) {
 
         commandService.writeOff(id, dto);
         return ResponseEntity.noContent().build();
@@ -106,7 +106,7 @@ public class StockController implements StockControllerDocs {
     @PatchMapping(path = "/{id}/reserve", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> reserve(
             @PathVariable UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDTO dto) {
+            @RequestBody @Valid StockAvailableQuantityUpdateDto dto) {
 
         commandService.reserve(id, dto);
         return ResponseEntity.noContent().build();
@@ -116,7 +116,7 @@ public class StockController implements StockControllerDocs {
     @PatchMapping(path = "/{id}/release", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> release(
             @PathVariable UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDTO dto) {
+            @RequestBody @Valid StockAvailableQuantityUpdateDto dto) {
 
         commandService.release(id, dto);
         return ResponseEntity.noContent().build();

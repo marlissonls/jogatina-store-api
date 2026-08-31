@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Schema(name = "OrderResponseDTO")
+@Schema(name = "OrderResponseDto")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record OrderResponseDTO(
+public record OrderResponseDto(
         UUID id,
         UUID customerId,
         BigDecimal subTotalAmount,
@@ -24,7 +24,7 @@ public record OrderResponseDTO(
         LocalDateTime createdAt,
         List<OrderItemSnapshot> items
 ) {
-    public OrderResponseDTO(Order order, List<OrderItemSnapshot> items) {
+    public OrderResponseDto(Order order, List<OrderItemSnapshot> items) {
         this(
                 order.getId(),
                 order.getCustomerId(),

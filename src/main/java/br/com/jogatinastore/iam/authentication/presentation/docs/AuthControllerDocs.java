@@ -1,9 +1,9 @@
 package br.com.jogatinastore.iam.authentication.presentation.docs;
 
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
-import br.com.jogatinastore.iam.authentication.application.dto.AccountCredentialsDTO;
-import br.com.jogatinastore.iam.authentication.application.dto.RefreshTokenDTO;
-import br.com.jogatinastore.iam.authentication.application.dto.TokenDTO;
+import br.com.jogatinastore.iam.authentication.application.dto.AccountCredentialsDto;
+import br.com.jogatinastore.iam.authentication.application.dto.RefreshTokenDto;
+import br.com.jogatinastore.iam.authentication.application.dto.TokenDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,7 +24,7 @@ public interface AuthControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<TokenDTO> signIn(@RequestBody @Valid AccountCredentialsDTO credentials);
+    ResponseEntity<TokenDto> signIn(@RequestBody @Valid AccountCredentialsDto credentials);
 
     @Operation(
             summary = "Refresh token for authenticated user and returns a token",
@@ -36,5 +36,5 @@ public interface AuthControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<TokenDTO> refresh(@RequestBody @Valid RefreshTokenDTO refresh);
+    ResponseEntity<TokenDto> refresh(@RequestBody @Valid RefreshTokenDto refresh);
 }

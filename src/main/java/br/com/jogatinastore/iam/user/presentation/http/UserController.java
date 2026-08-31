@@ -1,11 +1,11 @@
 package br.com.jogatinastore.iam.user.presentation.http;
 
+import br.com.jogatinastore.iam.user.application.dto.UserEmployeeCreateDto;
+import br.com.jogatinastore.iam.user.application.dto.UserCreateDto;
+import br.com.jogatinastore.iam.user.application.dto.UserResponseDto;
 import br.com.jogatinastore.iam.user.presentation.docs.UserControllerDocs;
-import br.com.jogatinastore.iam.user.application.dto.request.CreateEmployeeInput;
-import br.com.jogatinastore.iam.user.application.dto.request.CreateUserInput;
-import br.com.jogatinastore.iam.user.application.dto.request.UpdateUserRoleInput;
+import br.com.jogatinastore.iam.user.application.dto.UserUpdateRoleDto;
 import br.com.jogatinastore.shared.pagination.PageResponse;
-import br.com.jogatinastore.iam.user.application.dto.response.UserResponseOutput;
 import br.com.jogatinastore.iam.user.application.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +37,7 @@ public class UserController implements UserControllerDocs {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<PageResponse<UserResponseOutput>> findAll(
+    public ResponseEntity<PageResponse<UserResponseDto>> findAll(
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.ASC)
             Pageable pageable
     ) {
@@ -48,15 +48,15 @@ public class UserController implements UserControllerDocs {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<UserResponseOutput> findById(@PathVariable UUID id) {
+    public ResponseEntity<UserResponseDto> findById(@PathVariable UUID id) {
 
         return ResponseEntity.ok().body(service.findById(id));
     }
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserResponseOutput> create(@RequestBody @Valid CreateUserInput dto) {
-        UserResponseOutput response = service.create(dto);
+    public ResponseEntity<UserResponseDto> create(@RequestBody @Valid UserCreateDto dto) {
+        UserResponseDto response = service.create(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -71,8 +71,8 @@ public class UserController implements UserControllerDocs {
     @PostMapping(path = "/employee", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<UserResponseOutput> createEmployee(@RequestBody @Valid CreateEmployeeInput dto) {
-        UserResponseOutput response = service.createEmployee(dto);
+    public ResponseEntity<UserResponseDto> createEmployee(@RequestBody @Valid UserEmployeeCreateDto dto) {
+        UserResponseDto response = service.createEmployee(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -87,7 +87,7 @@ public class UserController implements UserControllerDocs {
     @PutMapping(path = "/assignRole", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UpdateUserRoleInput dto) {
+    public ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UserUpdateRoleDto dto) {
         service.assignRoleToUser(dto);
         return ResponseEntity.noContent().build();
     }
@@ -96,7 +96,7 @@ public class UserController implements UserControllerDocs {
     @PutMapping(path = "/removeRole", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UpdateUserRoleInput dto) {
+    public ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UserUpdateRoleDto dto) {
         service.removeRoleFromUser(dto);
         return ResponseEntity.noContent().build();
     }

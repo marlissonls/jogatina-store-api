@@ -31,7 +31,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<ProductPublicResponseDTO>> searchPublicViewProducts(
+    ResponseEntity<PageResponse<ProductPublicResponseDto>> searchPublicViewProducts(
             @ParameterObject @ModelAttribute ProductPublicFilter filter,
             @PageableDefault(size = 12, sort = "title") Pageable pageable
     );
@@ -47,7 +47,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductPublicResponseDTO> findBySlug(@PathVariable String slug);
+    ResponseEntity<ProductPublicResponseDto> findBySlug(@PathVariable String slug);
 
     @Operation(
             summary = "Searching manager Products",
@@ -61,7 +61,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<ProductWithStockResponseDTO>> searchManagerViewProducts(
+    ResponseEntity<PageResponse<ProductWithStockResponseDto>> searchManagerViewProducts(
             @ParameterObject @ModelAttribute ProductManagerFilter filter,
             @PageableDefault(size = 12, sort = "title") Pageable pageable
     );
@@ -79,7 +79,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDTO> findById(@PathVariable UUID id);
+    ResponseEntity<ProductWithStockResponseDto> findById(@PathVariable UUID id);
 
     @Operation(
             summary = "Fetching Product by barcode",
@@ -94,7 +94,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDTO> findByBarcode(@PathVariable String barcode);
+    ResponseEntity<ProductWithStockResponseDto> findByBarcode(@PathVariable String barcode);
 
     @Operation(
             summary = "Fetching Product by SKU",
@@ -109,7 +109,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDTO> findBySku(@PathVariable String sku);
+    ResponseEntity<ProductWithStockResponseDto> findBySku(@PathVariable String sku);
 
     @Operation(
             summary = "Creating a Product",
@@ -123,7 +123,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductResponseDTO> create(@RequestBody @Valid ProductCreateDTO dto);
+    ResponseEntity<ProductResponseDto> create(@RequestBody @Valid ProductCreateDto dto);
 
     @Operation(
             summary = "Updating a Product",
@@ -138,9 +138,9 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductResponseDTO> update(
+    ResponseEntity<ProductResponseDto> update(
             @PathVariable @NotNull UUID id,
-            @RequestBody @Valid ProductUpdateDTO dto);
+            @RequestBody @Valid ProductUpdateDto dto);
 
     @Operation(
             summary = "Deactivating a Product",

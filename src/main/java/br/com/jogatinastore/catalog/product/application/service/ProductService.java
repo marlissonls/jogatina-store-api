@@ -2,11 +2,11 @@ package br.com.jogatinastore.catalog.product.application.service;
 
 import br.com.jogatinastore.catalog.brand.application.service.BrandService;
 import br.com.jogatinastore.catalog.category.application.service.CategoryService;
-import br.com.jogatinastore.catalog.product.application.dto.ProductPublicResponseDTO;
-import br.com.jogatinastore.catalog.product.application.dto.ProductCreateDTO;
-import br.com.jogatinastore.catalog.product.application.dto.ProductResponseDTO;
-import br.com.jogatinastore.catalog.product.application.dto.ProductWithStockResponseDTO;
-import br.com.jogatinastore.catalog.product.application.dto.ProductUpdateDTO;
+import br.com.jogatinastore.catalog.product.application.dto.ProductPublicResponseDto;
+import br.com.jogatinastore.catalog.product.application.dto.ProductCreateDto;
+import br.com.jogatinastore.catalog.product.application.dto.ProductResponseDto;
+import br.com.jogatinastore.catalog.product.application.dto.ProductWithStockResponseDto;
+import br.com.jogatinastore.catalog.product.application.dto.ProductUpdateDto;
 import br.com.jogatinastore.catalog.product.domain.model.Product;
 import br.com.jogatinastore.catalog.product.domain.exception.ProductErrors;
 import br.com.jogatinastore.catalog.product.presentation.filter.ProductManagerFilter;
@@ -58,7 +58,7 @@ public class ProductService {
         this.brandService = brandService;
     }
 
-    public PageResponse<ProductPublicResponseDTO> getPublicViewProducts(
+    public PageResponse<ProductPublicResponseDto> getPublicViewProducts(
             ProductPublicFilter filter, Pageable pageable
     ) {
         logger.info("Search public products. filter={}", filter);
@@ -70,7 +70,7 @@ public class ProductService {
 
         var stocksByProductId = findStocksByProductIds(page);
 
-        var items = page.map(product -> new ProductPublicResponseDTO(
+        var items = page.map(product -> new ProductPublicResponseDto(
                 product,
                 stocksByProductId.get(product.getId())
         )).getContent();
@@ -83,7 +83,7 @@ public class ProductService {
         );
     }
 
-    public PageResponse<ProductWithStockResponseDTO> getManagerViewProducts(
+    public PageResponse<ProductWithStockResponseDto> getManagerViewProducts(
             ProductManagerFilter filter, Pageable pageable
     ) {
         logger.debug("Fetching filtered products");
@@ -95,7 +95,7 @@ public class ProductService {
 
         var stocksByProductId = findStocksByProductIds(page);
 
-        var items = page.map(product -> new ProductWithStockResponseDTO(
+        var items = page.map(product -> new ProductWithStockResponseDto(
                 product,
                 stocksByProductId.get(product.getId())
         )).getContent();
@@ -108,14 +108,14 @@ public class ProductService {
         );
     }
 
-    public ProductWithStockResponseDTO findById(UUID id) {
+    public ProductWithStockResponseDto findById(UUID id) {
         logger.debug("Fetching product id={}", id);
 
         var product = findEntityById(id);
 
         var stock = getStock(product);
 
-        return new ProductWithStockResponseDTO(product, stock);
+        return new ProductWithStockResponseDto(product, stock);
     }
 
     public ProductSnapshot getAvailableProduct(UUID id) {
@@ -132,7 +132,7 @@ public class ProductService {
         return repository.findProductsForAvailabilityCheck(ids);
     }
 
-    public ProductPublicResponseDTO findBySlug(String slug) {
+    public ProductPublicResponseDto findBySlug(String slug) {
         logger.debug("Fetching product slug={}", slug);
 
         var product = repository.findBySlugAndActiveTrue(slug)
@@ -140,10 +140,10 @@ public class ProductService {
 
         var stock = getStock(product);
 
-        return new ProductPublicResponseDTO(product, stock);
+        return new ProductPublicResponseDto(product, stock);
     }
 
-    public ProductWithStockResponseDTO findByBarcode(String barcode) {
+    public ProductWithStockResponseDto findByBarcode(String barcode) {
         logger.debug("Fetching product barcode={}", barcode);
 
         var product = repository.findByBarcode(barcode)
@@ -151,10 +151,10 @@ public class ProductService {
 
         var stock = getStock(product);
 
-        return new ProductWithStockResponseDTO(product, stock);
+        return new ProductWithStockResponseDto(product, stock);
     }
 
-    public ProductWithStockResponseDTO findBySku(String sku) {
+    public ProductWithStockResponseDto findBySku(String sku) {
         logger.debug("Fetching product sku={}", sku);
 
         var product = repository.findBySku(sku)
@@ -162,11 +162,11 @@ public class ProductService {
 
         var stock = getStock(product);
 
-        return new ProductWithStockResponseDTO(product, stock);
+        return new ProductWithStockResponseDto(product, stock);
     }
 
     @Transactional
-    public ProductResponseDTO create(ProductCreateDTO dto) {
+    public ProductResponseDto create(ProductCreateDto dto) {
         logger.debug("Creating Product: {}", dto.title());
 
         try {
@@ -181,7 +181,7 @@ public class ProductService {
 
             logger.info("Product created successfully. product title={}", created.getTitle());
 
-            return new ProductResponseDTO(created);
+            return new ProductResponseDto(created);
         } catch (DataIntegrityViolationException ex) {
             handleUniqueConstraintViolation(ex);
             throw ex;
@@ -189,7 +189,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDTO update(UUID id, ProductUpdateDTO dto) {
+    public ProductResponseDto update(UUID id, ProductUpdateDto dto) {
         logger.debug("Updating Product: {}", dto.title());
 
         Product product = findEntityById(id);
@@ -208,7 +208,7 @@ public class ProductService {
 
         logger.info("Product updated successfully. product title={}", updated.getTitle());
 
-        return new ProductResponseDTO(updated);
+        return new ProductResponseDto(updated);
     }
 
     @Transactional

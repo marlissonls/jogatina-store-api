@@ -2,9 +2,9 @@ package br.com.jogatinastore.catalog.product.domain.model;
 
 import br.com.jogatinastore.catalog.brand.domain.model.Brand;
 import br.com.jogatinastore.catalog.category.domain.model.Category;
-import br.com.jogatinastore.catalog.product.application.dto.ProductUpdateDTO;
+import br.com.jogatinastore.catalog.product.application.dto.ProductUpdateDto;
 import br.com.jogatinastore.inventory.stock.domain.model.Stock;
-import br.com.jogatinastore.catalog.product.application.dto.ProductCreateDTO;
+import br.com.jogatinastore.catalog.product.application.dto.ProductCreateDto;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -107,7 +107,7 @@ public class Product {
     }
 
     public static Product createFrom(
-            ProductCreateDTO dto,
+            ProductCreateDto dto,
             String slug,
             Category category,
             Brand brand)
@@ -126,7 +126,7 @@ public class Product {
         );
     }
 
-    public void update(ProductUpdateDTO dto, Category category, Brand brand) {
+    public void update(ProductUpdateDto dto, Category category, Brand brand) {
 
         if (dto.title() != null && !dto.title().isBlank())
             this.setTitle(dto.title());

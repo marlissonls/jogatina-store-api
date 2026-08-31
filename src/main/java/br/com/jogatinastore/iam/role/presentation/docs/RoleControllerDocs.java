@@ -1,8 +1,8 @@
 package br.com.jogatinastore.iam.role.presentation.docs;
 
-import br.com.jogatinastore.iam.role.application.dto.RoleCreateDTO;
-import br.com.jogatinastore.iam.role.application.dto.RoleResponseDTO;
-import br.com.jogatinastore.iam.role.application.dto.RoleUpdateDTO;
+import br.com.jogatinastore.iam.role.application.dto.RoleCreateDto;
+import br.com.jogatinastore.iam.role.application.dto.RoleResponseDto;
+import br.com.jogatinastore.iam.role.application.dto.RoleUpdateDto;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import br.com.jogatinastore.shared.pagination.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +35,7 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<RoleResponseDTO>> findAll(
+    ResponseEntity<PageResponse<RoleResponseDto>> findAll(
             @PageableDefault(size = 12, sort = "title", direction = Sort.Direction.ASC)
             Pageable pageable
     );
@@ -52,7 +52,7 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<RoleResponseDTO> findById(@PathVariable UUID id);
+    ResponseEntity<RoleResponseDto> findById(@PathVariable UUID id);
 
     @Operation(
             summary = "Finding one Role by title",
@@ -67,7 +67,7 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<RoleResponseDTO> findByTitle(@RequestParam String title);
+    ResponseEntity<RoleResponseDto> findByTitle(@RequestParam String title);
 
     @Operation(
             summary = "Add a new Role",
@@ -81,7 +81,7 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<RoleResponseDTO> create(@RequestBody @Valid RoleCreateDTO dto);
+    ResponseEntity<RoleResponseDto> create(@RequestBody @Valid RoleCreateDto dto);
 
     @Operation(
             summary = "Update one Role",
@@ -96,8 +96,8 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<RoleResponseDTO> update(
+    ResponseEntity<RoleResponseDto> update(
             @PathVariable UUID id,
-            @RequestBody @Valid RoleUpdateDTO dto
+            @RequestBody @Valid RoleUpdateDto dto
     );
 }

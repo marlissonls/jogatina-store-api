@@ -4,7 +4,7 @@ import br.com.jogatinastore.inventory.stock.application.movement.StockMovementIt
 import br.com.jogatinastore.inventory.stock.application.service.StockCommandService;
 import br.com.jogatinastore.sales.cart.application.service.CartService;
 import br.com.jogatinastore.sales.cart.application.snapshot.CartSnapshot;
-import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDTO;
+import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
 import br.com.jogatinastore.sales.order.application.contract.OrderCreationData;
 import br.com.jogatinastore.sales.order.application.contract.OrderItemData;
 import br.com.jogatinastore.sales.order.domain.model.Order;
@@ -36,7 +36,7 @@ public class CheckoutService {
     }
 
     @Transactional
-    public CheckoutResponseDTO checkout(UUID userId) {
+    public CheckoutResponseDto checkout(UUID userId) {
         logger.debug("Checkout started. customerId={}", userId);
 
         CartSnapshot snapshot = cartService.getCartSnapshot(userId);
@@ -54,7 +54,7 @@ public class CheckoutService {
                 userId, order.getId(), snapshot.items().size(), order.getTotalAmount()
         );
 
-        return new CheckoutResponseDTO(order, snapshot.items());
+        return new CheckoutResponseDto(order, snapshot.items());
     }
 
     private List<StockMovementItem> buildReservationItems(CartSnapshot snapshot) {

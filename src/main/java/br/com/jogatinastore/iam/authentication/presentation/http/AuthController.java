@@ -1,9 +1,9 @@
 package br.com.jogatinastore.iam.authentication.presentation.http;
 
 import br.com.jogatinastore.iam.authentication.presentation.docs.AuthControllerDocs;
-import br.com.jogatinastore.iam.authentication.application.dto.AccountCredentialsDTO;
-import br.com.jogatinastore.iam.authentication.application.dto.RefreshTokenDTO;
-import br.com.jogatinastore.iam.authentication.application.dto.TokenDTO;
+import br.com.jogatinastore.iam.authentication.application.dto.AccountCredentialsDto;
+import br.com.jogatinastore.iam.authentication.application.dto.RefreshTokenDto;
+import br.com.jogatinastore.iam.authentication.application.dto.TokenDto;
 import br.com.jogatinastore.iam.authentication.application.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,14 +24,14 @@ public class AuthController implements AuthControllerDocs {
 
     @Override
     @PostMapping(path = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TokenDTO> signIn(@RequestBody @Valid AccountCredentialsDTO credentials) {
+    public ResponseEntity<TokenDto> signIn(@RequestBody @Valid AccountCredentialsDto credentials) {
 
         return ResponseEntity.ok().body(service.signIn(credentials));
     }
 
     @Override
     @PostMapping(path = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TokenDTO> refresh(@RequestBody @Valid RefreshTokenDTO refresh) {
+    public ResponseEntity<TokenDto> refresh(@RequestBody @Valid RefreshTokenDto refresh) {
 
         return ResponseEntity.ok().body(service.refreshToken(refresh));
     }

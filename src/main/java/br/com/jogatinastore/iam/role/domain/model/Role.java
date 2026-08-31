@@ -1,7 +1,7 @@
 package br.com.jogatinastore.iam.role.domain.model;
 
-import br.com.jogatinastore.iam.role.application.dto.RoleCreateDTO;
-import br.com.jogatinastore.iam.role.application.dto.RoleUpdateDTO;
+import br.com.jogatinastore.iam.role.application.dto.RoleCreateDto;
+import br.com.jogatinastore.iam.role.application.dto.RoleUpdateDto;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -33,14 +33,14 @@ public class Role implements GrantedAuthority {
         this.description = description;
     }
 
-    public static Role createFrom(RoleCreateDTO dto) {
+    public static Role createFrom(RoleCreateDto dto) {
         return new Role(
                 dto.title(),
                 dto.description()
         );
     }
 
-    public void applyUpdate(RoleUpdateDTO dto) {
+    public void applyUpdate(RoleUpdateDto dto) {
         this.title = dto.title();
         this.description = dto.description();
     }

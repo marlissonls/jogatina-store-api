@@ -1,7 +1,7 @@
 package br.com.jogatinastore.sales.cart.presentation.http;
 
-import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDTO;
-import br.com.jogatinastore.sales.cart.application.dto.CartResponseDTO;
+import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDto;
+import br.com.jogatinastore.sales.cart.application.dto.CartResponseDto;
 import br.com.jogatinastore.sales.cart.application.service.CartService;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,7 +27,7 @@ public class CartController implements br.com.jogatinastore.sales.cart.presentat
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CartResponseDTO> getCart(
+    public ResponseEntity<CartResponseDto> getCart(
             @AuthenticationPrincipal AuthenticatedUser auth
     ) {
         return ResponseEntity.ok(service.getCart(UUID.fromString(auth.getId())));
@@ -37,7 +37,7 @@ public class CartController implements br.com.jogatinastore.sales.cart.presentat
     @PostMapping(value = "/items", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addProduct(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @RequestBody @Valid CartAddProductRequestDTO dto
+            @RequestBody @Valid CartAddProductRequestDto dto
     ) {
         service.addProduct(UUID.fromString(auth.getId()), dto);
 

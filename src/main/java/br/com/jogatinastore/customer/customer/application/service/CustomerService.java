@@ -1,8 +1,8 @@
 package br.com.jogatinastore.customer.customer.application.service;
 
-import br.com.jogatinastore.customer.customer.application.dto.CustomerCreateDTO;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerUpdateDTO;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerResponseDTO;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerCreateDto;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerUpdateDto;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerResponseDto;
 import br.com.jogatinastore.customer.customer.domain.model.Customer;
 import br.com.jogatinastore.customer.customer.application.mapper.CustomerMapper;
 import br.com.jogatinastore.customer.customer.infrastructure.persistence.CustomerRepository;
@@ -43,13 +43,13 @@ public class CustomerService {
         this.userService = userService;
     }
 
-    public PageResponse<CustomerResponseDTO> findAll(Pageable pageable) {
+    public PageResponse<CustomerResponseDto> findAll(Pageable pageable) {
 
         logger.debug("Fetching all Customers. page={}", pageable);
 
         Page<Customer> page = repository.findAll(pageable);
 
-        List<CustomerResponseDTO> items = page.stream()
+        List<CustomerResponseDto> items = page.stream()
                 .map(mapper::toResponse)
                 .toList();
 
@@ -61,25 +61,25 @@ public class CustomerService {
         );
     }
 
-    public CustomerResponseDTO findById(UUID id) {
+    public CustomerResponseDto findById(UUID id) {
 
         logger.debug("Starting findById. customerId={}", id);
 
         Customer customer = findEntityById(id);
-        CustomerResponseDTO response = mapper.toResponse(customer);
+        CustomerResponseDto response = mapper.toResponse(customer);
 
         logger.info("Customer retrieved successfully. customerId={}", id);
 
         return response;
     }
 
-    public CustomerResponseDTO me(UUID userId) {
+    public CustomerResponseDto me(UUID userId) {
 
         logger.debug("Fetching authenticated customer profile. customerId={}", userId);
 
         Customer customer = findEntityById(userId);
 
-        CustomerResponseDTO response = mapper.toResponse(customer);
+        CustomerResponseDto response = mapper.toResponse(customer);
 
         logger.info("Customer profile retrieved successfully. customerId={}", userId);
 
@@ -87,7 +87,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerResponseDTO create(UUID userId, CustomerCreateDTO dto) {
+    public CustomerResponseDto create(UUID userId, CustomerCreateDto dto) {
 
         logger.debug("Creating customer. userId={}", userId);
 
@@ -106,7 +106,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerResponseDTO update(UUID id, CustomerUpdateDTO dto) {
+    public CustomerResponseDto update(UUID id, CustomerUpdateDto dto) {
 
         logger.debug("Updating customer. customerId={}", id);
 
@@ -119,7 +119,7 @@ public class CustomerService {
         return mapper.toResponse(updatedCustomer);
     }
 
-    private void applyUpdate(CustomerUpdateDTO dto, Customer customer) {
+    private void applyUpdate(CustomerUpdateDto dto, Customer customer) {
         customer.setName(dto.name());
         customer.setPhone(dto.phone());
         customer.setBirthDate(dto.birthDate());

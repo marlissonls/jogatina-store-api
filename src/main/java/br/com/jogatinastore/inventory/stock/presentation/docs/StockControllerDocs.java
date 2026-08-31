@@ -1,9 +1,9 @@
 package br.com.jogatinastore.inventory.stock.presentation.docs;
 
-import br.com.jogatinastore.inventory.stock.application.dto.StockAvailableQuantityUpdateDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockCreateDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockMinimumQuantityUpdateDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockResponseDTO;
+import br.com.jogatinastore.inventory.stock.application.dto.StockAvailableQuantityUpdateDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockCreateDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockMinimumQuantityUpdateDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockResponseDto;
 import br.com.jogatinastore.inventory.stock.presentation.filter.StockManagerFilter;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import br.com.jogatinastore.shared.pagination.PageResponse;
@@ -38,8 +38,8 @@ public interface StockControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<StockResponseDTO> create(
-            @RequestBody @Valid StockCreateDTO dto
+    ResponseEntity<StockResponseDto> create(
+            @RequestBody @Valid StockCreateDto dto
     );
 
 
@@ -59,7 +59,7 @@ public interface StockControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<StockResponseDTO>> findAll(
+    ResponseEntity<PageResponse<StockResponseDto>> findAll(
             @ParameterObject
             @ModelAttribute StockManagerFilter filter,
             @PageableDefault(size = 12, sort = "availableQuantity")
@@ -84,7 +84,7 @@ public interface StockControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<StockResponseDTO> findById(
+    ResponseEntity<StockResponseDto> findById(
             @PathVariable UUID id
     );
 
@@ -108,7 +108,7 @@ public interface StockControllerDocs {
     )
     ResponseEntity<Void> updateMinimumQuantity(
             @PathVariable UUID id,
-            @RequestBody @Valid StockMinimumQuantityUpdateDTO dto
+            @RequestBody @Valid StockMinimumQuantityUpdateDto dto
     );
 
 
@@ -131,7 +131,7 @@ public interface StockControllerDocs {
     )
     ResponseEntity<Void> increase(
             @PathVariable UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDTO dto
+            @RequestBody @Valid StockAvailableQuantityUpdateDto dto
     );
 
 
@@ -154,7 +154,7 @@ public interface StockControllerDocs {
     )
     ResponseEntity<Void> writeOff(
             @PathVariable UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDTO dto
+            @RequestBody @Valid StockAvailableQuantityUpdateDto dto
     );
 
 
@@ -177,7 +177,7 @@ public interface StockControllerDocs {
     )
     ResponseEntity<Void> reserve(
             @PathVariable UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDTO dto
+            @RequestBody @Valid StockAvailableQuantityUpdateDto dto
     );
 
 
@@ -200,7 +200,7 @@ public interface StockControllerDocs {
     )
     ResponseEntity<Void> release(
             @PathVariable UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDTO dto
+            @RequestBody @Valid StockAvailableQuantityUpdateDto dto
     );
 }
 

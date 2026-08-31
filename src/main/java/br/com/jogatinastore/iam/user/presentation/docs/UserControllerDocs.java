@@ -1,11 +1,11 @@
 package br.com.jogatinastore.iam.user.presentation.docs;
 
-import br.com.jogatinastore.iam.user.application.dto.request.CreateEmployeeInput;
-import br.com.jogatinastore.iam.user.application.dto.request.UpdateUserRoleInput;
+import br.com.jogatinastore.iam.user.application.dto.UserEmployeeCreateDto;
+import br.com.jogatinastore.iam.user.application.dto.UserCreateDto;
+import br.com.jogatinastore.iam.user.application.dto.UserResponseDto;
+import br.com.jogatinastore.iam.user.application.dto.UserUpdateRoleDto;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import br.com.jogatinastore.shared.pagination.PageResponse;
-import br.com.jogatinastore.iam.user.application.dto.request.CreateUserInput;
-import br.com.jogatinastore.iam.user.application.dto.response.UserResponseOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,7 +35,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<UserResponseOutput>> findAll(
+    ResponseEntity<PageResponse<UserResponseDto>> findAll(
             @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable
     );
@@ -53,7 +53,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<UserResponseOutput> findById(@PathVariable UUID id);
+    ResponseEntity<UserResponseDto> findById(@PathVariable UUID id);
 
     @PostMapping
     @Operation(
@@ -65,7 +65,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<UserResponseOutput> create(@RequestBody @Valid CreateUserInput dto);
+    ResponseEntity<UserResponseDto> create(@RequestBody @Valid UserCreateDto dto);
 
     @PostMapping
     @Operation(
@@ -80,7 +80,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<UserResponseOutput> createEmployee(@RequestBody @Valid CreateEmployeeInput dto);
+    ResponseEntity<UserResponseDto> createEmployee(@RequestBody @Valid UserEmployeeCreateDto dto);
 
     @Operation(
             summary = "Assign role to User",
@@ -94,7 +94,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UpdateUserRoleInput dto);
+    ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UserUpdateRoleDto dto);
 
     @Operation(
             summary = "Remove role from User",
@@ -108,7 +108,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UpdateUserRoleInput dto);
+    ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UserUpdateRoleDto dto);
 
     @Operation(
             summary = "Delete one User",

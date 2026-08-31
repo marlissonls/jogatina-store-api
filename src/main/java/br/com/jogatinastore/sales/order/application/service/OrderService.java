@@ -4,7 +4,7 @@ import br.com.jogatinastore.customer.customer.application.service.CustomerServic
 import br.com.jogatinastore.inventory.stock.application.movement.StockMovementItem;
 import br.com.jogatinastore.inventory.stock.application.service.StockCommandService;
 import br.com.jogatinastore.sales.order.application.contract.OrderCreationData;
-import br.com.jogatinastore.sales.order.application.dto.OrderResponseDTO;
+import br.com.jogatinastore.sales.order.application.dto.OrderResponseDto;
 import br.com.jogatinastore.sales.order.domain.model.Order;
 import br.com.jogatinastore.sales.order.domain.exception.OrderErrors;
 import br.com.jogatinastore.sales.order.infrastructure.persistence.OrderRepository;
@@ -40,7 +40,7 @@ public class OrderService {
         this.stockService = stockService;
     }
 
-    public OrderResponseDTO getOrder(UUID id, UUID userId) {
+    public OrderResponseDto getOrder(UUID id, UUID userId) {
         logger.debug("Fetching order for orderId={}, customerId={}", id, userId);
 
         Order order = repository.findByIdAndCustomerId(id, userId)
@@ -54,16 +54,16 @@ public class OrderService {
                 .map(OrderItemSnapshot::new)
                 .toList();
 
-        return new OrderResponseDTO(order, items);
+        return new OrderResponseDto(order, items);
     }
 
-    public PageResponse<OrderResponseDTO> getOrders(UUID userId, Pageable pageable) {
+    public PageResponse<OrderResponseDto> getOrders(UUID userId, Pageable pageable) {
         logger.debug("Fetching orders for customerId={}", userId);
 
         Page<Order> page = repository.findAllByCustomerId(userId, pageable);
 
-        List<OrderResponseDTO> orders = page
-                .map(order -> new OrderResponseDTO(order, null))
+        List<OrderResponseDto> orders = page
+                .map(order -> new OrderResponseDto(order, null))
                 .getContent();
 
         return new PageResponse<>(

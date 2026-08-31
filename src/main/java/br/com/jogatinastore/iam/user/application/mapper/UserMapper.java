@@ -1,9 +1,9 @@
 package br.com.jogatinastore.iam.user.application.mapper;
 
-import br.com.jogatinastore.iam.user.application.dto.request.CreateEmployeeInput;
+import br.com.jogatinastore.iam.user.application.dto.UserEmployeeCreateDto;
+import br.com.jogatinastore.iam.user.application.dto.UserResponseDto;
 import br.com.jogatinastore.iam.user.domain.model.User;
-import br.com.jogatinastore.iam.user.application.dto.request.CreateUserInput;
-import br.com.jogatinastore.iam.user.application.dto.response.UserResponseOutput;
+import br.com.jogatinastore.iam.user.application.dto.UserCreateDto;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -12,18 +12,18 @@ import java.util.List;
 public interface UserMapper {
 
     @Mapping(target = "roles", source = "userRoles")
-    UserResponseOutput toResponse(User user);
+    UserResponseDto toResponse(User user);
 
-    List<UserResponseOutput> toResponseList(List<User> users);
+    List<UserResponseDto> toResponseList(List<User> users);
 
-
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "email", source = "email")
-    User toEntity(CreateUserInput dto);
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "email", source = "email")
-    User toEmployeeEntity(CreateEmployeeInput dto);
+    User toEntity(UserCreateDto dto);
 
-    List<User> toEntityList(List<CreateUserInput> dtos);
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "email", source = "email")
+    User toEmployeeEntity(UserEmployeeCreateDto dto);
+
+    List<User> toEntityList(List<UserCreateDto> dtos);
 }

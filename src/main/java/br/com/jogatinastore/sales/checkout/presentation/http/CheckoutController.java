@@ -1,7 +1,7 @@
 package br.com.jogatinastore.sales.checkout.presentation.http;
 
 import br.com.jogatinastore.sales.checkout.application.service.CheckoutService;
-import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDTO;
+import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import br.com.jogatinastore.sales.checkout.presentation.docs.CheckoutControllerDocs;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,7 +26,7 @@ public class CheckoutController implements CheckoutControllerDocs {
     @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CheckoutResponseDTO> checkout(
+    public ResponseEntity<CheckoutResponseDto> checkout(
             @AuthenticationPrincipal AuthenticatedUser auth
     ) {
         return ResponseEntity.ok().body(service.checkout(UUID.fromString(auth.getId())));

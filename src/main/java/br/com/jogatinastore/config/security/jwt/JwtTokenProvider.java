@@ -2,7 +2,7 @@ package br.com.jogatinastore.config.security.jwt;
 
 import br.com.jogatinastore.config.security.jwt.exception.InvalidJwtTokenException;
 import br.com.jogatinastore.iam.authentication.domain.exception.AuthErrors;
-import br.com.jogatinastore.iam.authentication.application.dto.TokenDTO;
+import br.com.jogatinastore.iam.authentication.application.dto.TokenDto;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -52,14 +52,14 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public TokenDTO createAccessToken(String userId, String email, List<String> roles) {
+    public TokenDto createAccessToken(String userId, String email, List<String> roles) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
         Date refreshValidity = new Date(now.getTime() + refreshValidityInMilliseconds);
         String accessToken = getAccessToken(userId, email, roles, now, validity);
         String refreshToken = getRefreshToken(userId, email, roles, now, refreshValidity);
 
-        return new TokenDTO(email, true, now, validity, accessToken, refreshToken);
+        return new TokenDto(email, true, now, validity, accessToken, refreshToken);
     }
 
     private String getAccessToken(String userId, String email, List<String> roles, Date now, Date validity) {
@@ -168,7 +168,7 @@ public class JwtTokenProvider {
         }
     }
 
-    public TokenDTO issueTokens(
+    public TokenDto issueTokens(
             String id,
             String email,
             Collection<? extends GrantedAuthority> authorities

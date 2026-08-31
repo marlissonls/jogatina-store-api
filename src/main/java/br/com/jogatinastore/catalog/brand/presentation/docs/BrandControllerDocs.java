@@ -1,8 +1,8 @@
 package br.com.jogatinastore.catalog.brand.presentation.docs;
 
-import br.com.jogatinastore.catalog.brand.application.dto.BrandPublicDTO;
-import br.com.jogatinastore.catalog.brand.application.dto.BrandRequestDTO;
-import br.com.jogatinastore.catalog.brand.application.dto.BrandResponseDTO;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandPublicDto;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandRequestDto;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandResponseDto;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,7 +26,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
             }
     )
-    ResponseEntity<List<BrandPublicDTO>> findPublicBrands();
+    ResponseEntity<List<BrandPublicDto>> findPublicBrands();
 
     @Operation(
             summary = "Fetching Brand by slug",
@@ -38,7 +38,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandPublicDTO> findBySlug(@PathVariable String slug);
+    ResponseEntity<BrandPublicDto> findBySlug(@PathVariable String slug);
 
     @Operation(
             summary = "Fetching all Brands",
@@ -51,7 +51,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<List<BrandResponseDTO>> findAll();
+    ResponseEntity<List<BrandResponseDto>> findAll();
 
     @Operation(
             summary = "Creating a Brand",
@@ -65,7 +65,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandResponseDTO> create(@RequestBody @Valid BrandRequestDTO dto);
+    ResponseEntity<BrandResponseDto> create(@RequestBody @Valid BrandRequestDto dto);
 
     @Operation(
             summary = "Fetching Brand by ID",
@@ -80,7 +80,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandResponseDTO> findById(@PathVariable UUID id);
+    ResponseEntity<BrandResponseDto> findById(@PathVariable UUID id);
 
     @Operation(
             summary = "Updating a Brand",
@@ -95,9 +95,9 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandResponseDTO> update(
+    ResponseEntity<BrandResponseDto> update(
             @PathVariable UUID id,
-            @RequestBody @Valid BrandRequestDTO dto);
+            @RequestBody @Valid BrandRequestDto dto);
 
     @Operation(
             summary = "Deactivating a Brand",

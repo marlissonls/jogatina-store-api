@@ -3,10 +3,10 @@ package br.com.jogatinastore.iam.user.application.service;
 import br.com.jogatinastore.iam.role.domain.code.RoleCode;
 import br.com.jogatinastore.iam.role.domain.model.Role;
 import br.com.jogatinastore.iam.role.application.service.RoleService;
-import br.com.jogatinastore.iam.user.application.dto.request.CreateEmployeeInput;
-import br.com.jogatinastore.iam.user.application.dto.request.CreateUserInput;
-import br.com.jogatinastore.iam.user.application.dto.request.UpdateUserRoleInput;
-import br.com.jogatinastore.iam.user.application.dto.response.UserResponseOutput;
+import br.com.jogatinastore.iam.user.application.dto.UserEmployeeCreateDto;
+import br.com.jogatinastore.iam.user.application.dto.UserCreateDto;
+import br.com.jogatinastore.iam.user.application.dto.UserUpdateRoleDto;
+import br.com.jogatinastore.iam.user.application.dto.UserResponseDto;
 import br.com.jogatinastore.iam.user.domain.exception.UserErrors;
 import br.com.jogatinastore.iam.user.domain.model.User;
 import br.com.jogatinastore.iam.user.application.mapper.UserMapper;
@@ -49,7 +49,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public PageResponse<UserResponseOutput> findAll(Pageable pageable) {
+    public PageResponse<UserResponseDto> findAll(Pageable pageable) {
 
         logger.debug("Fetching all users. pagination={}", pageable);
 
@@ -71,12 +71,12 @@ public class UserService {
         );
     }
 
-    public UserResponseOutput findById(UUID id) {
+    public UserResponseDto findById(UUID id) {
 
         logger.debug("Fetching user. userId={}", id);
 
         User user = findByIdWithRoles(id);
-        UserResponseOutput response = mapper.toResponse(user);
+        UserResponseDto response = mapper.toResponse(user);
 
         logger.info("Successfully retrieved user. userId={}", id);
 
@@ -84,7 +84,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseOutput create(CreateUserInput dto) {
+    public UserResponseDto create(UserCreateDto dto) {
 
         logger.debug("Creating new user domain. data={}", dto);
 
@@ -106,7 +106,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseOutput createEmployee(CreateEmployeeInput dto) {
+    public UserResponseDto createEmployee(UserEmployeeCreateDto dto) {
 
         logger.debug("Creating new user employee domain. data={}", dto);
 
@@ -161,7 +161,7 @@ public class UserService {
     }
 
     @Transactional
-    public void assignRoleToUser(UpdateUserRoleInput dto) {
+    public void assignRoleToUser(UserUpdateRoleDto dto) {
         logger.debug("Assigning role to user. userId={}, roleId={}", dto.userId(), dto.roleId());
 
         User user =  findByIdWithRoles(dto.userId());
@@ -174,7 +174,7 @@ public class UserService {
     }
 
     @Transactional
-    public void removeRoleFromUser(UpdateUserRoleInput dto) {
+    public void removeRoleFromUser(UserUpdateRoleDto dto) {
         logger.debug("Removing role fom user. userId={}, roleId={}", dto.userId(), dto.roleId());
 
         User user =  findByIdWithRoles(dto.userId());

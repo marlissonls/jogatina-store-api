@@ -1,8 +1,8 @@
 package br.com.jogatinastore.catalog.category.presentation.http;
 
-import br.com.jogatinastore.catalog.category.application.dto.CategoryPublicDTO;
-import br.com.jogatinastore.catalog.category.application.dto.CategoryRequestDTO;
-import br.com.jogatinastore.catalog.category.application.dto.CategoryResponseDTO;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryPublicDto;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryRequestDto;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryResponseDto;
 import br.com.jogatinastore.catalog.category.application.service.CategoryService;
 import br.com.jogatinastore.catalog.category.presentation.docs.CategoryControllerDocs;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,13 +32,13 @@ public class CategoryController implements CategoryControllerDocs {
     // PUBLIC ENDPOINTS
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CategoryPublicDTO>> findPublicCategories() {
+    public ResponseEntity<List<CategoryPublicDto>> findPublicCategories() {
         return ResponseEntity.ok().body(service.findPublicCategories());
     }
 
     @Override
     @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoryPublicDTO> findBySlug(@PathVariable String slug) {
+    public ResponseEntity<CategoryPublicDto> findBySlug(@PathVariable String slug) {
         return ResponseEntity.ok().body(service.findBySlug(slug));
     }
 
@@ -47,7 +47,7 @@ public class CategoryController implements CategoryControllerDocs {
     @GetMapping(path = "/manager", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<List<CategoryResponseDTO>> findAll() {
+    public ResponseEntity<List<CategoryResponseDto>> findAll() {
         return ResponseEntity.ok().body(service.findAll());
     }
 
@@ -55,7 +55,7 @@ public class CategoryController implements CategoryControllerDocs {
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CategoryResponseDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<CategoryResponseDto> findById(@PathVariable UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
@@ -63,8 +63,8 @@ public class CategoryController implements CategoryControllerDocs {
     @PostMapping(path = "/manager", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CategoryResponseDTO> create(@RequestBody @Valid CategoryRequestDTO dto) {
-        CategoryResponseDTO response = service.create(dto);
+    public ResponseEntity<CategoryResponseDto> create(@RequestBody @Valid CategoryRequestDto dto) {
+        CategoryResponseDto response = service.create(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -78,9 +78,9 @@ public class CategoryController implements CategoryControllerDocs {
     @PutMapping(path = "/manager/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CategoryResponseDTO> update(
+    public ResponseEntity<CategoryResponseDto> update(
             @PathVariable UUID id,
-            @RequestBody @Valid CategoryRequestDTO dto) {
+            @RequestBody @Valid CategoryRequestDto dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
 

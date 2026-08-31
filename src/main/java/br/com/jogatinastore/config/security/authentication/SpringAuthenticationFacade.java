@@ -1,6 +1,6 @@
 package br.com.jogatinastore.config.security.authentication;
 
-import br.com.jogatinastore.iam.authentication.application.dto.AccountCredentialsDTO;
+import br.com.jogatinastore.iam.authentication.application.dto.AccountCredentialsDto;
 import br.com.jogatinastore.iam.security.authentication.AuthenticationFacade;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +20,7 @@ public class SpringAuthenticationFacade implements AuthenticationFacade {
     }
 
     @Override
-    public AuthenticatedUser authenticate(AccountCredentialsDTO credentials) {
+    public AuthenticatedUser authenticate(AccountCredentialsDto credentials) {
 
         Authentication authentication =
             authenticationManager.authenticate(

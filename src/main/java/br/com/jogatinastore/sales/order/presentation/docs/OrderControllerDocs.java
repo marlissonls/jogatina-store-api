@@ -1,7 +1,7 @@
 package br.com.jogatinastore.sales.order.presentation.docs;
 
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
-import br.com.jogatinastore.sales.order.application.dto.OrderResponseDTO;
+import br.com.jogatinastore.sales.order.application.dto.OrderResponseDto;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import br.com.jogatinastore.shared.pagination.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public interface OrderControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<OrderResponseDTO> getOrder(
+    ResponseEntity<OrderResponseDto> getOrder(
             @AuthenticationPrincipal AuthenticatedUser auth,
             @PathVariable UUID id
     );
@@ -58,7 +58,7 @@ public interface OrderControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<OrderResponseDTO>> getOrders(
+    ResponseEntity<PageResponse<OrderResponseDto>> getOrders(
             @AuthenticationPrincipal AuthenticatedUser auth,
             @PageableDefault(
                     size = 12,

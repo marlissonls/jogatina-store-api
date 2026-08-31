@@ -1,8 +1,8 @@
 package br.com.jogatinastore.catalog.category.presentation.docs;
 
-import br.com.jogatinastore.catalog.category.application.dto.CategoryPublicDTO;
-import br.com.jogatinastore.catalog.category.application.dto.CategoryRequestDTO;
-import br.com.jogatinastore.catalog.category.application.dto.CategoryResponseDTO;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryPublicDto;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryRequestDto;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryResponseDto;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +33,7 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<List<CategoryPublicDTO>> findPublicCategories();
+    ResponseEntity<List<CategoryPublicDto>> findPublicCategories();
 
 
     @Operation(
@@ -51,7 +51,7 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CategoryPublicDTO> findBySlug(
+    ResponseEntity<CategoryPublicDto> findBySlug(
             @PathVariable String slug
     );
 
@@ -74,7 +74,7 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<List<CategoryResponseDTO>> findAll();
+    ResponseEntity<List<CategoryResponseDto>> findAll();
 
 
     @Operation(
@@ -94,7 +94,7 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CategoryResponseDTO> findById(
+    ResponseEntity<CategoryResponseDto> findById(
             @PathVariable UUID id
     );
 
@@ -116,8 +116,8 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CategoryResponseDTO> create(
-            @RequestBody @Valid CategoryRequestDTO dto
+    ResponseEntity<CategoryResponseDto> create(
+            @RequestBody @Valid CategoryRequestDto dto
     );
 
 
@@ -139,9 +139,9 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CategoryResponseDTO> update(
+    ResponseEntity<CategoryResponseDto> update(
             @PathVariable UUID id,
-            @RequestBody @Valid CategoryRequestDTO dto
+            @RequestBody @Valid CategoryRequestDto dto
     );
 
 

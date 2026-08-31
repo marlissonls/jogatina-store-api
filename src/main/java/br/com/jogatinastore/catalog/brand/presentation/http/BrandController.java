@@ -1,8 +1,8 @@
 package br.com.jogatinastore.catalog.brand.presentation.http;
 
-import br.com.jogatinastore.catalog.brand.application.dto.BrandPublicDTO;
-import br.com.jogatinastore.catalog.brand.application.dto.BrandRequestDTO;
-import br.com.jogatinastore.catalog.brand.application.dto.BrandResponseDTO;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandPublicDto;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandRequestDto;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandResponseDto;
 import br.com.jogatinastore.catalog.brand.application.service.BrandService;
 import br.com.jogatinastore.catalog.brand.presentation.docs.BrandControllerDocs;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,13 +31,13 @@ public class BrandController implements BrandControllerDocs {
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BrandPublicDTO>> findPublicBrands() {
+    public ResponseEntity<List<BrandPublicDto>> findPublicBrands() {
         return ResponseEntity.ok().body(service.findPublicCategories());
     }
 
     @Override
     @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BrandPublicDTO> findBySlug(@PathVariable String slug) {
+    public ResponseEntity<BrandPublicDto> findBySlug(@PathVariable String slug) {
         return ResponseEntity.ok().body(service.findBySlug(slug));
     }
 
@@ -45,7 +45,7 @@ public class BrandController implements BrandControllerDocs {
     @GetMapping(path = "/manager/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<List<BrandResponseDTO>> findAll() {
+    public ResponseEntity<List<BrandResponseDto>> findAll() {
         return ResponseEntity.ok().body(service.findAll());
     }
 
@@ -53,8 +53,8 @@ public class BrandController implements BrandControllerDocs {
     @PostMapping(path = "/manager", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<BrandResponseDTO> create(@RequestBody @Valid BrandRequestDTO dto) {
-        BrandResponseDTO response = service.create(dto);
+    public ResponseEntity<BrandResponseDto> create(@RequestBody @Valid BrandRequestDto dto) {
+        BrandResponseDto response = service.create(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -68,7 +68,7 @@ public class BrandController implements BrandControllerDocs {
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<BrandResponseDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<BrandResponseDto> findById(@PathVariable UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
@@ -76,9 +76,9 @@ public class BrandController implements BrandControllerDocs {
     @PutMapping(path = "/manager/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<BrandResponseDTO> update(
+    public ResponseEntity<BrandResponseDto> update(
             @PathVariable UUID id,
-            @RequestBody @Valid BrandRequestDTO dto) {
+            @RequestBody @Valid BrandRequestDto dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
 

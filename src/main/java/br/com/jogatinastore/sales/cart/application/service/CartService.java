@@ -3,8 +3,8 @@ package br.com.jogatinastore.sales.cart.application.service;
 import br.com.jogatinastore.catalog.product.application.service.ProductService;
 import br.com.jogatinastore.catalog.product.application.snapshot.ProductSnapshot;
 import br.com.jogatinastore.inventory.stock.domain.exception.StockErrors;
-import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDTO;
-import br.com.jogatinastore.sales.cart.application.dto.CartResponseDTO;
+import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDto;
+import br.com.jogatinastore.sales.cart.application.dto.CartResponseDto;
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
 import br.com.jogatinastore.sales.cart.domain.exception.CartErrors;
 import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
@@ -43,7 +43,7 @@ public class CartService {
         this.productService = productService;
     }
 
-    public CartResponseDTO getCart(UUID userId) {
+    public CartResponseDto getCart(UUID userId) {
         logger.debug("Fetching open cart for customerId={}", userId);
 
         Optional<Cart> cartOpt =  repository.findByCustomerIdAndStatus(userId, CartStatus.ACTIVE);
@@ -59,11 +59,11 @@ public class CartService {
             items = repository.findCartItems(cart.getId());
         }
 
-        return new CartResponseDTO(cart, items);
+        return new CartResponseDto(cart, items);
     }
 
     @Transactional
-    public void addProduct(UUID userId, CartAddProductRequestDTO dto) {
+    public void addProduct(UUID userId, CartAddProductRequestDto dto) {
         logger.debug("Adding product to cart. customerId={}, productId={}, quantity={}",
                 userId, dto.productId(), dto.quantity());
 

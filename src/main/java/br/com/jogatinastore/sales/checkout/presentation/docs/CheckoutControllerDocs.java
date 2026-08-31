@@ -1,7 +1,7 @@
 package br.com.jogatinastore.sales.checkout.presentation.docs;
 
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
-import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDTO;
+import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +30,7 @@ public interface CheckoutControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CheckoutResponseDTO> checkout(
+    ResponseEntity<CheckoutResponseDto> checkout(
             @AuthenticationPrincipal AuthenticatedUser auth
     );
 }

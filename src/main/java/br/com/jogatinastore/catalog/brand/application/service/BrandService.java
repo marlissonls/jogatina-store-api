@@ -1,9 +1,9 @@
 package br.com.jogatinastore.catalog.brand.application.service;
 
 import br.com.jogatinastore.catalog.brand.infrastructure.persistence.BrandRepository;
-import br.com.jogatinastore.catalog.brand.application.dto.BrandPublicDTO;
-import br.com.jogatinastore.catalog.brand.application.dto.BrandRequestDTO;
-import br.com.jogatinastore.catalog.brand.application.dto.BrandResponseDTO;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandPublicDto;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandRequestDto;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandResponseDto;
 import br.com.jogatinastore.catalog.brand.domain.model.Brand;
 import br.com.jogatinastore.catalog.brand.domain.exception.BrandErrors;
 import br.com.jogatinastore.shared.exception.base.ConflictException;
@@ -27,16 +27,16 @@ public class BrandService {
         this.repository = repository;
     }
 
-    public List<BrandPublicDTO> findPublicCategories() {
+    public List<BrandPublicDto> findPublicCategories() {
         logger.debug("Fetching public Categories");
 
         return repository.findByActiveTrue()
             .stream()
-            .map(BrandPublicDTO::new)
+            .map(BrandPublicDto::new)
             .toList();
     }
 
-    public BrandPublicDTO findBySlug(String slug) {
+    public BrandPublicDto findBySlug(String slug) {
         logger.debug("Fetching brand slug={}", slug);
 
         var brand = repository.findBySlugAndActiveTrue(slug)
@@ -45,20 +45,20 @@ public class BrandService {
                         BrandErrors.Code.BRAND_NOT_FOUND
                 ));
 
-        return new BrandPublicDTO(brand);
+        return new BrandPublicDto(brand);
     }
 
-    public List<BrandResponseDTO> findAll() {
+    public List<BrandResponseDto> findAll() {
         logger.debug("Fetching all Categories");
 
         return repository.findAll()
             .stream()
-            .map(BrandResponseDTO::new)
+            .map(BrandResponseDto::new)
             .toList();
     }
 
     @Transactional
-    public BrandResponseDTO create(BrandRequestDTO dto) {
+    public BrandResponseDto create(BrandRequestDto dto) {
         logger.debug("Creating brand: {}", dto.title());
 
         String slug = SlugUtils.toSlug(dto.title());
@@ -71,12 +71,12 @@ public class BrandService {
 
         logger.info("Brand created successfully. id={}", saved.getId());
 
-        return new BrandResponseDTO(saved);
+        return new BrandResponseDto(saved);
     }
 
-    public BrandResponseDTO findById(UUID id) {
+    public BrandResponseDto findById(UUID id) {
         logger.debug("Fetching brand id={}", id);
-        return new BrandResponseDTO(findEntityById(id));
+        return new BrandResponseDto(findEntityById(id));
     }
 
     public Brand getValidReference(UUID id) {
@@ -88,7 +88,7 @@ public class BrandService {
     }
 
     @Transactional
-    public BrandResponseDTO update(UUID id, BrandRequestDTO dto) {
+    public BrandResponseDto update(UUID id, BrandRequestDto dto) {
         logger.debug("Updating brand id={}", id);
 
         Brand brand = findEntityById(id);
@@ -100,7 +100,7 @@ public class BrandService {
 
         logger.info("Brand updated successfully id={}", id);
 
-        return new BrandResponseDTO(brand);
+        return new BrandResponseDto(brand);
     }
 
     @Transactional

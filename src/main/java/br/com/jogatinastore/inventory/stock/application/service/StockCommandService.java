@@ -1,9 +1,9 @@
 package br.com.jogatinastore.inventory.stock.application.service;
 
-import br.com.jogatinastore.inventory.stock.application.dto.StockAvailableQuantityUpdateDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockCreateDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockMinimumQuantityUpdateDTO;
-import br.com.jogatinastore.inventory.stock.application.dto.StockResponseDTO;
+import br.com.jogatinastore.inventory.stock.application.dto.StockAvailableQuantityUpdateDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockCreateDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockMinimumQuantityUpdateDto;
+import br.com.jogatinastore.inventory.stock.application.dto.StockResponseDto;
 import br.com.jogatinastore.inventory.stock.domain.model.Stock;
 import br.com.jogatinastore.inventory.stock.application.movement.StockMovementItem;
 import br.com.jogatinastore.inventory.stock.domain.exception.StockErrors;
@@ -36,7 +36,7 @@ public class StockCommandService {
     }
 
     @Transactional
-    public StockResponseDTO create(StockCreateDTO dto) {
+    public StockResponseDto create(StockCreateDto dto) {
         logger.debug("Creating stock. productId={}", dto.productId());
 
         var product = productService.getValidReference(dto.productId());
@@ -51,11 +51,11 @@ public class StockCommandService {
 
         logger.info("Stock created successfully. id={}, productId={}", saved.getId(), saved.getProductId());
 
-        return new StockResponseDTO(saved);
+        return new StockResponseDto(saved);
     }
 
     @Transactional
-    public void updateMinimumQuantity(UUID id, StockMinimumQuantityUpdateDTO dto) {
+    public void updateMinimumQuantity(UUID id, StockMinimumQuantityUpdateDto dto) {
         logger.debug("Updating stock minimum quantity. id={}, new minimum quantity={}", id, dto.newMinimumQuantity());
 
         int updated = repository.updateMinimumQuantity(id, dto.newMinimumQuantity());
@@ -68,7 +68,7 @@ public class StockCommandService {
     }
 
     @Transactional
-    public void increase(UUID id, StockAvailableQuantityUpdateDTO dto) {
+    public void increase(UUID id, StockAvailableQuantityUpdateDto dto) {
         logger.debug("Increasing stock quantity. id={}, quantity={}", id, dto.amount());
 
         int updated = repository.increase(id, dto.amount());
@@ -81,7 +81,7 @@ public class StockCommandService {
     }
 
     @Transactional
-    public void writeOff(UUID id, StockAvailableQuantityUpdateDTO dto) {
+    public void writeOff(UUID id, StockAvailableQuantityUpdateDto dto) {
         logger.debug("Writing off stock quantity. id={}, quantity={}", id, dto.amount());
 
         int updated = repository.writeOff(id, dto.amount());
@@ -94,7 +94,7 @@ public class StockCommandService {
     }
 
     @Transactional
-    public void reserve(UUID id, StockAvailableQuantityUpdateDTO dto) {
+    public void reserve(UUID id, StockAvailableQuantityUpdateDto dto) {
         logger.debug("Reserving stock quantity. id={}, quantity={}", id, dto.amount());
 
         int updated = repository.reserve(id, dto.amount());
@@ -107,7 +107,7 @@ public class StockCommandService {
     }
 
     @Transactional
-    public void release(UUID id, StockAvailableQuantityUpdateDTO dto) {
+    public void release(UUID id, StockAvailableQuantityUpdateDto dto) {
         logger.debug("Releasing reserved stock quantity. id={}, quantity={}", id, dto.amount());
 
         int updated = repository.release(id, dto.amount());
@@ -120,7 +120,7 @@ public class StockCommandService {
     }
 
     @Transactional
-    public void commit(UUID id, StockAvailableQuantityUpdateDTO dto) {
+    public void commit(UUID id, StockAvailableQuantityUpdateDto dto) {
         logger.debug("Committing reserved stock quantity. id={}, quantity={}", id, dto.amount());
 
         int updated = repository.commit(id, dto.amount());

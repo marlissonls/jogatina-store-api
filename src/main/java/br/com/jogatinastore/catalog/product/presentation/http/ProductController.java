@@ -38,7 +38,7 @@ public class ProductController implements ProductControllerDocs {
     // ?search={search}&category={category}&brand={brand}&onSale={onSale}&featured={featured}&isNew={isNew}&minPrice={minPrice}&maxPrice={maxPrice}
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PageResponse<ProductPublicResponseDTO>> searchPublicViewProducts(
+    public ResponseEntity<PageResponse<ProductPublicResponseDto>> searchPublicViewProducts(
             @ParameterObject @ModelAttribute ProductPublicFilter filter,
             @PageableDefault(size = 12, sort = "title") Pageable pageable
     ) {
@@ -50,7 +50,7 @@ public class ProductController implements ProductControllerDocs {
     // findBySlug
     @Override
     @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductPublicResponseDTO> findBySlug(@PathVariable String slug) {
+    public ResponseEntity<ProductPublicResponseDto> findBySlug(@PathVariable String slug) {
         return ResponseEntity.ok().body(service.findBySlug(slug));
     }
 
@@ -60,7 +60,7 @@ public class ProductController implements ProductControllerDocs {
     @GetMapping(path = "/manager", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<PageResponse<ProductWithStockResponseDTO>> searchManagerViewProducts(
+    public ResponseEntity<PageResponse<ProductWithStockResponseDto>> searchManagerViewProducts(
             @ParameterObject @ModelAttribute ProductManagerFilter filter,
             @PageableDefault(size = 12, sort = "title") Pageable pageable
     ) {
@@ -74,7 +74,7 @@ public class ProductController implements ProductControllerDocs {
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<ProductWithStockResponseDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<ProductWithStockResponseDto> findById(@PathVariable UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
@@ -83,7 +83,7 @@ public class ProductController implements ProductControllerDocs {
     @GetMapping(path = "/manager/barcode/{barcode}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<ProductWithStockResponseDTO> findByBarcode(@PathVariable String barcode) {
+    public ResponseEntity<ProductWithStockResponseDto> findByBarcode(@PathVariable String barcode) {
         return ResponseEntity.ok().body(service.findByBarcode(barcode));
     }
 
@@ -92,7 +92,7 @@ public class ProductController implements ProductControllerDocs {
     @GetMapping(path = "/manager/sku/{sku}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<ProductWithStockResponseDTO> findBySku(@PathVariable String sku) {
+    public ResponseEntity<ProductWithStockResponseDto> findBySku(@PathVariable String sku) {
         return ResponseEntity.ok().body(service.findBySku(sku));
     }
 
@@ -101,8 +101,8 @@ public class ProductController implements ProductControllerDocs {
     @PostMapping(path = "/manager", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<ProductResponseDTO> create(@RequestBody @Valid ProductCreateDTO dto) {
-        ProductResponseDTO response = service.create(dto);
+    public ResponseEntity<ProductResponseDto> create(@RequestBody @Valid ProductCreateDto dto) {
+        ProductResponseDto response = service.create(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -118,9 +118,9 @@ public class ProductController implements ProductControllerDocs {
     @PutMapping(path = "/manager/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<ProductResponseDTO> update(
+    public ResponseEntity<ProductResponseDto> update(
             @PathVariable @NotNull UUID id,
-            @RequestBody @Valid ProductUpdateDTO dto) {
+            @RequestBody @Valid ProductUpdateDto dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
 

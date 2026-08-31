@@ -1,8 +1,8 @@
 package br.com.jogatinastore.iam.role.application.service;
 
-import br.com.jogatinastore.iam.role.application.dto.RoleCreateDTO;
-import br.com.jogatinastore.iam.role.application.dto.RoleResponseDTO;
-import br.com.jogatinastore.iam.role.application.dto.RoleUpdateDTO;
+import br.com.jogatinastore.iam.role.application.dto.RoleCreateDto;
+import br.com.jogatinastore.iam.role.application.dto.RoleResponseDto;
+import br.com.jogatinastore.iam.role.application.dto.RoleUpdateDto;
 import br.com.jogatinastore.iam.role.domain.model.Role;
 import br.com.jogatinastore.iam.role.domain.exception.RoleErrors;
 import br.com.jogatinastore.iam.role.infrastructure.persistence.RoleRepository;
@@ -31,14 +31,14 @@ public class RoleService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<RoleResponseDTO> findAll(Pageable pageable) {
+    public PageResponse<RoleResponseDto> findAll(Pageable pageable) {
 
         logger.debug("Fetching all roles. pagination={}", pageable);
 
         var page = repository.findAll(pageable);
 
         var items = page.getContent().stream()
-                .map(RoleResponseDTO::new)
+                .map(RoleResponseDto::new)
                 .toList();
 
         return new PageResponse<>(
@@ -50,7 +50,7 @@ public class RoleService {
     }
 
     @Transactional(readOnly = true)
-    public RoleResponseDTO findById(UUID id) {
+    public RoleResponseDto findById(UUID id) {
 
         logger.debug("Fetching role. roleId={}", id);
 
@@ -58,11 +58,11 @@ public class RoleService {
 
         logger.info("Role retrieved successfully. id={}", role.getId());
 
-        return new RoleResponseDTO(role);
+        return new RoleResponseDto(role);
     }
 
     @Transactional(readOnly = true)
-    public RoleResponseDTO findByTitle(String title) {
+    public RoleResponseDto findByTitle(String title) {
         logger.debug("Fetching role by title. title={}", title);
 
         Role role = getByTitle(title);
@@ -70,7 +70,7 @@ public class RoleService {
         logger.info("Role retrieved by title successfully. id={}, title={}",
                 role.getId(), role.getTitle());
 
-        return new RoleResponseDTO(role);
+        return new RoleResponseDto(role);
     }
 
     public Role getByTitle(String title) {
@@ -102,7 +102,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleResponseDTO create(RoleCreateDTO dto) {
+    public RoleResponseDto create(RoleCreateDto dto) {
 
         logger.debug("Creating role. title={}", dto.title());
 
@@ -114,11 +114,11 @@ public class RoleService {
 
         logger.info("Role created successfully. roleId={}", savedRole.getId());
 
-        return new RoleResponseDTO(savedRole);
+        return new RoleResponseDto(savedRole);
     }
 
     @Transactional
-    public RoleResponseDTO update(UUID id, RoleUpdateDTO dto) {
+    public RoleResponseDto update(UUID id, RoleUpdateDto dto) {
 
         logger.debug("Updating role. roleId={}", id);
 
@@ -130,7 +130,7 @@ public class RoleService {
 
         logger.info("Role updated successfully. roleId={}, roleTitle={}", role.getId(), role.getTitle());
 
-        return new RoleResponseDTO(role);
+        return new RoleResponseDto(role);
     }
 
     public @NonNull Role getEntityById(UUID id) {

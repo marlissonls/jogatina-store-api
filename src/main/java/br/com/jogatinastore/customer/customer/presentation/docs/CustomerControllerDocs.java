@@ -1,8 +1,8 @@
 package br.com.jogatinastore.customer.customer.presentation.docs;
 
-import br.com.jogatinastore.customer.customer.application.dto.CustomerCreateDTO;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerResponseDTO;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerUpdateDTO;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerCreateDto;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerResponseDto;
+import br.com.jogatinastore.customer.customer.application.dto.CustomerUpdateDto;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import br.com.jogatinastore.shared.pagination.PageResponse;
@@ -34,7 +34,7 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<CustomerResponseDTO>> findAll(
+    ResponseEntity<PageResponse<CustomerResponseDto>> findAll(
             @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable
     );
@@ -52,7 +52,7 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CustomerResponseDTO> findById(@PathVariable UUID id);
+    ResponseEntity<CustomerResponseDto> findById(@PathVariable UUID id);
 
     @Operation(
             summary = "Get current authenticated Customer",
@@ -66,7 +66,7 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CustomerResponseDTO> me(@AuthenticationPrincipal AuthenticatedUser auth);
+    ResponseEntity<CustomerResponseDto> me(@AuthenticationPrincipal AuthenticatedUser auth);
 
     @Operation(
             summary = "Add a new Customer",
@@ -78,9 +78,9 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<CustomerResponseDTO> create(
+    ResponseEntity<CustomerResponseDto> create(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @RequestBody @Valid CustomerCreateDTO dto
+            @RequestBody @Valid CustomerCreateDto dto
     );
 
     @Operation(
@@ -95,7 +95,7 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<CustomerResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid CustomerUpdateDTO dto);
+    ResponseEntity<CustomerResponseDto> update(@PathVariable UUID id, @RequestBody @Valid CustomerUpdateDto dto);
 
     @Operation(
             summary = "Delete one Customer",

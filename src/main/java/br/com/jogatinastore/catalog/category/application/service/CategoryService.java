@@ -1,8 +1,8 @@
 package br.com.jogatinastore.catalog.category.application.service;
 
-import br.com.jogatinastore.catalog.category.application.dto.CategoryPublicDTO;
-import br.com.jogatinastore.catalog.category.application.dto.CategoryRequestDTO;
-import br.com.jogatinastore.catalog.category.application.dto.CategoryResponseDTO;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryPublicDto;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryRequestDto;
+import br.com.jogatinastore.catalog.category.application.dto.CategoryResponseDto;
 import br.com.jogatinastore.catalog.category.domain.model.Category;
 import br.com.jogatinastore.catalog.category.domain.exception.CategoryErrors;
 import br.com.jogatinastore.catalog.category.infrastructure.persistence.CategoryRepository;
@@ -27,16 +27,16 @@ public class CategoryService {
         this.repository = repository;
     }
 
-    public List<CategoryPublicDTO> findPublicCategories() {
+    public List<CategoryPublicDto> findPublicCategories() {
         logger.debug("Fetching public Categories");
 
         return repository.findByActiveTrue()
             .stream()
-            .map(CategoryPublicDTO::new)
+            .map(CategoryPublicDto::new)
             .toList();
     }
 
-    public CategoryPublicDTO findBySlug(String slug) {
+    public CategoryPublicDto findBySlug(String slug) {
         logger.debug("Fetching category slug={}", slug);
 
         var category = repository.findBySlugAndActiveTrue(slug)
@@ -45,20 +45,20 @@ public class CategoryService {
                         CategoryErrors.Code.CATEGORY_NOT_FOUND
                 ));
 
-        return new CategoryPublicDTO(category);
+        return new CategoryPublicDto(category);
     }
 
-    public List<CategoryResponseDTO> findAll() {
+    public List<CategoryResponseDto> findAll() {
         logger.debug("Fetching all Categories");
 
         return repository.findAll()
             .stream()
-            .map(CategoryResponseDTO::new)
+            .map(CategoryResponseDto::new)
             .toList();
     }
 
     @Transactional
-    public CategoryResponseDTO create(CategoryRequestDTO dto) {
+    public CategoryResponseDto create(CategoryRequestDto dto) {
         logger.debug("Creating Category: {}", dto.title());
 
         String slug = SlugUtils.toSlug(dto.title());
@@ -71,12 +71,12 @@ public class CategoryService {
 
         logger.info("Category created successfully. id={}", saved.getId());
 
-        return new CategoryResponseDTO(saved);
+        return new CategoryResponseDto(saved);
     }
 
-    public CategoryResponseDTO findById(UUID id) {
+    public CategoryResponseDto findById(UUID id) {
         logger.debug("Fetching category id={}", id);
-        return new CategoryResponseDTO(findEntityById(id));
+        return new CategoryResponseDto(findEntityById(id));
     }
 
     public Category getValidReference(UUID id) {
@@ -88,7 +88,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponseDTO update(UUID id, CategoryRequestDTO dto) {
+    public CategoryResponseDto update(UUID id, CategoryRequestDto dto) {
         logger.debug("Updating category id={}", id);
 
         Category category = findEntityById(id);
@@ -100,7 +100,7 @@ public class CategoryService {
 
         logger.info("Category updated successfully id={}", id);
 
-        return new CategoryResponseDTO(category);
+        return new CategoryResponseDto(category);
     }
 
     @Transactional
