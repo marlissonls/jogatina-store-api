@@ -15,23 +15,22 @@ public final class PublicEndpoints {
             new AntPathRequestMatcher("/swagger-ui/**"),
 
             new AntPathRequestMatcher(
-                    "/api/user/v1",
+                    "/api/v1/users",
                     HttpMethod.POST.name()
             ),
 
             new AntPathRequestMatcher(
-                    "/api/products/v1/public",
+                    "/api/v1/products/public",
                     HttpMethod.GET.name()
             ),
 
             new AntPathRequestMatcher(
-                    "/api/products/v1/public/slug/**",
+                    "/api/v1/products/slug/**",
                     HttpMethod.GET.name()
             )
     );
 
-    private PublicEndpoints() {
-    }
+    private PublicEndpoints() {}
 
     public static RequestMatcher matcher() {
         return MATCHER;

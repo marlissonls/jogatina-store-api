@@ -4,12 +4,14 @@ import br.com.jogatinastore.sales.order.domain.model.Order;
 import br.com.jogatinastore.sales.order.application.snapshot.OrderItemSnapshot;
 import br.com.jogatinastore.sales.order.domain.status.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Schema(name = "OrderResponseDTO")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record OrderResponseDTO(
         UUID id,

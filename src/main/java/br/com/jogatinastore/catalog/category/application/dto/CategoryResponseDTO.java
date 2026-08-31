@@ -1,10 +1,12 @@
 package br.com.jogatinastore.catalog.category.application.dto;
 
 import br.com.jogatinastore.catalog.category.domain.model.Category;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Schema(name = "CategoryResponseDTO")
 public record CategoryResponseDTO(
     UUID id,
     String title,

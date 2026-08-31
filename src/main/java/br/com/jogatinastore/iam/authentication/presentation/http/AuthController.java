@@ -17,21 +17,20 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController implements AuthControllerDocs {
 
     private final AuthService service;
-    private final String JSON = MediaType.APPLICATION_JSON_VALUE;
 
     public AuthController(AuthService service) {
         this.service = service;
     }
 
-    @PostMapping(path = "/signin", produces = JSON)
     @Override
+    @PostMapping(path = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TokenDTO> signIn(@RequestBody @Valid AccountCredentialsDTO credentials) {
 
         return ResponseEntity.ok().body(service.signIn(credentials));
     }
 
-    @PostMapping(path = "/refresh", produces = JSON)
     @Override
+    @PostMapping(path = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TokenDTO> refresh(@RequestBody @Valid RefreshTokenDTO refresh) {
 
         return ResponseEntity.ok().body(service.refreshToken(refresh));

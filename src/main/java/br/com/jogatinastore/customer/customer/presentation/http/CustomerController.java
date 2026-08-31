@@ -24,21 +24,20 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/customers/v1")
+@RequestMapping("/api/v1/customers")
 @Tag(name = "Customers", description = "Endpoints for Customers management")
 public class CustomerController implements CustomerControllerDocs {
 
     private final CustomerService service;
-    private final String JSON = MediaType.APPLICATION_JSON_VALUE;
 
     public CustomerController(CustomerService service) {
         this.service = service;
     }
 
-    @GetMapping(produces = JSON)
+    @Override
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    @Override
     public ResponseEntity<PageResponse<CustomerResponseDTO>> findAll(
             @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable
@@ -46,26 +45,26 @@ public class CustomerController implements CustomerControllerDocs {
         return ResponseEntity.ok().body(service.findAll(pageable));
     }
 
-    @GetMapping(path = "/{id}", produces = JSON)
+    @Override
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    @Override
     public ResponseEntity<CustomerResponseDTO> findById(@PathVariable UUID id) {
 
         return ResponseEntity.ok().body(service.findById(id));
     }
 
-    @GetMapping(path = "/me", produces = JSON)
+    @Override
+    @GetMapping(path = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CUSTOMER')")
     @SecurityRequirement(name = "bearerAuth")
-    @Override
     public ResponseEntity<CustomerResponseDTO> me(@AuthenticationPrincipal AuthenticatedUser auth) {
 
         return ResponseEntity.ok().body(service.me(UUID.fromString(auth.getId())));
     }
 
-    @PostMapping(consumes = JSON, produces = JSON)
     @Override
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomerResponseDTO> create(
             @AuthenticationPrincipal AuthenticatedUser auth,
             @RequestBody @Valid CustomerCreateDTO dto
@@ -81,10 +80,10 @@ public class CustomerController implements CustomerControllerDocs {
         return ResponseEntity.created(location).body(response);
     }
 
-    @PutMapping(path = "/{id}", consumes = JSON, produces = JSON)
+    @Override
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.getId()")
     @SecurityRequirement(name = "bearerAuth")
-    @Override
     public ResponseEntity<CustomerResponseDTO> update(
             @PathVariable UUID id,
             @RequestBody @Valid CustomerUpdateDTO dto)
@@ -92,11 +91,11 @@ public class CustomerController implements CustomerControllerDocs {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
 
+    @Override
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
     @SecurityRequirement(name = "bearerAuth")
-    @Override
-    public ResponseEntity<?> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
 
         service.delete(id);
         return ResponseEntity.noContent().build();

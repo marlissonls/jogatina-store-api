@@ -4,6 +4,8 @@ import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDTO;
 import br.com.jogatinastore.sales.cart.application.dto.CartResponseDTO;
 import br.com.jogatinastore.sales.cart.application.service.CartService;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,23 +15,26 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/carts/v1")
-public class CartController {
+@RequestMapping("/api/v1/carts")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Carts", description = "Endpoints for Carts management")
+public class CartController implements br.com.jogatinastore.sales.cart.presentation.docs.CartControllerDocs {
     private final CartService service;
-    private final String JSON = MediaType.APPLICATION_JSON_VALUE;
 
     public CartController(CartService service) {
         this.service = service;
     }
 
-    @GetMapping(produces = JSON)
+    @Override
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CartResponseDTO> getCart(
             @AuthenticationPrincipal AuthenticatedUser auth
     ) {
         return ResponseEntity.ok(service.getCart(UUID.fromString(auth.getId())));
     }
 
-    @PostMapping(value = "/items", consumes = JSON)
+    @Override
+    @PostMapping(value = "/items", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addProduct(
             @AuthenticationPrincipal AuthenticatedUser auth,
             @RequestBody @Valid CartAddProductRequestDTO dto
@@ -39,6 +44,7 @@ public class CartController {
         return ResponseEntity.noContent().build();
     }
 
+    @Override
     @DeleteMapping("/items/product/{productId}")
     public ResponseEntity<Void> removeProduct(
             @AuthenticationPrincipal AuthenticatedUser auth,

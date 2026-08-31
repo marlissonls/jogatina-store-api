@@ -27,10 +27,10 @@ public interface RoleControllerDocs {
             description = "Finds all Roles with pagination",
             tags = {"Roles"},
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200"),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
@@ -45,8 +45,7 @@ public interface RoleControllerDocs {
             description = "Finds a specific Role based on the provided ID",
             tags = {"Roles"},
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200"),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
@@ -60,10 +59,10 @@ public interface RoleControllerDocs {
             description = "Finds a specific Role based on the provided title",
             tags = {"Roles"},
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200"),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
@@ -75,11 +74,10 @@ public interface RoleControllerDocs {
             description = "Adds a new Role by passing a JSON representation of the Role.",
             tags = {"Roles"},
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "201"),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Created", responseCode = "201"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
@@ -90,10 +88,10 @@ public interface RoleControllerDocs {
             description = "Updates a Role based on the provided ID and JSON representation of the Role.",
             tags = {"Roles"},
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200"),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }

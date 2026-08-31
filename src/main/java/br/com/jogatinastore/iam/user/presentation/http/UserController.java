@@ -23,7 +23,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/user/v1")
+@RequestMapping("/api/v1/users")
 @Tag(name = "Users", description = "Endpoints for Users management")
 public class UserController implements UserControllerDocs {
 
@@ -33,10 +33,10 @@ public class UserController implements UserControllerDocs {
         this.service = service;
     }
 
+    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    @Override
     public ResponseEntity<PageResponse<UserResponseOutput>> findAll(
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.ASC)
             Pageable pageable
@@ -82,7 +82,6 @@ public class UserController implements UserControllerDocs {
 
         return ResponseEntity.created(location).body(response);
     }
-
 
     @Override
     @PutMapping(path = "/assignRole", consumes = MediaType.APPLICATION_JSON_VALUE)
