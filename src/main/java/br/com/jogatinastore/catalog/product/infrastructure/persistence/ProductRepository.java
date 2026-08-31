@@ -22,7 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
     Optional<Product> findBySku(String sku);
 
     @Query("""
-        SELECT new br.com.jogatinastore.catalog.product.snapshot.ProductSnapshot(
+        SELECT new br.com.jogatinastore.catalog.product.application.snapshot.ProductSnapshot(
             p.id,
             p.active,
             p.price,
@@ -38,7 +38,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
     Optional<ProductSnapshot> findAvailableProduct(UUID id);
 
     @Query("""
-    SELECT new br.com.jogatinastore.catalog.product.snapshot.ProductSnapshot(
+    SELECT new br.com.jogatinastore.catalog.product.application.snapshot.ProductSnapshot(
             p.id,
             p.active,
             p.price,

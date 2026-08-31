@@ -19,9 +19,8 @@ public interface AuthControllerDocs {
             description = "Validates user credentials and generates an access token for role.",
             tags = {"Authentication"},
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
@@ -32,9 +31,8 @@ public interface AuthControllerDocs {
             description = "Generates a new access token using the provided refresh token.",
             tags = {"Authentication"},
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )

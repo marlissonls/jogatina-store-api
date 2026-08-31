@@ -31,5 +31,5 @@ Inclui endpoints REST e persistência em banco MySQL.
     mvn spring-boot:run
     ```
 4. Endpoints principais
-- GET /api/users/v1 → lista usuários
-- POST /api/users/v1 → cria usuário
+- GET /api/v1/users → lista usuários
+- POST /api/v1/users → cria usuário

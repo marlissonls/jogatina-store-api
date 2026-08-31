@@ -4,12 +4,13 @@ import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
 import br.com.jogatinastore.sales.order.domain.model.Order;
 import br.com.jogatinastore.sales.order.application.snapshot.OrderItemSnapshot;
 import br.com.jogatinastore.sales.order.domain.status.OrderStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-
+@Schema(name = "CheckoutResponseDTO")
 public record CheckoutResponseDTO(
         UUID id,
         UUID customerId,

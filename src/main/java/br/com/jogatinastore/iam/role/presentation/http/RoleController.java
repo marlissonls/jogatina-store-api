@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/roles/v1")
+@RequestMapping("/api/v1/roles")
 @PreAuthorize("hasRole('ADMIN')")
-@Tag(name = "Roles", description = "Endpoints for role management")
+@Tag(name = "Roles", description = "Endpoints for Roles management")
 public class RoleController implements RoleControllerDocs {
 
     private final RoleService service;

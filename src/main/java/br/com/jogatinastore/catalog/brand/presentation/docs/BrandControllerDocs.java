@@ -1,32 +1,49 @@
-package br.com.jogatinastore.customer.customer.presentation.docs;
+package br.com.jogatinastore.catalog.brand.presentation.docs;
 
-import br.com.jogatinastore.customer.customer.application.dto.CustomerCreateDTO;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerResponseDTO;
-import br.com.jogatinastore.customer.customer.application.dto.CustomerUpdateDTO;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandPublicDTO;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandRequestDTO;
+import br.com.jogatinastore.catalog.brand.application.dto.BrandResponseDTO;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
-import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
-import br.com.jogatinastore.shared.pagination.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
-public interface CustomerControllerDocs {
+public interface BrandControllerDocs {
 
     @Operation(
-            summary = "Fetching all Customers",
-            description = "Finds all Customers with pagination",
-            tags = {"Customers"},
+            summary = "Fetching public Brands",
+            description = "Finds all public Brands",
+            tags = {"Brands"},
+            responses = {
+                    @ApiResponse(description = "OK", responseCode = "200"),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+            }
+    )
+    ResponseEntity<List<BrandPublicDTO>> findPublicBrands();
+
+    @Operation(
+            summary = "Fetching Brand by slug",
+            description = "Finds a Brand by its slug",
+            tags = {"Brands"},
+            responses = {
+                    @ApiResponse(description = "OK", responseCode = "200"),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            }
+    )
+    ResponseEntity<BrandPublicDTO> findBySlug(@PathVariable String slug);
+
+    @Operation(
+            summary = "Fetching all Brands",
+            description = "Finds all Brands with pagination",
+            tags = {"Brands"},
             responses = {
                     @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
@@ -34,59 +51,26 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<CustomerResponseDTO>> findAll(
-            @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
-            Pageable pageable
-    );
+    ResponseEntity<List<BrandResponseDTO>> findAll();
 
     @Operation(
-            summary = "Fetching one Customer",
-            description = "Finds a specific Customer based on the provided ID",
-            tags = {"Customers"},
-            responses = {
-                    @ApiResponse(description = "OK", responseCode = "200"),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            }
-    )
-    ResponseEntity<CustomerResponseDTO> findById(@PathVariable UUID id);
-
-    @Operation(
-            summary = "Get current authenticated Customer",
-            description = "Returns the profile data of the currently authenticated Customer",
-            tags = {"Customers"},
-            responses = {
-                    @ApiResponse(description = "OK", responseCode = "200"),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            }
-    )
-    ResponseEntity<CustomerResponseDTO> me(@AuthenticationPrincipal AuthenticatedUser auth);
-
-    @Operation(
-            summary = "Add a new Customer",
-            description = "Adds a new Customer by passing a JSON representation of the Customer.",
-            tags = {"Customers"},
+            summary = "Creating a Brand",
+            description = "Creates a new Brand from the provided JSON representation",
+            tags = {"Brands"},
             responses = {
                     @ApiResponse(description = "Created", responseCode = "201"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<CustomerResponseDTO> create(
-            @AuthenticationPrincipal AuthenticatedUser auth,
-            @RequestBody @Valid CustomerCreateDTO dto
-    );
+            }
+    )
+    ResponseEntity<BrandResponseDTO> create(@RequestBody @Valid BrandRequestDTO dto);
 
     @Operation(
-            summary = "Update a Customer information",
-            description = "Updates a Customer's data by passing a JSON representation of the updated Customer and providing the Customer ID.",
-            tags = {"Customers"},
+            summary = "Fetching Brand by ID",
+            description = "Finds a Brand by its ID",
+            tags = {"Brands"},
             responses = {
                     @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
@@ -94,20 +78,54 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<CustomerResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid CustomerUpdateDTO dto);
+            }
+    )
+    ResponseEntity<BrandResponseDTO> findById(@PathVariable UUID id);
 
     @Operation(
-            summary = "Delete one Customer",
-            description = "Deletes a Customer based on the provided ID",
-            tags = {"Customers"},
+            summary = "Updating a Brand",
+            description = "Updates an existing Brand from the provided JSON representation",
+            tags = {"Brands"},
             responses = {
-                    @ApiResponse(description = "No content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "OK", responseCode = "200"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<Void> delete(@PathVariable UUID id);
+            }
+    )
+    ResponseEntity<BrandResponseDTO> update(
+            @PathVariable UUID id,
+            @RequestBody @Valid BrandRequestDTO dto);
+
+    @Operation(
+            summary = "Deactivating a Brand",
+            description = "Deactivates a Brand by its ID",
+            tags = {"Brands"},
+            responses = {
+                    @ApiResponse(description = "No Content", responseCode = "204"),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            }
+    )
+    ResponseEntity<Void> deactivate(@PathVariable UUID id);
+
+    @Operation(
+            summary = "Activating a Brand",
+            description = "Activates a Brand by its ID",
+            tags = {"Brands"},
+            responses = {
+                    @ApiResponse(description = "No Content", responseCode = "204"),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            }
+    )
+    ResponseEntity<Void> activate(@PathVariable UUID id);
 }
