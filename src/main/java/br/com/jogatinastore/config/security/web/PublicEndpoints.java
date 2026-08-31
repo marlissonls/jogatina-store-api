@@ -20,7 +20,7 @@ public final class PublicEndpoints {
             ),
 
             new AntPathRequestMatcher(
-                    "/api/v1/products/public",
+                    "/api/v1/products",
                     HttpMethod.GET.name()
             ),
 
