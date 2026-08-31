@@ -37,7 +37,7 @@ public class AuthorizationExceptionHandler {
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.FORBIDDEN.value(),
-                ErrorCode.NOT_AUTHORIZED.name(),
+                ErrorCode.FORBIDDEN.name(),
                 ex.getMessage(),
                 OffsetDateTime.now(),
                 errors
