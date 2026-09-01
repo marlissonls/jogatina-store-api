@@ -60,7 +60,7 @@ public class CustomerController implements CustomerControllerDocs {
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CustomerResponseDto> me(@AuthenticationPrincipal AuthenticatedUser auth) {
 
-        return ResponseEntity.ok().body(service.me(UUID.fromString(auth.getId())));
+        return ResponseEntity.ok().body(service.me(auth.getId()));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CustomerController implements CustomerControllerDocs {
             @AuthenticationPrincipal AuthenticatedUser auth,
             @RequestBody @Valid CustomerCreateDto dto
     ) {
-        CustomerResponseDto response = service.create(UUID.fromString(auth.getId()), dto);
+        CustomerResponseDto response = service.create(auth.getId(), dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -82,7 +82,7 @@ public class CustomerController implements CustomerControllerDocs {
 
     @Override
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.getId()")
+    @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CustomerResponseDto> update(
             @PathVariable UUID id,
@@ -93,7 +93,7 @@ public class CustomerController implements CustomerControllerDocs {
 
     @Override
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
 

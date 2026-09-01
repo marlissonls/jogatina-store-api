@@ -5,9 +5,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.UUID;
 
 public class AuthenticatedUser implements UserDetails {
-    private String id;
+    private UUID id;
     private String email;
     private String passwordHash;
     private Collection<? extends GrantedAuthority> authorities;
@@ -17,7 +18,7 @@ public class AuthenticatedUser implements UserDetails {
     private Boolean enabled = true;
 
     public AuthenticatedUser(
-            String id,
+            UUID id,
             String email,
             String passwordHash,
             Collection<? extends GrantedAuthority> authorities,
@@ -36,7 +37,7 @@ public class AuthenticatedUser implements UserDetails {
     }
 
     public AuthenticatedUser(
-            String id,
+            UUID id,
             String email,
             Collection<? extends GrantedAuthority> authorities
     ) {
@@ -80,11 +81,11 @@ public class AuthenticatedUser implements UserDetails {
         return this.email;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

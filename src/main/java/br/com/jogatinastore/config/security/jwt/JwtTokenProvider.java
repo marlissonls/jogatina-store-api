@@ -52,7 +52,7 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public TokenDto createAccessToken(String userId, String email, List<String> roles) {
+    public TokenDto createAccessToken(UUID userId, String email, List<String> roles) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
         Date refreshValidity = new Date(now.getTime() + refreshValidityInMilliseconds);
@@ -62,7 +62,7 @@ public class JwtTokenProvider {
         return new TokenDto(email, true, now, validity, accessToken, refreshToken);
     }
 
-    private String getAccessToken(String userId, String email, List<String> roles, Date now, Date validity) {
+    private String getAccessToken(UUID userId, String email, List<String> roles, Date now, Date validity) {
 
         String issuerUrl = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
@@ -71,7 +71,7 @@ public class JwtTokenProvider {
 
         return JWT.create()
                 .withSubject(email)
-                .withClaim("id", userId)
+                .withClaim("id", userId.toString())
                 .withClaim("roles", roles)
                 .withClaim("type", "access")
                 .withIssuedAt(now)
@@ -80,13 +80,13 @@ public class JwtTokenProvider {
                 .sign(algorithm);
     }
 
-    private String getRefreshToken(String userId, String email, List<String> roles, Date now, Date refreshValidity) {
+    private String getRefreshToken(UUID userId, String email, List<String> roles, Date now, Date refreshValidity) {
 
         String jti = UUID.randomUUID().toString();
 
         return JWT.create()
                 .withSubject(email)
-                .withClaim("id", userId)
+                .withClaim("id", userId.toString())
                 .withClaim("roles", roles)
                 .withClaim("jti", jti)
                 .withClaim("type", "refresh")
@@ -119,7 +119,7 @@ public class JwtTokenProvider {
         try {
             DecodedJWT decodedJWT = accessTokenVerifier.verify(token);
 
-            String id = decodedJWT.getClaim("id").asString();
+            UUID id = decodedJWT.getClaim("id").as(UUID.class);
             String email = decodedJWT.getSubject();
 
             var roles = decodedJWT.getClaim("roles").asList(String.class);
@@ -152,7 +152,7 @@ public class JwtTokenProvider {
 
             DecodedJWT decodedJWT = refreshTokenVerifier.verify(refreshToken.get());
 
-            String id = decodedJWT.getClaim("id").asString();
+            UUID id = decodedJWT.getClaim("id").as(UUID.class);
             String email = decodedJWT.getSubject();
             var roles = decodedJWT.getClaim("roles").asList(String.class);
             var authorities = roles.stream()
@@ -169,7 +169,7 @@ public class JwtTokenProvider {
     }
 
     public TokenDto issueTokens(
-            String id,
+            UUID id,
             String email,
             Collection<? extends GrantedAuthority> authorities
     ) {

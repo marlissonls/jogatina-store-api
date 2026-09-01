@@ -41,6 +41,7 @@ public class UserController implements UserControllerDocs {
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.ASC)
             Pageable pageable
     ) {
+
         return ResponseEntity.ok().body(service.findAll(pageable));
     }
 
@@ -56,6 +57,7 @@ public class UserController implements UserControllerDocs {
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDto> create(@RequestBody @Valid UserCreateDto dto) {
+
         UserResponseDto response = service.create(dto);
 
         URI location = ServletUriComponentsBuilder
@@ -72,6 +74,7 @@ public class UserController implements UserControllerDocs {
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserResponseDto> createEmployee(@RequestBody @Valid UserEmployeeCreateDto dto) {
+
         UserResponseDto response = service.createEmployee(dto);
 
         URI location = ServletUriComponentsBuilder
@@ -88,6 +91,7 @@ public class UserController implements UserControllerDocs {
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UserUpdateRoleDto dto) {
+
         service.assignRoleToUser(dto);
         return ResponseEntity.noContent().build();
     }
@@ -97,13 +101,14 @@ public class UserController implements UserControllerDocs {
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UserUpdateRoleDto dto) {
+
         service.removeRoleFromUser(dto);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.getId()")
+    @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
 

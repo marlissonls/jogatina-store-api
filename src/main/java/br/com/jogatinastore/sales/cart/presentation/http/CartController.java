@@ -30,7 +30,7 @@ public class CartController implements br.com.jogatinastore.sales.cart.presentat
     public ResponseEntity<CartResponseDto> getCart(
             @AuthenticationPrincipal AuthenticatedUser auth
     ) {
-        return ResponseEntity.ok(service.getCart(UUID.fromString(auth.getId())));
+        return ResponseEntity.ok(service.getCart(auth.getId()));
     }
 
     @Override
@@ -39,7 +39,7 @@ public class CartController implements br.com.jogatinastore.sales.cart.presentat
             @AuthenticationPrincipal AuthenticatedUser auth,
             @RequestBody @Valid CartAddProductRequestDto dto
     ) {
-        service.addProduct(UUID.fromString(auth.getId()), dto);
+        service.addProduct(auth.getId(), dto);
 
         return ResponseEntity.noContent().build();
     }
@@ -50,7 +50,7 @@ public class CartController implements br.com.jogatinastore.sales.cart.presentat
             @AuthenticationPrincipal AuthenticatedUser auth,
             @PathVariable UUID productId
     ) {
-        service.removeProduct(UUID.fromString(auth.getId()), productId);
+        service.removeProduct(auth.getId(), productId);
 
         return ResponseEntity.noContent().build();
     }

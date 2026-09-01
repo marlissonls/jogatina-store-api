@@ -33,7 +33,7 @@ public class AuthenticatedUserDetailsService implements UserDetailsService {
                 .toList();
 
         return new AuthenticatedUser(
-                user.getId().toString(),
+                user.getId(),
                 user.getEmail(),
                 user.getPassword(),
                 authorities,

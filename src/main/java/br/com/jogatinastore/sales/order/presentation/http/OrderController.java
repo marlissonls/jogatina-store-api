@@ -33,7 +33,7 @@ public class OrderController implements br.com.jogatinastore.sales.order.present
             @AuthenticationPrincipal AuthenticatedUser auth,
             @PathVariable UUID id
     ) {
-        return ResponseEntity.ok().body(service.getOrder(id, UUID.fromString(auth.getId())));
+        return ResponseEntity.ok().body(service.getOrder(id, auth.getId()));
     }
 
     @Override
@@ -43,7 +43,7 @@ public class OrderController implements br.com.jogatinastore.sales.order.present
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
-        return ResponseEntity.ok().body(service.getOrders(UUID.fromString(auth.getId()), pageable));
+        return ResponseEntity.ok().body(service.getOrders(auth.getId(), pageable));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class OrderController implements br.com.jogatinastore.sales.order.present
             @AuthenticationPrincipal AuthenticatedUser auth,
             @PathVariable UUID id
     ) {
-        service.cancel(id, UUID.fromString(auth.getId()));
+        service.cancel(id, auth.getId());
         return ResponseEntity.noContent().build();
     }
 }

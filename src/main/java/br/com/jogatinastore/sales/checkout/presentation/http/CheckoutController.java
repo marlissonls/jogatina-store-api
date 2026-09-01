@@ -29,6 +29,6 @@ public class CheckoutController implements CheckoutControllerDocs {
     public ResponseEntity<CheckoutResponseDto> checkout(
             @AuthenticationPrincipal AuthenticatedUser auth
     ) {
-        return ResponseEntity.ok().body(service.checkout(UUID.fromString(auth.getId())));
+        return ResponseEntity.ok().body(service.checkout(auth.getId()));
     }
 }
