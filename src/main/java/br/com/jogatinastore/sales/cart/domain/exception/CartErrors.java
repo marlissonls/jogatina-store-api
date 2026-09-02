@@ -20,6 +20,7 @@ public final class CartErrors {
         public static final String CART_NOT_FOUND = "error.cart.not_found";
         public static final String CART_ID_REQUIRED = "error.cart.id.required";
         public static final String CART_CUSTOMER_ID_REQUIRED = "error.cart.customer.id.required";
+        public static final String CART_IS_EMPTY = "error.cart.items.empty";
         public static final String CART_ITEM_PRODUCT_ID_REQUIRED = "error.cart.item.product.id.required";
         public static final String CART_ITEM_NOT_FOUND = "error.cart.item.not_found";
         public static final String CART_ITEM_UNAVAILABLE = "error.cart.item.unavailable";

@@ -5,6 +5,7 @@ import br.com.jogatinastore.catalog.product.application.snapshot.ProductSnapshot
 import br.com.jogatinastore.inventory.stock.domain.exception.StockErrors;
 import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDto;
 import br.com.jogatinastore.sales.cart.application.dto.CartResponseDto;
+import br.com.jogatinastore.sales.cart.domain.exception.CartIsEmptyException;
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
 import br.com.jogatinastore.sales.cart.domain.exception.CartErrors;
 import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
@@ -106,6 +107,13 @@ public class CartService {
         Cart cart = findOpenCartOrThrow(customerId);
 
         List<CartItemSnapshot> items = repository.findCartItems(cart.getId());
+
+        if (items.isEmpty()) {
+            throw new CartIsEmptyException(
+                    CartErrors.Target.CART,
+                    CartErrors.Code.CART_IS_EMPTY
+            );
+        }
 
         return new CartSnapshot(cart, items);
     }

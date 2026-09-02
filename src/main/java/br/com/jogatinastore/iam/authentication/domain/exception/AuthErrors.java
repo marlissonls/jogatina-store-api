@@ -7,6 +7,7 @@ public final class AuthErrors {
     // Targets
     public static final class Target {
         public static final String CREDENTIALS = "auth.signin.credentials";
+        public static final String AUTHENTICATION = "auth.authentication";
         public static final String TOKEN = "auth.token";
         public static final String ACCESS_TOKEN = "auth.access_token";
         public static final String REFRESH_TOKEN = "auth.refresh_token";
@@ -17,6 +18,8 @@ public final class AuthErrors {
     // Codes
     public static final class Code {
         public static final String CREDENTIALS_INVALID = "error.auth.signin.credentials.invalid";
+
+        public static final String AUTHENTICATION_REQUIRED = "error.auth.authentication.required";
 
         public static final String TOKEN_INVALID = "error.auth.token.invalid";
         public static final String ACCESS_TOKEN_INVALID = "error.auth.access_token.invalid";

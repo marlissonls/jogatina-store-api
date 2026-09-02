@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import org.slf4j.Logger;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -126,5 +127,29 @@ public class RequestExceptionHandler {
         if (parts.length >= 3)
             return parts[1] + "." + field;
         return field;
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleNoResourceFoundException(
+            NoResourceFoundException ex) {
+
+        logger.warn("No handler found for {} {}", ex.getHttpMethod(), ex.getResourcePath());
+
+        var errors = List.of(
+                new ErrorDetail(
+                        RequestErrors.Target.RESOURCE,
+                        RequestErrors.Code.RESOURCE_NOT_FOUND
+                )
+        );
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ErrorCode.RESOURCE_NOT_FOUND.name(),
+                "Path resource not found",
+                OffsetDateTime.now(),
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }

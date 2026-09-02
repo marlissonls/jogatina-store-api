@@ -8,6 +8,8 @@ public final class RequestErrors {
     public static final class Target {
         public static final String REQUEST = "request";
 
+        public static final String RESOURCE = "request.resource";
+
         public static final String PAYLOAD = "request.payload";
 
         public static final String PATH_PARAMETER =
@@ -19,6 +21,9 @@ public final class RequestErrors {
 
     // Codes
     public static final class Code {
+        public static final String RESOURCE_NOT_FOUND =
+                "error.request.resource.not_found";
+
         public static final String INVALID_PAYLOAD =
                 "error.request.payload.invalid";
 

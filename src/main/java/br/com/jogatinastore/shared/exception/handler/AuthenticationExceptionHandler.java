@@ -12,6 +12,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -42,6 +43,30 @@ public class AuthenticationExceptionHandler {
             ex.getMessage(),
             OffsetDateTime.now(),
             errors
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    public ResponseEntity<ExceptionResponse> handleInsufficientAuthenticationException(
+            InsufficientAuthenticationException ex) {
+
+        logger.warn("Insufficient authentication: {}", ex.getMessage());
+
+        var errors = List.of(
+                new ErrorDetail(
+                        AuthErrors.Target.AUTHENTICATION,
+                        AuthErrors.Code.AUTHENTICATION_REQUIRED
+                )
+        );
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                ErrorCode.INSUFFICIENT_AUTHENTICATION.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                errors
         );
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
