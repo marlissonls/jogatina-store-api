@@ -1,5 +1,6 @@
 package br.com.jogatinastore.config.security.config;
 
+import br.com.jogatinastore.config.security.web.ProtectedEndpoints;
 import br.com.jogatinastore.config.security.web.PublicEndpoints;
 import br.com.jogatinastore.observability.logging.LoggingFilter;
 import br.com.jogatinastore.config.security.web.RequestAuthenticationFilter;
@@ -50,7 +51,7 @@ public class SecurityConfig {
 
         return http
             .httpBasic(AbstractHttpConfigurer::disable)
-            .csrf(AbstractHttpConfigurer::disable) // Desabilita CSRF para conseguir dar POST/PUT
+            .csrf(AbstractHttpConfigurer::disable) // Disables CSRF protection for stateless API requests
             .cors(Customizer.withDefaults())
             .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(loggingFilter, UsernamePasswordAuthenticationFilter.class)
@@ -60,8 +61,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                 authorizeHttpRequests -> authorizeHttpRequests
                     .requestMatchers(PublicEndpoints.matcher()).permitAll()
-                    .requestMatchers("/api/**").authenticated()
-                    .requestMatchers("/users").denyAll()
+                    .requestMatchers(ProtectedEndpoints.matcher()).authenticated()
+                    .anyRequest().permitAll() // Ensures unknown routes reach MVC and result in NoResourceFoundException instead of InsufficientAuthenticationException
             )
             .exceptionHandling(handling -> handling
                 .authenticationEntryPoint((request, response, authException) -> {
