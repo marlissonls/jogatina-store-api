@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class StockCommandService {
@@ -133,28 +136,44 @@ public class StockCommandService {
     }
 
     public void reserveItems(@Valid List<StockMovementItem> items) {
-        for (StockMovementItem item : items) {
-            Stock stock = repository.findByProductId(item.productId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            StockErrors.Target.PRODUCT,
-                            StockErrors.Code.STOCK_NOT_FOUND
-                    ));
+        List<UUID> productIds = items
+                .stream()
+                .map(StockMovementItem::productId)
+                .toList();
 
-            if (stock.getAvailableQuantity() < item.quantity()) {
-                throw new InsufficientStockException(
-                        StockErrors.Target.QUANTITY,
-                        StockErrors.Code.STOCK_QUANTITY_INSUFFICIENT
+        List<Stock> stocks = repository.findByProductIdIn(productIds);
+
+        Map<UUID, Stock> stockMap = stocks.stream()
+                .collect(Collectors.toMap(
+                        Stock::getProductId,
+                        Function.identity()
+                ));
+
+        for (StockMovementItem movementItem : items) {
+            Stock stock = stockMap.get(movementItem.productId());
+
+            if (stock == null) {
+                throw new ResourceNotFoundException(
+                        StockErrors.Target.PRODUCT,
+                        StockErrors.Code.STOCK_NOT_FOUND
                 );
             }
 
-            int updatedRows = repository.reserve(stock.getId(), item.quantity());
-
-            if (updatedRows == 0) {
-                throw new InsufficientStockException(
+           if (stock.getAvailableQuantity() < movementItem.quantity()) {
+               throw new InsufficientStockException(
                         StockErrors.Target.QUANTITY,
                         StockErrors.Code.STOCK_QUANTITY_INSUFFICIENT
-                );
-            }
+               );
+           }
+
+           int updatedRows = repository.reserve(stock.getId(), movementItem.quantity());
+
+           if (updatedRows == 0) {
+               throw new InsufficientStockException(
+                       StockErrors.Target.QUANTITY,
+                       StockErrors.Code.STOCK_QUANTITY_INSUFFICIENT
+               );
+           }
         }
     }
 

@@ -37,20 +37,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
     """)
     Optional<ProductSnapshot> findAvailableProduct(UUID id);
 
-    @Query("""
-    SELECT new br.com.jogatinastore.catalog.product.application.snapshot.ProductSnapshot(
-            p.id,
-            p.active,
-            p.price,
-            p.salePrice,
-            s.availableQuantity
-        )
-        FROM Stock s
-        JOIN s.product p
-        WHERE p.id IN :ids
-    """)
-    List<ProductSnapshot> findProductsForAvailabilityCheck(Collection<UUID> ids);
-
     @Modifying
     @Query("UPDATE Product p " +
             "SET p.active = false " +
