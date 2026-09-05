@@ -7,6 +7,7 @@ import br.com.jogatinastore.catalog.product.application.dto.ProductCreateDto;
 import br.com.jogatinastore.catalog.product.application.dto.ProductResponseDto;
 import br.com.jogatinastore.catalog.product.application.dto.ProductWithStockResponseDto;
 import br.com.jogatinastore.catalog.product.application.dto.ProductUpdateDto;
+import br.com.jogatinastore.catalog.product.domain.exception.ProductUnavailableException;
 import br.com.jogatinastore.catalog.product.domain.model.Product;
 import br.com.jogatinastore.catalog.product.domain.exception.ProductErrors;
 import br.com.jogatinastore.catalog.product.presentation.filter.ProductManagerFilter;
@@ -128,10 +129,6 @@ public class ProductService {
                 );
     }
 
-    public List<ProductSnapshot> getProductsForAvailabilityCheck(List<UUID> ids) {
-        return repository.findProductsForAvailabilityCheck(ids);
-    }
-
     public ProductPublicResponseDto findBySlug(String slug) {
         logger.debug("Fetching product slug={}", slug);
 
@@ -231,6 +228,34 @@ public class ProductService {
         repository.activate(id);
 
         logger.info("Product activated successfully. id={}", id);
+    }
+
+    public void checkProductsAreActive(List<UUID> productIds) {
+        List<Product> products = repository.findAllById(productIds);
+
+        Map<UUID, Product> productMap = products.stream()
+                .collect(Collectors.toMap(
+                        Product::getId,
+                        Function.identity()
+                ));
+
+        for (UUID productId : productIds) {
+            Product product = productMap.get(productId);
+
+            if (product == null) {
+                throw new ResourceNotFoundException(
+                        ProductErrors.Target.ID,
+                        ProductErrors.Code.PRODUCT_NOT_FOUND
+                );
+            }
+
+            if (!product.getActive()) {
+                throw new ProductUnavailableException(
+                        ProductErrors.Target.PRODUCT,
+                        ProductErrors.Code.PRODUCT_UNAVAILABLE
+                );
+            }
+        }
     }
 
     private Product findEntityById(UUID id) {

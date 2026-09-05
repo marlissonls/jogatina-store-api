@@ -1,8 +1,10 @@
 package br.com.jogatinastore.sales.checkout.application.service;
 
+import br.com.jogatinastore.catalog.product.application.service.ProductService;
 import br.com.jogatinastore.inventory.stock.application.movement.StockMovementItem;
 import br.com.jogatinastore.inventory.stock.application.service.StockCommandService;
 import br.com.jogatinastore.sales.cart.application.service.CartService;
+import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
 import br.com.jogatinastore.sales.cart.application.snapshot.CartSnapshot;
 import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
 import br.com.jogatinastore.sales.order.application.contract.OrderCreationData;
@@ -21,15 +23,18 @@ import java.util.UUID;
 public class CheckoutService {
     private final Logger logger = LoggerFactory.getLogger(CheckoutService.class);
 
+    private final ProductService productService;
     private final StockCommandService stockService;
     private final CartService cartService;
     private final OrderService orderService;
 
     public CheckoutService(
+            ProductService productService,
             StockCommandService stockService,
             CartService cartService,
             OrderService orderService
     ) {
+        this.productService = productService;
         this.stockService = stockService;
         this.cartService = cartService;
         this.orderService = orderService;
@@ -41,7 +46,7 @@ public class CheckoutService {
 
         CartSnapshot snapshot = cartService.getCartSnapshot(userId);
 
-        cartService.validateForCheckout(snapshot);
+        productService.checkProductsAreActive(extractProductIds(snapshot));
 
         stockService.reserveItems(buildReservationItems(snapshot));
 
@@ -55,6 +60,13 @@ public class CheckoutService {
         );
 
         return new CheckoutResponseDto(order, snapshot.items());
+    }
+
+    private List<UUID> extractProductIds(CartSnapshot snapshot) {
+        return snapshot.items()
+                .stream()
+                .map(CartItemSnapshot::getProductId)
+                .toList();
     }
 
     private List<StockMovementItem> buildReservationItems(CartSnapshot snapshot) {

@@ -19,6 +19,7 @@ public final class ProductErrors {
 
     public final static class Code {
         public static final String PRODUCT_NOT_FOUND = "error.product.not_found";
+        public static final String PRODUCT_UNAVAILABLE = "error.product.unavailable";
 
         public static final String PRODUCT_ID_REQUIRED = "error.product.id.required";
 

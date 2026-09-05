@@ -103,6 +103,10 @@ public class CartService {
                 cart.getId(), userId, productId);
     }
 
+    public void markAsConverted(Cart cart) {
+        cart.markAsConverted();
+    }
+
     public CartSnapshot getCartSnapshot(UUID customerId) {
         Cart cart = findOpenCartOrThrow(customerId);
 
@@ -124,42 +128,5 @@ public class CartService {
                         CartErrors.Target.CART,
                         CartErrors.Code.CART_NOT_FOUND
                 ));
-    }
-
-    public void validateForCheckout(CartSnapshot snapshot) {
-
-        List<UUID> productIds = snapshot.items().stream()
-                .map(CartItemSnapshot::getProductId)
-                .toList();
-
-        Map<UUID, ProductSnapshot> products = productService
-                .getProductsForAvailabilityCheck(productIds)
-                .stream()
-                .collect(Collectors.toMap(
-                        ProductSnapshot::id,
-                        Function.identity()
-                ));
-
-        for (CartItemSnapshot item : snapshot.items()) {
-            ProductSnapshot product = products.get(item.getProductId());
-
-            if (!product.active()) {
-                throw new CartItemUnavailableException(
-                        CartErrors.Target.ITEM,
-                        CartErrors.Code.CART_ITEM_UNAVAILABLE
-                );
-            }
-
-            if (product.stock() < item.getQuantity()) {
-                throw new InsufficientStockException(
-                        StockErrors.Target.QUANTITY,
-                        StockErrors.Code.STOCK_QUANTITY_INSUFFICIENT
-                );
-            }
-        }
-    }
-
-    public void markAsConverted(Cart cart) {
-        cart.markAsConverted();
     }
 }
