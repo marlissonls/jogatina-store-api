@@ -1,0 +1,45 @@
+server:
+  port: 8888
+
+cors:
+  originPatterns: http://localhost:8080,http://localhost:3000,http://127.0.0.1:5500
+
+security:
+  jwt:
+    token:
+      secret: ${JWT_SECRET:test-secret-jogatinastore-123456789}
+      expire-length: ${JWT_EXPIRE_TIME:3600000}
+      refresh-expire-length: ${JWT_REFRESH_EXPIRE_TIME:10800000}
+
+spring:
+  application:
+    name: jogatinastore
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # url, username and password are dynamically generated for integration tests
+#    url: ${DB_URL}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        type:
+          preferred_uuid_jdbc_type: CHAR
+      #dialect: org.hibernate.dialect.MySQL8Dialect or MySQLDialect
+    show-sql: false
+
+    open-in-view: false
+
+spring-doc:
+  paths-to-match:
+    - /auth/**
+    - /api/v1/**
+  swagger-ui:
+    use-root-path: true
+
+
+logging:
+  level:
+    root: INFO
