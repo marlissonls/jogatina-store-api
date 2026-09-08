@@ -1,4 +1,4 @@
-package br.com.jogatinastore.sales.checkout.application.service;
+package br.com.jogatinastore.unittests.sales.checkout.application.service;
 
 import br.com.jogatinastore.catalog.product.application.service.ProductService;
 import br.com.jogatinastore.catalog.product.domain.exception.ProductErrors;
@@ -14,6 +14,7 @@ import br.com.jogatinastore.sales.cart.domain.exception.CartErrors;
 import br.com.jogatinastore.sales.cart.domain.exception.CartIsEmptyException;
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
 import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
+import br.com.jogatinastore.sales.checkout.application.service.CheckoutService;
 import br.com.jogatinastore.sales.order.application.contract.OrderCreationData;
 import br.com.jogatinastore.sales.order.application.contract.OrderItemData;
 import br.com.jogatinastore.sales.order.application.service.OrderService;
