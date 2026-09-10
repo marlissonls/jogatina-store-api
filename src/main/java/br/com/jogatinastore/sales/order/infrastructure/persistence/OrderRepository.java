@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,10 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
         WHERE o.id = :id
           AND o.customerId = :customerId
     """)
-    Optional<Order> findByIdAndCustomerId(UUID id, UUID customerId);
+    Optional<Order> findByIdAndCustomerId(
+        @Param("id") UUID id,
+        @Param("customerId") UUID customerId
+    );
 
     Page<Order> findAllByCustomerId(UUID customerId, Pageable pageable);
 
@@ -34,7 +38,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
         JOIN products p
             ON p.id = oi.product_id
         WHERE oi.order_id = :orderId
-          AND p.active = TRUE
     """, nativeQuery = true)
-    List<OrderItemProjection> findOrderItems(UUID orderId);
+    List<OrderItemProjection> findOrderItems(@Param("orderId") UUID orderId);
 }

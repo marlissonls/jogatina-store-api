@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
         LEFT JOIN FETCH up.role
         WHERE u.id IN :ids
     """)
-    List<User> findAllWithRolesByIdIn(List<UUID> ids);
+    List<User> findAllWithRolesByIdIn(@Param("ids") List<UUID> ids);
 
     @Query("SELECT u FROM User u " +
             "JOIN FETCH u.userRoles up " +
