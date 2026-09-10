@@ -31,7 +31,6 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
         JOIN products p
             ON p.id = ci.product_id
         WHERE ci.cart_id = :cartId
-          AND p.active = TRUE
     """, nativeQuery = true)
     List<CartItemSnapshot> findCartItems(UUID cartId);
 }
