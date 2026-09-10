@@ -1,8 +1,10 @@
 package br.com.jogatinastore.shared.exception.handler;
 
+import br.com.jogatinastore.catalog.product.domain.exception.ProductUnavailableException;
 import br.com.jogatinastore.iam.user.domain.exception.CannotRemoveLastRoleException;
 import br.com.jogatinastore.iam.user.domain.exception.RoleNotAssignedException;
 import br.com.jogatinastore.inventory.stock.domain.exception.InsufficientStockException;
+import br.com.jogatinastore.sales.cart.domain.exception.CartIsEmptyException;
 import br.com.jogatinastore.sales.cart.domain.exception.CartItemUnavailableException;
 import br.com.jogatinastore.shared.exception.base.ConflictException;
 import br.com.jogatinastore.shared.exception.code.ErrorCode;
@@ -40,14 +42,46 @@ public class ConflictExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
+    @ExceptionHandler(ProductUnavailableException.class)
+    public final ResponseEntity<ExceptionResponse> handleProductUnavailableException(ProductUnavailableException ex) {
+
+        logger.warn("Product unavailable. Errors={}", ex.getErrors());
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.CONFLICT.value(),
+                ErrorCode.PRODUCT_UNAVAILABLE.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                ex.getErrors()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     @ExceptionHandler(InsufficientStockException.class)
     public final ResponseEntity<ExceptionResponse> handleInsufficientStockException(InsufficientStockException ex) {
 
-        logger.warn("Cart Item unavailable. Errors={}", ex.getErrors());
+        logger.warn("Insufficient stock. Errors={}", ex.getErrors());
 
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.CONFLICT.value(),
                 ErrorCode.INSUFFICIENT_STOCK.name(),
+                ex.getMessage(),
+                OffsetDateTime.now(),
+                ex.getErrors()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(CartIsEmptyException.class)
+    public final ResponseEntity<ExceptionResponse> handleCartIsEmptyException(CartIsEmptyException ex) {
+
+        logger.warn("Cart is empty. Errors={}", ex.getErrors());
+
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.CONFLICT.value(),
+                ErrorCode.CART_IS_EMPTY.name(),
                 ex.getMessage(),
                 OffsetDateTime.now(),
                 ex.getErrors()

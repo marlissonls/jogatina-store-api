@@ -35,7 +35,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
            AND p.active
            AND s.availableQuantity > 0
     """)
-    Optional<ProductSnapshot> findAvailableProduct(UUID id);
+    Optional<ProductSnapshot> findAvailableProduct(@Param("id") UUID id);
 
     @Modifying
     @Query("UPDATE Product p " +

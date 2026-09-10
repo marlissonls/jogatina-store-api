@@ -1,4 +1,4 @@
-package br.com.jogatinastore.config;
+package br.com.jogatinastore.integrationtests.config;
 
 public final class TestConfigs {
 

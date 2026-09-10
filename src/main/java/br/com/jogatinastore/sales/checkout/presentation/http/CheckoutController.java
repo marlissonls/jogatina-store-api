@@ -10,7 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +31,14 @@ public class CheckoutController implements CheckoutControllerDocs {
     public ResponseEntity<CheckoutResponseDto> checkout(
             @AuthenticationPrincipal AuthenticatedUser auth
     ) {
-        return ResponseEntity.ok().body(service.checkout(auth.getId()));
+        CheckoutResponseDto response = service.checkout(auth.getId());
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
 }

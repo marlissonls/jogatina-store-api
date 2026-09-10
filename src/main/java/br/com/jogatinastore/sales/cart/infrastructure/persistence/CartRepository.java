@@ -5,6 +5,7 @@ import br.com.jogatinastore.sales.cart.domain.status.CartStatus;
 import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,10 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
         WHERE c.customerId = :customerId
            AND c.status = :status
     """)
-    Optional<Cart> findByCustomerIdAndStatus(UUID customerId, CartStatus status);
+    Optional<Cart> findByCustomerIdAndStatus(
+            @Param("customerId") UUID customerId,
+            @Param("status") CartStatus status
+    );
 
     @Query(value = """
         SELECT
@@ -31,7 +35,6 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
         JOIN products p
             ON p.id = ci.product_id
         WHERE ci.cart_id = :cartId
-          AND p.active = TRUE
     """, nativeQuery = true)
-    List<CartItemSnapshot> findCartItems(UUID cartId);
+    List<CartItemSnapshot> findCartItems(@Param("cartId") UUID cartId);
 }
