@@ -119,7 +119,7 @@ class CheckoutServiceTest {
     }
 
     @Test
-    void shouldFailCheckoutWhenCartOpenCartIsNotFound() {
+    void shouldFailCheckoutWhenActiveCartIsNotFound() {
         // Given
         UUID userId = UUID.randomUUID();
 

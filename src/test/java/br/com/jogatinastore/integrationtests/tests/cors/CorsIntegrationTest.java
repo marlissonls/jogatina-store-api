@@ -1,4 +1,4 @@
-package br.com.jogatinastore.integrationtests.cors;
+package br.com.jogatinastore.integrationtests.tests.cors;
 
 import br.com.jogatinastore.integrationtests.infrastructure.AbstractIntegrationTest;
 import br.com.jogatinastore.integrationtests.config.TestConfigs;

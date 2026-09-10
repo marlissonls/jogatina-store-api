@@ -1,4 +1,4 @@
-package br.com.jogatinastore.config;
+package br.com.jogatinastore.integrationtests.infrastructure;
 
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
