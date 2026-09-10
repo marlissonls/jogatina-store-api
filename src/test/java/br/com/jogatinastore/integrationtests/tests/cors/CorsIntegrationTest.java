@@ -1,7 +1,7 @@
 package br.com.jogatinastore.integrationtests.cors;
 
-import br.com.jogatinastore.config.AbstractIntegrationTest;
-import br.com.jogatinastore.config.TestConfigs;
+import br.com.jogatinastore.integrationtests.infrastructure.AbstractIntegrationTest;
+import br.com.jogatinastore.integrationtests.config.TestConfigs;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
