@@ -13,12 +13,12 @@ import br.com.jogatinastore.sales.cart.application.snapshot.CartSnapshot;
 import br.com.jogatinastore.sales.cart.domain.exception.CartErrors;
 import br.com.jogatinastore.sales.cart.domain.exception.CartIsEmptyException;
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
-import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
 import br.com.jogatinastore.sales.checkout.application.service.CheckoutService;
 import br.com.jogatinastore.sales.order.application.contract.OrderCreationData;
 import br.com.jogatinastore.sales.order.application.contract.OrderItemData;
+import br.com.jogatinastore.sales.order.application.dto.OrderItemResponseDto;
+import br.com.jogatinastore.sales.order.application.dto.OrderResponseDto;
 import br.com.jogatinastore.sales.order.application.service.OrderService;
-import br.com.jogatinastore.sales.order.application.snapshot.OrderItemSnapshot;
 import br.com.jogatinastore.sales.order.domain.model.Order;
 import br.com.jogatinastore.shared.exception.base.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,6 +67,7 @@ class CheckoutServiceTest {
         // Given
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
+        String productTitle = "Test Product";
         BigDecimal unitPrice = new BigDecimal("100.00");
         int quantity = 2;
         BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
@@ -74,10 +75,18 @@ class CheckoutServiceTest {
         Cart cart = new Cart(userId);
         cart.addItem(productId, unitPrice, quantity);
 
-        CartItemSnapshot item = mock(CartItemSnapshot.class);
-        when(item.getProductId()).thenReturn(productId);
-        when(item.getUnitPrice()).thenReturn(unitPrice);
-        when(item.getQuantity()).thenReturn(quantity);
+//        CartItemSnapshot item = mock(CartItemSnapshot.class);
+//        when(item.getProductId()).thenReturn(productId);
+//        when(item.getUnitPrice()).thenReturn(unitPrice);
+//        when(item.getQuantity()).thenReturn(quantity);
+
+        CartItemSnapshot item = new CartItemSnapshot(
+                productId,
+                productTitle,
+                unitPrice,
+                quantity,
+                subtotal
+        );
 
         CartSnapshot snapshot = new CartSnapshot(cart, List.of(item));
 
@@ -96,14 +105,15 @@ class CheckoutServiceTest {
                 .thenReturn(order);
 
         // When
-        CheckoutResponseDto response = checkoutService.checkout(userId);
+
+        OrderResponseDto response = checkoutService.checkout(userId);
 
         // Then
         assertEquals(order.getId(), response.id());
         assertEquals(order.getCustomerId(), response.customerId());
         assertEquals(order.getSubtotalAmount(), response.subTotalAmount());
         assertEquals(
-                List.of(new OrderItemSnapshot(item)),
+                List.of(new OrderItemResponseDto(item)),
                 response.items()
         );
 
@@ -169,14 +179,24 @@ class CheckoutServiceTest {
         // Given
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
+        String productTitle = "Test Product";
         BigDecimal unitPrice = new BigDecimal("100.00");
         int quantity = 2;
+        BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
 
         Cart cart = new Cart(userId);
         cart.addItem(productId, unitPrice, quantity);
 
-        CartItemSnapshot item = mock(CartItemSnapshot.class);
-        when(item.getProductId()).thenReturn(productId);
+//        CartItemSnapshot item = mock(CartItemSnapshot.class);
+//        when(item.getProductId()).thenReturn(productId);
+
+        CartItemSnapshot item = new CartItemSnapshot(
+                productId,
+                productTitle,
+                unitPrice,
+                quantity,
+                subtotal
+        );
 
         CartSnapshot snapshot = new CartSnapshot(cart, List.of(item));
 
@@ -187,7 +207,7 @@ class CheckoutServiceTest {
 
         List<UUID> productIds = snapshot.items()
                 .stream()
-                .map(CartItemSnapshot::getProductId)
+                .map(CartItemSnapshot::productId)
                 .toList();
 
         when(cartService.getCartSnapshot(userId))
@@ -212,14 +232,24 @@ class CheckoutServiceTest {
         // Given
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
+        String productTitle = "Test Product";
         BigDecimal unitPrice = new BigDecimal("100.00");
         int quantity = 2;
+        BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
 
         Cart cart = new Cart(userId);
         cart.addItem(productId, unitPrice, quantity);
 
-        CartItemSnapshot item = mock(CartItemSnapshot.class);
-        when(item.getProductId()).thenReturn(productId);
+//        CartItemSnapshot item = mock(CartItemSnapshot.class);
+//        when(item.productId()).thenReturn(productId);
+
+        CartItemSnapshot item = new CartItemSnapshot(
+                productId,
+                productTitle,
+                unitPrice,
+                quantity,
+                subtotal
+        );
 
         CartSnapshot snapshot = new CartSnapshot(cart, List.of(item));
 
@@ -230,7 +260,7 @@ class CheckoutServiceTest {
 
         List<UUID> productIds = snapshot.items()
                 .stream()
-                .map(CartItemSnapshot::getProductId)
+                .map(CartItemSnapshot::productId)
                 .toList();
 
         when(cartService.getCartSnapshot(userId))
@@ -255,15 +285,25 @@ class CheckoutServiceTest {
         // Given
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
+        String productTitle = "Test Product";
         BigDecimal unitPrice = new BigDecimal("100.00");
         int quantity = 2;
+        BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
 
         Cart cart = new Cart(userId);
         cart.addItem(productId, unitPrice, quantity);
 
-        CartItemSnapshot item = mock(CartItemSnapshot.class);
-        when(item.getProductId()).thenReturn(productId);
-        when(item.getQuantity()).thenReturn(quantity);
+//        CartItemSnapshot item = mock(CartItemSnapshot.class);
+//        when(item.getProductId()).thenReturn(productId);
+//        when(item.getQuantity()).thenReturn(quantity);
+
+        CartItemSnapshot item = new CartItemSnapshot(
+                productId,
+                productTitle,
+                unitPrice,
+                quantity,
+                subtotal
+        );
 
         CartSnapshot snapshot = new CartSnapshot(cart, List.of(item));
 
@@ -275,8 +315,8 @@ class CheckoutServiceTest {
         List<StockMovementItem> reservationItems = snapshot.items()
                 .stream()
                 .map(cartItem -> new StockMovementItem(
-                        cartItem.getProductId(),
-                        cartItem.getQuantity()
+                        cartItem.productId(),
+                        cartItem.quantity()
                 ))
                 .toList();
 
@@ -302,15 +342,25 @@ class CheckoutServiceTest {
         // Given
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
+        String productTitle = "Test Product";
         BigDecimal unitPrice = new BigDecimal("100.00");
         int quantity = 2;
+        BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
 
         Cart cart = new Cart(userId);
         cart.addItem(productId, unitPrice, quantity);
 
-        CartItemSnapshot item = mock(CartItemSnapshot.class);
-        when(item.getProductId()).thenReturn(productId);
-        when(item.getQuantity()).thenReturn(quantity);
+//        CartItemSnapshot item = mock(CartItemSnapshot.class);
+//        when(item.getProductId()).thenReturn(productId);
+//        when(item.getQuantity()).thenReturn(quantity);
+
+        CartItemSnapshot item = new CartItemSnapshot(
+                productId,
+                productTitle,
+                unitPrice,
+                quantity,
+                subtotal
+        );
 
         CartSnapshot snapshot = new CartSnapshot(cart, List.of(item));
 
@@ -322,8 +372,8 @@ class CheckoutServiceTest {
         List<StockMovementItem> reservationItems = snapshot.items()
                 .stream()
                 .map(cartItem -> new StockMovementItem(
-                        cartItem.getProductId(),
-                        cartItem.getQuantity()
+                        cartItem.productId(),
+                        cartItem.quantity()
                 ))
                 .toList();
 

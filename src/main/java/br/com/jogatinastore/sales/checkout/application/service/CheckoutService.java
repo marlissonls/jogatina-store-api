@@ -6,9 +6,10 @@ import br.com.jogatinastore.inventory.stock.application.service.StockCommandServ
 import br.com.jogatinastore.sales.cart.application.service.CartService;
 import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
 import br.com.jogatinastore.sales.cart.application.snapshot.CartSnapshot;
-import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
 import br.com.jogatinastore.sales.order.application.contract.OrderCreationData;
 import br.com.jogatinastore.sales.order.application.contract.OrderItemData;
+import br.com.jogatinastore.sales.order.application.dto.OrderItemResponseDto;
+import br.com.jogatinastore.sales.order.application.dto.OrderResponseDto;
 import br.com.jogatinastore.sales.order.domain.model.Order;
 import br.com.jogatinastore.sales.order.application.service.OrderService;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class CheckoutService {
     }
 
     @Transactional
-    public CheckoutResponseDto checkout(UUID userId) {
+    public OrderResponseDto checkout(UUID userId) {
         logger.debug("Checkout started. customerId={}", userId);
 
         CartSnapshot snapshot = cartService.getCartSnapshot(userId);
@@ -59,13 +60,13 @@ public class CheckoutService {
                 userId, order.getId(), snapshot.items().size(), order.getTotalAmount()
         );
 
-        return new CheckoutResponseDto(order, snapshot.items());
+        return new OrderResponseDto(order, buildOrderItemsResponse(snapshot));
     }
 
     private List<UUID> extractProductIds(CartSnapshot snapshot) {
         return snapshot.items()
                 .stream()
-                .map(CartItemSnapshot::getProductId)
+                .map(CartItemSnapshot::productId)
                 .toList();
     }
 
@@ -73,8 +74,8 @@ public class CheckoutService {
         return snapshot.items()
                 .stream()
                 .map(item -> new StockMovementItem(
-                        item.getProductId(),
-                        item.getQuantity()
+                        item.productId(),
+                        item.quantity()
                 ))
                 .toList();
     }
@@ -85,13 +86,20 @@ public class CheckoutService {
                 snapshot.cart().getSubtotalAmount(),
                 snapshot.items().stream()
                         .map(i -> new OrderItemData(
-                                i.getProductId(),
-                                i.getUnitPrice(),
-                                i.getQuantity()
+                                i.productId(),
+                                i.unitPrice(),
+                                i.quantity()
                         ))
                         .toList()
 //                shipping.getAmount(),
 //                coupon.getDiscountAmount()
         );
+    }
+
+    private List<OrderItemResponseDto> buildOrderItemsResponse(CartSnapshot snapshot) {
+        return snapshot.items()
+                .stream()
+                .map(OrderItemResponseDto::new)
+                .toList();
     }
 }

@@ -1,7 +1,7 @@
-package br.com.jogatinastore.sales.order.infrastructure.persistence;
+package br.com.jogatinastore.sales.order.infrastructure.persistence.repository;
 
 import br.com.jogatinastore.sales.order.domain.model.Order;
-import br.com.jogatinastore.sales.order.application.snapshot.OrderItemProjection;
+import br.com.jogatinastore.sales.order.infrastructure.persistence.projection.OrderItemProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

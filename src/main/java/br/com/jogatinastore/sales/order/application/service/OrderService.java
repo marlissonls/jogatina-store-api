@@ -4,10 +4,11 @@ import br.com.jogatinastore.customer.customer.application.service.CustomerServic
 import br.com.jogatinastore.inventory.stock.application.movement.StockMovementItem;
 import br.com.jogatinastore.inventory.stock.application.service.StockCommandService;
 import br.com.jogatinastore.sales.order.application.contract.OrderCreationData;
+import br.com.jogatinastore.sales.order.application.dto.OrderItemResponseDto;
 import br.com.jogatinastore.sales.order.application.dto.OrderResponseDto;
 import br.com.jogatinastore.sales.order.domain.model.Order;
 import br.com.jogatinastore.sales.order.domain.exception.OrderErrors;
-import br.com.jogatinastore.sales.order.infrastructure.persistence.OrderRepository;
+import br.com.jogatinastore.sales.order.infrastructure.persistence.repository.OrderRepository;
 import br.com.jogatinastore.sales.order.application.snapshot.OrderItemSnapshot;
 import br.com.jogatinastore.sales.order.domain.valueobject.OrderItem;
 import br.com.jogatinastore.shared.exception.base.ResourceNotFoundException;
@@ -49,9 +50,10 @@ public class OrderService {
                         OrderErrors.Code.ORDER_NOT_FOUND
         ));
 
-        List<OrderItemSnapshot> items = repository.findOrderItems(order.getId())
+        List<OrderItemResponseDto> items = repository.findOrderItems(order.getId())
                 .stream()
                 .map(OrderItemSnapshot::new)
+                .map(OrderItemResponseDto::new)
                 .toList();
 
         return new OrderResponseDto(order, items);

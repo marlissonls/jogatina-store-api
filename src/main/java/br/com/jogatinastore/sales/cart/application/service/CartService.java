@@ -4,15 +4,16 @@ import br.com.jogatinastore.catalog.product.application.service.ProductService;
 import br.com.jogatinastore.catalog.product.application.snapshot.ProductSnapshot;
 import br.com.jogatinastore.inventory.stock.domain.exception.StockErrors;
 import br.com.jogatinastore.sales.cart.application.dto.CartAddProductRequestDto;
+import br.com.jogatinastore.sales.cart.application.dto.CartItemResponseDto;
 import br.com.jogatinastore.sales.cart.application.dto.CartResponseDto;
+import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
 import br.com.jogatinastore.sales.cart.domain.exception.CartIsEmptyException;
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
 import br.com.jogatinastore.sales.cart.domain.exception.CartErrors;
-import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
-import br.com.jogatinastore.sales.cart.infrastructure.persistence.CartRepository;
+import br.com.jogatinastore.sales.cart.infrastructure.persistence.projection.CartItemProjection;
+import br.com.jogatinastore.sales.cart.infrastructure.persistence.repository.CartRepository;
 import br.com.jogatinastore.sales.cart.application.snapshot.CartSnapshot;
 import br.com.jogatinastore.sales.cart.domain.status.CartStatus;
-import br.com.jogatinastore.sales.cart.domain.exception.CartItemUnavailableException;
 import br.com.jogatinastore.inventory.stock.domain.exception.InsufficientStockException;
 
 import br.com.jogatinastore.shared.exception.base.ResourceNotFoundException;
@@ -22,11 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -50,14 +48,17 @@ public class CartService {
         Optional<Cart> cartOpt =  repository.findByCustomerIdAndStatus(userId, CartStatus.ACTIVE);
 
         Cart cart;
-        List<CartItemSnapshot> items;
+        List<CartItemResponseDto> items;
 
         if (cartOpt.isEmpty()) {
             cart = Cart.createFrom(userId);
             items = List.of();
         } else {
             cart = cartOpt.get();
-            items = repository.findCartItems(cart.getId());
+            items = repository.findCartItems(cart.getId())
+                    .stream()
+                    .map(CartItemResponseDto::new)
+                    .toList();
         }
 
         return new CartResponseDto(cart, items);
@@ -110,7 +111,10 @@ public class CartService {
     public CartSnapshot getCartSnapshot(UUID customerId) {
         Cart cart = findOpenCartOrThrow(customerId);
 
-        List<CartItemSnapshot> items = repository.findCartItems(cart.getId());
+        List<CartItemSnapshot> items = repository.findCartItems(cart.getId())
+                .stream()
+                .map(CartItemSnapshot::new)
+                .toList();
 
         if (items.isEmpty()) {
             throw new CartIsEmptyException(

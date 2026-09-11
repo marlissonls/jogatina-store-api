@@ -1,6 +1,7 @@
 package br.com.jogatinastore.sales.order.application.snapshot;
 
 import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
+import br.com.jogatinastore.sales.order.infrastructure.persistence.projection.OrderItemProjection;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -14,11 +15,11 @@ public record OrderItemSnapshot(
 ) {
     public OrderItemSnapshot(CartItemSnapshot item) {
         this(
-                item.getProductId(),
-                item.getProductTitle(),
-                item.getQuantity(),
-                item.getUnitPrice(),
-                item.getTotalPrice()
+                item.productId(),
+                item.productTitle(),
+                item.quantity(),
+                item.unitPrice(),
+                item.totalPrice()
         );
     }
 

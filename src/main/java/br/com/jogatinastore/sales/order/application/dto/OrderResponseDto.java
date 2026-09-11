@@ -1,7 +1,6 @@
 package br.com.jogatinastore.sales.order.application.dto;
 
 import br.com.jogatinastore.sales.order.domain.model.Order;
-import br.com.jogatinastore.sales.order.application.snapshot.OrderItemSnapshot;
 import br.com.jogatinastore.sales.order.domain.status.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,9 +21,9 @@ public record OrderResponseDto(
         BigDecimal totalAmount,
         OrderStatus status,
         LocalDateTime createdAt,
-        List<OrderItemSnapshot> items
+        List<OrderItemResponseDto> items
 ) {
-    public OrderResponseDto(Order order, List<OrderItemSnapshot> items) {
+    public OrderResponseDto(Order order, List<OrderItemResponseDto> items) {
         this(
                 order.getId(),
                 order.getCustomerId(),
