@@ -1,8 +1,8 @@
-package br.com.jogatinastore.sales.cart.infrastructure.persistence;
+package br.com.jogatinastore.sales.cart.infrastructure.persistence.repository;
 
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
 import br.com.jogatinastore.sales.cart.domain.status.CartStatus;
-import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
+import br.com.jogatinastore.sales.cart.infrastructure.persistence.projection.CartItemProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,5 +36,5 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
             ON p.id = ci.product_id
         WHERE ci.cart_id = :cartId
     """, nativeQuery = true)
-    List<CartItemSnapshot> findCartItems(@Param("cartId") UUID cartId);
+    List<CartItemProjection> findCartItems(@Param("cartId") UUID cartId);
 }

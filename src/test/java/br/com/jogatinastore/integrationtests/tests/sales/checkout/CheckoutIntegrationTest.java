@@ -17,11 +17,11 @@ import br.com.jogatinastore.inventory.stock.infrastructure.persistence.StockRepo
 import br.com.jogatinastore.sales.cart.domain.exception.CartErrors;
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
 import br.com.jogatinastore.sales.cart.domain.status.CartStatus;
-import br.com.jogatinastore.sales.cart.infrastructure.persistence.CartRepository;
-import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
+import br.com.jogatinastore.sales.cart.infrastructure.persistence.repository.CartRepository;
+import br.com.jogatinastore.sales.order.application.dto.OrderResponseDto;
 import br.com.jogatinastore.sales.order.domain.model.Order;
 import br.com.jogatinastore.sales.order.domain.status.OrderStatus;
-import br.com.jogatinastore.sales.order.infrastructure.persistence.OrderRepository;
+import br.com.jogatinastore.sales.order.infrastructure.persistence.repository.OrderRepository;
 import br.com.jogatinastore.shared.exception.code.ErrorCode;
 import br.com.jogatinastore.shared.exception.response.ExceptionResponse;
 import io.restassured.builder.RequestSpecBuilder;
@@ -52,7 +52,6 @@ public class CheckoutIntegrationTest extends AbstractIntegrationTest {
     private final StockRepository stockRepository;
     private final OrderRepository orderRepository;
 
-    private final RoleFixture roleFixture;
     private final UserFixture userFixture;
     private final CustomerFixture customerFixture;
     private final CategoryFixture categoryFixture;
@@ -71,7 +70,6 @@ public class CheckoutIntegrationTest extends AbstractIntegrationTest {
             StockRepository stockRepository,
             OrderRepository orderRepository,
 
-            RoleFixture roleFixture,
             UserFixture userFixture,
             CustomerFixture customerFixture,
             CategoryFixture categoryFixture,
@@ -87,7 +85,6 @@ public class CheckoutIntegrationTest extends AbstractIntegrationTest {
         this.stockRepository = stockRepository;
         this.orderRepository = orderRepository;
 
-        this.roleFixture = roleFixture;
         this.userFixture = userFixture;
         this.customerFixture = customerFixture;
         this.categoryFixture = categoryFixture;
@@ -163,7 +160,7 @@ public class CheckoutIntegrationTest extends AbstractIntegrationTest {
         String token = authenticator.authenticate(email, password);
 
 
-        CheckoutResponseDto response = given(specification)
+        OrderResponseDto response = given(specification)
                 .auth()
                 .oauth2(token)
                 .post()
@@ -171,7 +168,7 @@ public class CheckoutIntegrationTest extends AbstractIntegrationTest {
                 .statusCode(201)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .extract()
-                .as(CheckoutResponseDto.class);
+                .as(OrderResponseDto.class);
 
         Stock updatedStock = stockRepository.findById(stock.getId())
                 .orElseThrow();

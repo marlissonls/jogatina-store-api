@@ -1,7 +1,6 @@
 package br.com.jogatinastore.sales.cart.application.dto;
 
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
-import br.com.jogatinastore.sales.cart.application.snapshot.CartItemSnapshot;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -13,9 +12,9 @@ public record CartResponseDto(
         UUID id,
         UUID customerId,
         BigDecimal subTotalAmount,
-        List<CartItemSnapshot> items
+        List<CartItemResponseDto> items
 ) {
-    public CartResponseDto(Cart cart, List<CartItemSnapshot> items) {
+    public CartResponseDto(Cart cart, List<CartItemResponseDto> items) {
         this(
                 cart.getId(),
                 cart.getCustomerId(),

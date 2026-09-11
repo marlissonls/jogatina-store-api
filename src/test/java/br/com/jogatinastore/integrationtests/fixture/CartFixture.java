@@ -4,7 +4,7 @@ import br.com.jogatinastore.catalog.product.domain.model.Product;
 import br.com.jogatinastore.customer.customer.domain.model.Customer;
 import br.com.jogatinastore.sales.cart.domain.model.Cart;
 import br.com.jogatinastore.sales.cart.domain.status.CartStatus;
-import br.com.jogatinastore.sales.cart.infrastructure.persistence.CartRepository;
+import br.com.jogatinastore.sales.cart.infrastructure.persistence.repository.CartRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

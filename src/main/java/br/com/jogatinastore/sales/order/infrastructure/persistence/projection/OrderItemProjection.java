@@ -1,4 +1,4 @@
-package br.com.jogatinastore.sales.order.application.snapshot;
+package br.com.jogatinastore.sales.order.infrastructure.persistence.projection;
 
 import java.math.BigDecimal;
 import java.util.UUID;

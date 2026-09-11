@@ -1,9 +1,9 @@
 package br.com.jogatinastore.sales.checkout.presentation.http;
 
 import br.com.jogatinastore.sales.checkout.application.service.CheckoutService;
-import br.com.jogatinastore.sales.checkout.application.dto.CheckoutResponseDto;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import br.com.jogatinastore.sales.checkout.presentation.docs.CheckoutControllerDocs;
+import br.com.jogatinastore.sales.order.application.dto.OrderResponseDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/checkout")
@@ -28,10 +27,10 @@ public class CheckoutController implements CheckoutControllerDocs {
     @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CheckoutResponseDto> checkout(
+    public ResponseEntity<OrderResponseDto> checkout(
             @AuthenticationPrincipal AuthenticatedUser auth
     ) {
-        CheckoutResponseDto response = service.checkout(auth.getId());
+        OrderResponseDto response = service.checkout(auth.getId());
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

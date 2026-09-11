@@ -7,8 +7,8 @@ import br.com.jogatinastore.customer.customer.infrastructure.persistence.Custome
 import br.com.jogatinastore.iam.role.infrastructure.persistence.RoleRepository;
 import br.com.jogatinastore.iam.user.infrastructure.persistence.UserRepository;
 import br.com.jogatinastore.inventory.stock.infrastructure.persistence.StockRepository;
-import br.com.jogatinastore.sales.cart.infrastructure.persistence.CartRepository;
-import br.com.jogatinastore.sales.order.infrastructure.persistence.OrderRepository;
+import br.com.jogatinastore.sales.cart.infrastructure.persistence.repository.CartRepository;
+import br.com.jogatinastore.sales.order.infrastructure.persistence.repository.OrderRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
