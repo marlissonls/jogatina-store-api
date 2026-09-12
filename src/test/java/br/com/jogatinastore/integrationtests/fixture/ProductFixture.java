@@ -104,5 +104,10 @@ public class ProductFixture {
         product.setActive(false);
         repository.save(product);
     }
+
+    public void updateSalePrice(Product product, BigDecimal updatedSalePrice) {
+        product.setSalePrice(updatedSalePrice);
+        repository.save(product);
+    }
 }
 
