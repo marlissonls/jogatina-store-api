@@ -47,7 +47,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductPublicResponseDto> findBySlug(@PathVariable String slug);
+    ResponseEntity<ProductPublicResponseDto> findBySlug(@PathVariable("slug") String slug);
 
     @Operation(
             summary = "Searching manager Products",
@@ -79,7 +79,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDto> findById(@PathVariable UUID id);
+    ResponseEntity<ProductWithStockResponseDto> findById(@PathVariable("id") UUID id);
 
     @Operation(
             summary = "Fetching Product by barcode",
@@ -94,7 +94,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDto> findByBarcode(@PathVariable String barcode);
+    ResponseEntity<ProductWithStockResponseDto> findByBarcode(@PathVariable("barcode") String barcode);
 
     @Operation(
             summary = "Fetching Product by SKU",
@@ -109,7 +109,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDto> findBySku(@PathVariable String sku);
+    ResponseEntity<ProductWithStockResponseDto> findBySku(@PathVariable("sku") String sku);
 
     @Operation(
             summary = "Creating a Product",
@@ -139,7 +139,7 @@ public interface ProductControllerDocs {
             }
     )
     ResponseEntity<ProductResponseDto> update(
-            @PathVariable @NotNull UUID id,
+            @PathVariable("id") @NotNull UUID id,
             @RequestBody @Valid ProductUpdateDto dto);
 
     @Operation(
@@ -155,7 +155,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> deactivate(@PathVariable @NotNull UUID id);
+    ResponseEntity<Void> deactivate(@PathVariable("id") @NotNull UUID id);
 
     @Operation(
             summary = "Activating a Product",
@@ -170,6 +170,6 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> activate(@PathVariable @NotNull UUID id);
+    ResponseEntity<Void> activate(@PathVariable("id") @NotNull UUID id);
 }
 

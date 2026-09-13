@@ -31,7 +31,7 @@ public class OrderController implements br.com.jogatinastore.sales.order.present
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderResponseDto> getOrder(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable UUID id
+            @PathVariable("id") UUID id
     ) {
         return ResponseEntity.ok().body(service.getOrder(id, auth.getId()));
     }
@@ -50,7 +50,7 @@ public class OrderController implements br.com.jogatinastore.sales.order.present
     @PutMapping(path = "/{id}/cancel")
     public ResponseEntity<Void> cancelOrder(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable UUID id
+            @PathVariable("id") UUID id
     ) {
         service.cancel(id, auth.getId());
         return ResponseEntity.noContent().build();

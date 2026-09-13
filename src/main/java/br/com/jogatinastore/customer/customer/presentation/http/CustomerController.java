@@ -49,7 +49,7 @@ public class CustomerController implements CustomerControllerDocs {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CustomerResponseDto> findById(@PathVariable UUID id) {
+    public ResponseEntity<CustomerResponseDto> findById(@PathVariable("id") UUID id) {
 
         return ResponseEntity.ok().body(service.findById(id));
     }
@@ -85,7 +85,7 @@ public class CustomerController implements CustomerControllerDocs {
     @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CustomerResponseDto> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid CustomerUpdateDto dto)
     {
         return ResponseEntity.ok().body(service.update(id, dto));
@@ -95,7 +95,7 @@ public class CustomerController implements CustomerControllerDocs {
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
 
         service.delete(id);
         return ResponseEntity.noContent().build();

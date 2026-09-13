@@ -38,7 +38,7 @@ public class CategoryController implements CategoryControllerDocs {
 
     @Override
     @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoryPublicDto> findBySlug(@PathVariable String slug) {
+    public ResponseEntity<CategoryPublicDto> findBySlug(@PathVariable("slug") String slug) {
         return ResponseEntity.ok().body(service.findBySlug(slug));
     }
 
@@ -55,7 +55,7 @@ public class CategoryController implements CategoryControllerDocs {
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CategoryResponseDto> findById(@PathVariable UUID id) {
+    public ResponseEntity<CategoryResponseDto> findById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
@@ -79,7 +79,7 @@ public class CategoryController implements CategoryControllerDocs {
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CategoryResponseDto> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid CategoryRequestDto dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
@@ -88,7 +88,7 @@ public class CategoryController implements CategoryControllerDocs {
     @PatchMapping(path = "/manager/{id}/deactivate")
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> deactivate(@PathVariable UUID id) {
+    public ResponseEntity<Void> deactivate(@PathVariable("id") UUID id) {
 
         service.deactivate(id);
         return ResponseEntity.noContent().build();
@@ -98,7 +98,7 @@ public class CategoryController implements CategoryControllerDocs {
     @PatchMapping(path = "/manager/{id}/activate")
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> activate(@PathVariable UUID id) {
+    public ResponseEntity<Void> activate(@PathVariable("id") UUID id) {
 
         service.activate(id);
         return ResponseEntity.noContent().build();

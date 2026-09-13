@@ -38,7 +38,7 @@ public interface OrderControllerDocs {
     )
     ResponseEntity<OrderResponseDto> getOrder(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable UUID id
+            @PathVariable("id") UUID id
     );
 
 
@@ -89,6 +89,6 @@ public interface OrderControllerDocs {
     )
     ResponseEntity<Void> cancelOrder(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable UUID id
+            @PathVariable("id") UUID id
     );
 }

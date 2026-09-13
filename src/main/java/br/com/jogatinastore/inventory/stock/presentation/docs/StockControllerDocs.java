@@ -85,7 +85,7 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<StockResponseDto> findById(
-            @PathVariable UUID id
+            @PathVariable("id") UUID id
     );
 
 
@@ -107,7 +107,7 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> updateMinimumQuantity(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid StockMinimumQuantityUpdateDto dto
     );
 
@@ -130,7 +130,7 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> increase(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid StockAvailableQuantityUpdateDto dto
     );
 
@@ -153,7 +153,7 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> writeOff(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid StockAvailableQuantityUpdateDto dto
     );
 
@@ -176,7 +176,7 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> reserve(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid StockAvailableQuantityUpdateDto dto
     );
 
@@ -199,7 +199,7 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> release(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid StockAvailableQuantityUpdateDto dto
     );
 }

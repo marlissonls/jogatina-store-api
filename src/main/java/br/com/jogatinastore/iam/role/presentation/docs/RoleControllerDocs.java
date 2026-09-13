@@ -52,7 +52,7 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<RoleResponseDto> findById(@PathVariable UUID id);
+    ResponseEntity<RoleResponseDto> findById(@PathVariable("id") UUID id);
 
     @Operation(
             summary = "Finding one Role by title",
@@ -97,7 +97,7 @@ public interface RoleControllerDocs {
             }
     )
     ResponseEntity<RoleResponseDto> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid RoleUpdateDto dto
     );
 }

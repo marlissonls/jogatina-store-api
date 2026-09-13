@@ -52,7 +52,7 @@ public interface CategoryControllerDocs {
             }
     )
     ResponseEntity<CategoryPublicDto> findBySlug(
-            @PathVariable String slug
+            @PathVariable("slug") String slug
     );
 
 
@@ -95,7 +95,7 @@ public interface CategoryControllerDocs {
             }
     )
     ResponseEntity<CategoryResponseDto> findById(
-            @PathVariable UUID id
+            @PathVariable("id") UUID id
     );
 
 
@@ -140,7 +140,7 @@ public interface CategoryControllerDocs {
             }
     )
     ResponseEntity<CategoryResponseDto> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid CategoryRequestDto dto
     );
 
@@ -164,7 +164,7 @@ public interface CategoryControllerDocs {
             }
     )
     ResponseEntity<Void> deactivate(
-            @PathVariable UUID id
+            @PathVariable("id") UUID id
     );
 
 
@@ -187,6 +187,6 @@ public interface CategoryControllerDocs {
             }
     )
     ResponseEntity<Void> activate(
-            @PathVariable UUID id
+            @PathVariable("id") UUID id
     );
 }

@@ -48,7 +48,7 @@ public class CartController implements br.com.jogatinastore.sales.cart.presentat
     @DeleteMapping("/items/product/{productId}")
     public ResponseEntity<Void> removeProduct(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable UUID productId
+            @PathVariable("productId") UUID productId
     ) {
         service.removeProduct(auth.getId(), productId);
 

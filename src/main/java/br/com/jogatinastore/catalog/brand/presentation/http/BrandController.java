@@ -37,7 +37,7 @@ public class BrandController implements BrandControllerDocs {
 
     @Override
     @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BrandPublicDto> findBySlug(@PathVariable String slug) {
+    public ResponseEntity<BrandPublicDto> findBySlug(@PathVariable("slug") String slug) {
         return ResponseEntity.ok().body(service.findBySlug(slug));
     }
 
@@ -68,7 +68,7 @@ public class BrandController implements BrandControllerDocs {
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<BrandResponseDto> findById(@PathVariable UUID id) {
+    public ResponseEntity<BrandResponseDto> findById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
@@ -77,7 +77,7 @@ public class BrandController implements BrandControllerDocs {
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<BrandResponseDto> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid BrandRequestDto dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
@@ -86,7 +86,7 @@ public class BrandController implements BrandControllerDocs {
     @PatchMapping(path = "/manager/{id}/deactivate")
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> deactivate(@PathVariable UUID id) {
+    public ResponseEntity<Void> deactivate(@PathVariable("id") UUID id) {
 
         service.deactivate(id);
         return ResponseEntity.noContent().build();
@@ -96,7 +96,7 @@ public class BrandController implements BrandControllerDocs {
     @PatchMapping(path = "/manager/{id}/activate")
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> activate(@PathVariable UUID id) {
+    public ResponseEntity<Void> activate(@PathVariable("id") UUID id) {
 
         service.activate(id);
         return ResponseEntity.noContent().build();

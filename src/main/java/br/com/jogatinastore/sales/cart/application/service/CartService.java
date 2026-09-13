@@ -57,6 +57,7 @@ public class CartService {
             cart = cartOpt.get();
             items = repository.findCartItems(cart.getId())
                     .stream()
+                    .map(CartItemSnapshot::new)
                     .map(CartItemResponseDto::new)
                     .toList();
         }
