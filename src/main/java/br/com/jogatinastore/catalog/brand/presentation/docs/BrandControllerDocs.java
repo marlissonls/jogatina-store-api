@@ -38,7 +38,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandPublicDto> findBySlug(@PathVariable String slug);
+    ResponseEntity<BrandPublicDto> findBySlug(@PathVariable("slug") String slug);
 
     @Operation(
             summary = "Fetching all Brands",
@@ -80,7 +80,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandResponseDto> findById(@PathVariable UUID id);
+    ResponseEntity<BrandResponseDto> findById(@PathVariable("id") UUID id);
 
     @Operation(
             summary = "Updating a Brand",
@@ -96,7 +96,7 @@ public interface BrandControllerDocs {
             }
     )
     ResponseEntity<BrandResponseDto> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody @Valid BrandRequestDto dto);
 
     @Operation(
@@ -112,7 +112,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> deactivate(@PathVariable UUID id);
+    ResponseEntity<Void> deactivate(@PathVariable("id") UUID id);
 
     @Operation(
             summary = "Activating a Brand",
@@ -127,5 +127,5 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> activate(@PathVariable UUID id);
+    ResponseEntity<Void> activate(@PathVariable("id") UUID id);
 }

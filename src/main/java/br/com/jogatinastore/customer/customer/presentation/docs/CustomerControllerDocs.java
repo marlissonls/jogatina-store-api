@@ -52,7 +52,7 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CustomerResponseDto> findById(@PathVariable UUID id);
+    ResponseEntity<CustomerResponseDto> findById(@PathVariable("id") UUID id);
 
     @Operation(
             summary = "Get current authenticated Customer",
@@ -95,7 +95,7 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<CustomerResponseDto> update(@PathVariable UUID id, @RequestBody @Valid CustomerUpdateDto dto);
+    ResponseEntity<CustomerResponseDto> update(@PathVariable("id") UUID id, @RequestBody @Valid CustomerUpdateDto dto);
 
     @Operation(
             summary = "Delete one Customer",
@@ -109,5 +109,5 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<Void> delete(@PathVariable UUID id);
+    ResponseEntity<Void> delete(@PathVariable("id") UUID id);
 }

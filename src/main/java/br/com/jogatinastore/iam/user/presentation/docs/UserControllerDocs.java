@@ -53,7 +53,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<UserResponseDto> findById(@PathVariable UUID id);
+    ResponseEntity<UserResponseDto> findById(@PathVariable("id") UUID id);
 
     @PostMapping
     @Operation(
@@ -122,7 +122,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<Void> delete(@PathVariable UUID id);
+    ResponseEntity<Void> delete(@PathVariable("id") UUID id);
 
     @Operation(
             summary = "Deactivate user",
@@ -136,7 +136,7 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<Void> deactivate(@PathVariable UUID id);
+    ResponseEntity<Void> deactivate(@PathVariable("id") UUID id);
 
     @Operation(
             summary = "Activate user",
@@ -150,5 +150,5 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             })
-    ResponseEntity<Void> activate(@PathVariable UUID id);
+    ResponseEntity<Void> activate(@PathVariable("id") UUID id);
 }

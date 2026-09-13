@@ -79,7 +79,7 @@ public interface CartControllerDocs {
     )
     ResponseEntity<Void> removeProduct(
             @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable UUID productId
+            @PathVariable("productId") UUID productId
     );
 }
 

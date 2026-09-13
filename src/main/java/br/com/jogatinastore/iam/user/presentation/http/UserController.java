@@ -49,7 +49,7 @@ public class UserController implements UserControllerDocs {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<UserResponseDto> findById(@PathVariable UUID id) {
+    public ResponseEntity<UserResponseDto> findById(@PathVariable("id") UUID id) {
 
         return ResponseEntity.ok().body(service.findById(id));
     }
@@ -110,7 +110,7 @@ public class UserController implements UserControllerDocs {
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
 
         service.delete(id);
         return ResponseEntity.noContent().build();
@@ -120,7 +120,7 @@ public class UserController implements UserControllerDocs {
     @PatchMapping(path = "/{id}/deactivate")
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> deactivate(@PathVariable UUID id) {
+    public ResponseEntity<Void> deactivate(@PathVariable("id") UUID id) {
 
         service.deactivate(id);
         return ResponseEntity.noContent().build();
@@ -131,7 +131,7 @@ public class UserController implements UserControllerDocs {
     @PatchMapping(path = "/{id}/activate")
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> activate(@PathVariable UUID id) {
+    public ResponseEntity<Void> activate(@PathVariable("id") UUID id) {
 
         service.activate(id);
         return ResponseEntity.noContent().build();

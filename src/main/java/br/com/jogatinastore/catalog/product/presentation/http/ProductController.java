@@ -50,7 +50,7 @@ public class ProductController implements ProductControllerDocs {
     // findBySlug
     @Override
     @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductPublicResponseDto> findBySlug(@PathVariable String slug) {
+    public ResponseEntity<ProductPublicResponseDto> findBySlug(@PathVariable("slug") String slug) {
         return ResponseEntity.ok().body(service.findBySlug(slug));
     }
 
@@ -74,7 +74,7 @@ public class ProductController implements ProductControllerDocs {
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<ProductWithStockResponseDto> findById(@PathVariable UUID id) {
+    public ResponseEntity<ProductWithStockResponseDto> findById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
@@ -83,7 +83,7 @@ public class ProductController implements ProductControllerDocs {
     @GetMapping(path = "/manager/barcode/{barcode}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<ProductWithStockResponseDto> findByBarcode(@PathVariable String barcode) {
+    public ResponseEntity<ProductWithStockResponseDto> findByBarcode(@PathVariable("barcode") String barcode) {
         return ResponseEntity.ok().body(service.findByBarcode(barcode));
     }
 
@@ -92,7 +92,7 @@ public class ProductController implements ProductControllerDocs {
     @GetMapping(path = "/manager/sku/{sku}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<ProductWithStockResponseDto> findBySku(@PathVariable String sku) {
+    public ResponseEntity<ProductWithStockResponseDto> findBySku(@PathVariable("sku") String sku) {
         return ResponseEntity.ok().body(service.findBySku(sku));
     }
 
@@ -119,7 +119,7 @@ public class ProductController implements ProductControllerDocs {
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ProductResponseDto> update(
-            @PathVariable @NotNull UUID id,
+            @PathVariable("id") @NotNull UUID id,
             @RequestBody @Valid ProductUpdateDto dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
@@ -129,7 +129,7 @@ public class ProductController implements ProductControllerDocs {
     @PatchMapping(path = "/manager/{id}/deactivate")
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> deactivate(@PathVariable @NotNull UUID id) {
+    public ResponseEntity<Void> deactivate(@PathVariable("id") @NotNull UUID id) {
         service.deactivate(id);
         return ResponseEntity.noContent().build();
     }
@@ -139,7 +139,7 @@ public class ProductController implements ProductControllerDocs {
     @PatchMapping(path = "/manager/{id}/activate")
     @PreAuthorize("hasRole('MANAGER')")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> activate(@PathVariable @NotNull UUID id) {
+    public ResponseEntity<Void> activate(@PathVariable("id") @NotNull UUID id) {
         service.activate(id);
         return ResponseEntity.noContent().build();
     }

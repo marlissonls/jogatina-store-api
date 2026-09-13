@@ -45,7 +45,7 @@ public class RoleController implements RoleControllerDocs {
     @Override
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<RoleResponseDto> findById(@PathVariable UUID id) {
+    public ResponseEntity<RoleResponseDto> findById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
@@ -53,7 +53,7 @@ public class RoleController implements RoleControllerDocs {
     @GetMapping(value = "/title/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<RoleResponseDto> findByTitle(
-            @PathVariable String title
+            @PathVariable("title") String title
     ) {
         return ResponseEntity.ok(service.findByTitle(title));
     }
@@ -72,7 +72,7 @@ public class RoleController implements RoleControllerDocs {
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<RoleResponseDto> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @Valid @RequestBody RoleUpdateDto dto
     ) {
         return ResponseEntity.ok().body(service.update(id, dto));
