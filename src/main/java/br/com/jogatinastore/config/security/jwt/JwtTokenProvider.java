@@ -1,8 +1,8 @@
 package br.com.jogatinastore.config.security.jwt;
 
 import br.com.jogatinastore.config.security.jwt.exception.InvalidJwtTokenException;
-import br.com.jogatinastore.iam.authentication.domain.exception.AuthErrors;
 import br.com.jogatinastore.iam.authentication.application.dto.TokenDto;
+import br.com.jogatinastore.iam.authentication.domain.exception.AuthErrors;
 import br.com.jogatinastore.iam.security.principal.AuthenticatedUser;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -10,19 +10,17 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Service
 public class JwtTokenProvider {
 
     private final long validityInMilliseconds;
@@ -34,12 +32,12 @@ public class JwtTokenProvider {
             Pattern.compile("[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+");
 
     public JwtTokenProvider(
-        @Value("${security.jwt.token.secret:secret}") String secret,
-        @Value("${secret.jwt.token.expire-length:3600000}") long validityInMilliseconds,
-        @Value("${secret.jwt.token.refresh-expire-length:10800000}") long refreshValidityInMilliseconds
+            String secret,
+            Duration validity,
+            Duration refreshValidity
     ) {
-        this.validityInMilliseconds = validityInMilliseconds;
-        this.refreshValidityInMilliseconds = refreshValidityInMilliseconds;
+        this.validityInMilliseconds = validity.toMillis();
+        this.refreshValidityInMilliseconds = refreshValidity.toMillis();
         this.algorithm = Algorithm.HMAC256(secret);
         this.accessTokenVerifier = JWT
                 .require(algorithm)
