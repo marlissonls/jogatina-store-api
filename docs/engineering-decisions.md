@@ -6,21 +6,22 @@ This document explains selected engineering decisions in JogatinaStore, includin
 
 **Problem**
 
-Stock availability can change between checking the available quantity and updating the inventory. A separate read followed by an unconditional update can therefore allow an operation to deduct more stock than is available.
+Stock reservations must not reduce the available quantity below zero. Because multiple checkout requests can attempt to reserve the same stock concurrently, a quantity check performed earlier in the application may become outdated before the reservation is executed.
 
 **Decision**
 
-Use a conditional JPQL update that includes the available-quantity requirement in the database update itself.
+Use a conditional JPQL update to decrease the available quantity and increase the reserved quantity only when sufficient stock is available.
 
-**Trade-offs**
+**Rationale**
 
-- Combines the stock condition and quantity update into a single database operation.
-- Avoids relying solely on an earlier application-level availability check.
-- Requires the application to inspect the affected-row count to determine whether the update succeeded.
+- Enforces the stock availability condition at the database operation that performs the reservation.
+- Updates available and reserved quantities atomically, avoiding an intermediate state in which only one quantity has been changed.
+- Avoids loading and tracking the stock entity for a quantity operation that can be expressed directly as a conditional update.
+- Uses the affected-row count to determine whether the reservation succeeded.
 
 **Limitations**
 
-The conditional update protects the quantity invariant for that operation, provided success is determined from the affected-row count. It does not, by itself, guarantee that the entire checkout workflow is free from concurrency issues.
+This protects the stock quantity invariant during the reservation operation. It does not, by itself, guarantee concurrency safety for every operation in the checkout workflow.
 
 ## 2. Transactional Checkout
 
@@ -34,9 +35,7 @@ Coordinate checkout operations within a transaction so that participating databa
 
 **Trade-offs**
 
-- Helps preserve consistency across related database operations.
-- Requires transaction boundaries to cover the participating operations correctly.
-- Can increase transaction duration when multiple operations are involved.
+- **Improved atomicity vs. longer lock duration:** Grouping checkout operations in one transaction prevents participating database changes from being committed independently. However, locks acquired during the transaction may be held until commit or rollback, increasing contention when concurrent operations access the same records.
 
 **Limitations**
 
@@ -54,9 +53,7 @@ Use Spring Data JPA Specifications to compose predicates dynamically according t
 
 **Trade-offs**
 
-- Supports flexible combinations of filters without requiring a dedicated query for each combination.
-- Keeps filtering logic composable and reusable.
-- Can make query behavior harder to understand when specifications become overly complex.
+- **Flexibility vs. query complexity:** Specifications support combinations of optional filters without requiring a separate query for each combination. However, as filtering rules grow, the resulting predicates and generated SQL can become harder to understand, test, and optimize.
 
 **Limitations**
 
@@ -74,9 +71,7 @@ Organize business components around application services, domain models, infrast
 
 **Trade-offs**
 
-- Makes responsibilities easier to locate and reason about.
-- Supports focused testing and changes within individual components.
-- Introduces additional classes and package structure compared with a simpler layered implementation.
+- **Separation of concerns vs. structural complexity:** Separating responsibilities makes components easier to understand, test, and change independently. However, it introduces additional classes, interfaces, and package structure compared with a simpler implementation, increasing the amount of code developers must navigate and maintain.
 
 **Limitations**
 
@@ -94,9 +89,7 @@ Use Flyway versioned SQL migrations to manage schema changes, organized by busin
 
 **Trade-offs**
 
-- Provides a traceable history of schema changes.
-- Allows environments to apply migrations in a controlled sequence.
-- Requires migration files to be maintained carefully because applied migrations should not be modified casually.
+- **Traceability and controlled evolution vs. migration maintenance:** Versioned migrations provide a consistent, auditable history of schema changes. However, once a migration has been applied to a shared environment, correcting it generally requires a new migration rather than editing the original file, increasing the maintenance effort when schema changes need correction.
 
 **Limitations**
 
@@ -112,11 +105,15 @@ Business rules and interactions between application components need different le
 
 Use JUnit and Mockito for unit testing, and Spring Boot Test, RestAssured, and Testcontainers for integration testing.
 
+**Rationale**
+
+- Unit tests provide fast, focused feedback on business behavior.
+- Integration tests verify interactions across application and infrastructure boundaries.
+- Testcontainers allows integration tests to run against a real database engine instead of relying exclusively on mocks.
+
 **Trade-offs**
 
-- Unit tests support fast, focused feedback on business behavior.
-- Integration tests exercise interactions across application and infrastructure boundaries.
-- Container-based tests provide a more realistic database environment than isolated mocks, at the cost of additional execution time and infrastructure requirements.
+- **Realistic integration testing vs. execution cost:** Running tests against containerized infrastructure provides greater confidence in database interactions, but increases test execution time and requires a compatible container runtime.
 
 **Current Scope**
 
@@ -134,12 +131,11 @@ Duplicated exception-response logic and inconsistent logging can make API behavi
 
 Centralize shared exception-handling functionality and use configurable application logging.
 
-**Trade-offs**
+**Rationale**
 
-- Promotes consistent error responses across endpoints.
-- Reduces duplicated exception-handling code.
-- Requires care to avoid hiding useful diagnostic details or exposing internal information to API clients.
+- Centralizes exception-to-response mapping, promoting consistent API error responses.
+- Reduces duplicated exception-handling code and makes shared behavior easier to maintain.
 
 **Limitations**
 
-Centralized handling does not replace appropriate exception classification, meaningful log context, or tests that verify the API's error responses.
+Centralization does not guarantee that exceptions are classified correctly or that logs contain sufficient diagnostic context. Error responses and logging behavior must be tested to ensure clients receive appropriate information without exposing internal details.
