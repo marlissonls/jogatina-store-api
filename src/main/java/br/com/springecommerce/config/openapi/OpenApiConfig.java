@@ -27,7 +27,7 @@ public class OpenApiConfig {
                             → A Spring Boot REST API for a e-commerce store.
                             This project manages product inventory, user accounts, and order processing,
                             following modern Java standards and software engineering best practices.""")
-                        .termsOfService("https://github.com/marlissonls/jogatina-store-api/blob/main/TERMS.md")
+                        .termsOfService("https://github.com/marlissonls/spring-ecommerce-api/blob/main/TERMS.md")
                         .license(
                             new License()
                                 .name("MIT License")
