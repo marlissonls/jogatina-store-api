@@ -31,7 +31,7 @@
         <java-jwt.version>4.4.0</java-jwt.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <springdoc.version>2.7.0</springdoc.version>
-        <testcontainers.version>1.20.4</testcontainers.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
     <dependencies>
         <dependency>
