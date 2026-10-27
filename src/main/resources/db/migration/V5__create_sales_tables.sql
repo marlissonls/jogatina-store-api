@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS cart_items (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
+    PRIMARY KEY (cart_id, product_id), -- Added this because Render need it
+
     CONSTRAINT chk_quantity_positive CHECK (quantity > 0),
     CONSTRAINT chk_unit_price_positive CHECK (unit_price > 0),
 
@@ -86,6 +88,8 @@ CREATE TABLE IF NOT EXISTS order_items (
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (order_id, product_id), -- Added this because Render need it
 
     CONSTRAINT chk_order_item_quantity_positive CHECK (quantity > 0),
     CONSTRAINT chk_order_item_unit_price_positive CHECK (unit_price > 0),
