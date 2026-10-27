@@ -7,13 +7,13 @@ cors:
 security:
   jwt:
     token:
-      secret: ${JWT_SECRET:test-secret-jogatinastore-123456789}
+      secret: ${JWT_SECRET:test-secret-springecommerce-123456789}
       expire-length: ${JWT_EXPIRE_TIME:3600000}
       refresh-expire-length: ${JWT_REFRESH_EXPIRE_TIME:10800000}
 
 spring:
   application:
-    name: jogatinastore
+    name: springecommerce
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # url, username and password are dynamically generated for integration tests

@@ -1,6 +1,6 @@
 # Engineering Decisions
 
-This document explains selected engineering decisions in JogatinaStore, including the problems they address, their trade-offs, and their limitations.
+This document explains selected engineering decisions in SpringEcommerce, including the problems they address, their trade-offs, and their limitations.
 
 ## 1. Conditional Stock Updates
 

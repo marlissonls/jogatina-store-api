@@ -23,7 +23,7 @@ The application is organized into the following business modules:
 The source code is organized by business module, with internal packages separating responsibilities such as application services, domain models, persistence, and HTTP presentation where applicable.
 
 ```text
-br.com.jogatinastore/
+br.com.springecommerce/
 ├── iam/
 │   ├── user/
 │   ├── authentication/

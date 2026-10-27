@@ -2,7 +2,7 @@
 
 ## Overview
 
-JogatinaStore exposes a REST API organized into five business modules: IAM, Catalog, Customer, Inventory, and Sales.
+SpringEcommerce exposes a REST API organized into five business modules: IAM, Catalog, Customer, Inventory, and Sales.
 
 Interactive documentation is available through Swagger UI.
 

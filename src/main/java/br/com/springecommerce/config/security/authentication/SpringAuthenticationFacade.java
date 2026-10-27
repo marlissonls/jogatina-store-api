@@ -1,0 +1,35 @@
+package br.com.springecommerce.config.security.authentication;
+
+import br.com.springecommerce.iam.authentication.application.dto.AccountCredentialsDto;
+import br.com.springecommerce.iam.security.authentication.AuthenticationFacade;
+import br.com.springecommerce.iam.security.principal.AuthenticatedUser;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SpringAuthenticationFacade implements AuthenticationFacade {
+
+    private final AuthenticationManager authenticationManager;
+
+    public SpringAuthenticationFacade(
+            AuthenticationManager authenticationManager
+    ) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    @Override
+    public AuthenticatedUser authenticate(AccountCredentialsDto credentials) {
+
+        Authentication authentication =
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    credentials.email(),
+                    credentials.password()
+                )
+            );
+
+        return (AuthenticatedUser) authentication.getPrincipal();
+    }
+}
