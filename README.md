@@ -1,4 +1,4 @@
-# JogatinaStore
+# SpringEcommerce
 
 A modular monolith e-commerce application built with Java and Spring Boot, focused on backend development, domain modeling, data integrity, automated testing, and maintainable software design.
 
@@ -8,7 +8,7 @@ The project simulates core e-commerce workflows, including user management, prod
 
 ## 1. Project Overview
 
-JogatinaStore is a REST API for an online store, designed as a modular monolith. Its codebase is organized around business capabilities, with modules responsible for specific parts of the application.
+SpringEcommerce is a REST API for an online store, designed as a modular monolith. Its codebase is organized around business capabilities, with modules responsible for specific parts of the application.
 
 The project emphasizes:
 
@@ -72,7 +72,7 @@ Feature status reflects the current implementation and is subject to change as d
 
 ## 3. Architecture
 
-JogatinaStore follows the **modular monolith** architectural style. The application is deployed as a single unit, while its code is divided into modules organized around business capabilities.
+SpringEcommerce follows the **modular monolith** architectural style. The application is deployed as a single unit, while its code is divided into modules organized around business capabilities.
 
 Each module owns a specific area of the business. Within modules, packages separate concerns such as application services, domain models, persistence, HTTP controllers, and API documentation where appropriate.
 
@@ -81,7 +81,7 @@ This structure aims to keep related functionality together, make responsibilitie
 ### High-level structure
 
 ```text
-JogatinaStore
+SpringEcommerce
 ├── iam
 │   ├── user
 │   ├── authentication
@@ -187,7 +187,7 @@ For a quick, module-by-module endpoint index, see [API Reference](docs/api-refer
 
 ```bash
 git clone <repository-url>
-cd jogatinastore
+cd springecommerce
 ```
 
 Replace `<repository-url>` with the repository's actual Git URL.
@@ -280,7 +280,7 @@ For test boundaries, conventions, data setup, and known coverage gaps, see [Test
 The repository separates business modules, shared support code, application configuration, database migrations, and automated tests.
 
 ```text
-jogatinastore/
+springecommerce/
 ├── src/
 │   ├── main/
 │   │   ├── java/

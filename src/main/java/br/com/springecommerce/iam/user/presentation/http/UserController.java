@@ -1,0 +1,139 @@
+package br.com.springecommerce.iam.user.presentation.http;
+
+import br.com.springecommerce.iam.user.application.dto.UserEmployeeCreateDto;
+import br.com.springecommerce.iam.user.application.dto.UserCreateDto;
+import br.com.springecommerce.iam.user.application.dto.UserResponseDto;
+import br.com.springecommerce.iam.user.presentation.docs.UserControllerDocs;
+import br.com.springecommerce.iam.user.application.dto.UserUpdateRoleDto;
+import br.com.springecommerce.shared.pagination.PageResponse;
+import br.com.springecommerce.iam.user.application.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/users")
+@Tag(name = "Users", description = "Endpoints for Users management")
+public class UserController implements UserControllerDocs {
+
+    private final UserService service;
+
+    public UserController(UserService service) {
+        this.service = service;
+    }
+
+    @Override
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<PageResponse<UserResponseDto>> findAll(
+            @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.ASC)
+            Pageable pageable
+    ) {
+
+        return ResponseEntity.ok().body(service.findAll(pageable));
+    }
+
+    @Override
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<UserResponseDto> findById(@PathVariable("id") UUID id) {
+
+        return ResponseEntity.ok().body(service.findById(id));
+    }
+
+    @Override
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserResponseDto> create(@RequestBody @Valid UserCreateDto dto) {
+
+        UserResponseDto response = service.create(dto);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
+    }
+
+    @Override
+    @PostMapping(path = "/employee", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<UserResponseDto> createEmployee(@RequestBody @Valid UserEmployeeCreateDto dto) {
+
+        UserResponseDto response = service.createEmployee(dto);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
+    }
+
+    @Override
+    @PutMapping(path = "/assignRole", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UserUpdateRoleDto dto) {
+
+        service.assignRoleToUser(dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    @PutMapping(path = "/removeRole", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UserUpdateRoleDto dto) {
+
+        service.removeRoleFromUser(dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    @PatchMapping(path = "/{id}/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Void> deactivate(@PathVariable("id") UUID id) {
+
+        service.deactivate(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Override
+    @PatchMapping(path = "/{id}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Void> activate(@PathVariable("id") UUID id) {
+
+        service.activate(id);
+        return ResponseEntity.noContent().build();
+    }
+}

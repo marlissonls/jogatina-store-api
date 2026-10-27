@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from infrastructure -->
     </parent>
     <groupId>br.com</groupId>
-    <artifactId>jogatinastore</artifactId>
+    <artifactId>springecommerce</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>jogatinastore</name>
-    <description>jogatinastore</description>
+    <name>springecommerce</name>
+    <description>springecommerce</description>
     <url/>
     <licenses>
         <license/>
