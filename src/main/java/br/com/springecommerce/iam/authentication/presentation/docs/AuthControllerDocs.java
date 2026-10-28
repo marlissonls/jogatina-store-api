@@ -1,17 +1,17 @@
 package br.com.springecommerce.iam.authentication.presentation.docs;
 
-import br.com.springecommerce.shared.exception.response.ExceptionResponse;
 import br.com.springecommerce.iam.authentication.application.dto.AccountCredentialsDto;
 import br.com.springecommerce.iam.authentication.application.dto.RefreshTokenDto;
 import br.com.springecommerce.iam.authentication.application.dto.TokenDto;
+import br.com.springecommerce.shared.exception.response.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 
+@Tag(name = "Authentication", description = "Endpoints for User Authentication")
 public interface AuthControllerDocs {
 
     @Operation(
@@ -24,7 +24,7 @@ public interface AuthControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<TokenDto> signIn(@RequestBody @Valid AccountCredentialsDto credentials);
+    ResponseEntity<TokenDto> signIn(AccountCredentialsDto credentials);
 
     @Operation(
             summary = "Refresh token for authenticated user and returns a token",
@@ -36,5 +36,5 @@ public interface AuthControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<TokenDto> refresh(@RequestBody @Valid RefreshTokenDto refresh);
+    ResponseEntity<TokenDto> refresh(RefreshTokenDto refresh);
 }

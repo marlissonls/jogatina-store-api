@@ -5,8 +5,6 @@ import br.com.springecommerce.catalog.category.application.dto.CategoryRequestDt
 import br.com.springecommerce.catalog.category.application.dto.CategoryResponseDto;
 import br.com.springecommerce.catalog.category.application.service.CategoryService;
 import br.com.springecommerce.catalog.category.presentation.docs.CategoryControllerDocs;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +18,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/categories")
-@Tag(name = "Categories", description = "Endpoints for Categories management")
 public class CategoryController implements CategoryControllerDocs {
 
     private final CategoryService service;
@@ -46,7 +43,6 @@ public class CategoryController implements CategoryControllerDocs {
     @Override
     @GetMapping(path = "/manager", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<CategoryResponseDto>> findAll() {
         return ResponseEntity.ok().body(service.findAll());
     }
@@ -54,7 +50,6 @@ public class CategoryController implements CategoryControllerDocs {
     @Override
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CategoryResponseDto> findById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
@@ -62,7 +57,6 @@ public class CategoryController implements CategoryControllerDocs {
     @Override
     @PostMapping(path = "/manager", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CategoryResponseDto> create(@RequestBody @Valid CategoryRequestDto dto) {
         CategoryResponseDto response = service.create(dto);
 
@@ -77,7 +71,6 @@ public class CategoryController implements CategoryControllerDocs {
     @Override
     @PutMapping(path = "/manager/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CategoryResponseDto> update(
             @PathVariable("id") UUID id,
             @RequestBody @Valid CategoryRequestDto dto) {
@@ -87,7 +80,6 @@ public class CategoryController implements CategoryControllerDocs {
     @Override
     @PatchMapping(path = "/manager/{id}/deactivate")
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deactivate(@PathVariable("id") UUID id) {
 
         service.deactivate(id);
@@ -97,7 +89,6 @@ public class CategoryController implements CategoryControllerDocs {
     @Override
     @PatchMapping(path = "/manager/{id}/activate")
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> activate(@PathVariable("id") UUID id) {
 
         service.activate(id);

@@ -1,19 +1,20 @@
 package br.com.springecommerce.iam.authentication.presentation.http;
 
-import br.com.springecommerce.iam.authentication.presentation.docs.AuthControllerDocs;
 import br.com.springecommerce.iam.authentication.application.dto.AccountCredentialsDto;
 import br.com.springecommerce.iam.authentication.application.dto.RefreshTokenDto;
 import br.com.springecommerce.iam.authentication.application.dto.TokenDto;
 import br.com.springecommerce.iam.authentication.application.service.AuthService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import br.com.springecommerce.iam.authentication.presentation.docs.AuthControllerDocs;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Authentication", description = "Endpoints for User Authentication")
 public class AuthController implements AuthControllerDocs {
 
     private final AuthService service;

@@ -9,17 +9,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
+@Tag(name = "Roles", description = "Endpoints for Roles management")
 public interface RoleControllerDocs {
 
     @Operation(
@@ -35,10 +33,8 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<RoleResponseDto>> findAll(
-            @PageableDefault(size = 12, sort = "title", direction = Sort.Direction.ASC)
-            Pageable pageable
-    );
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<PageResponse<RoleResponseDto>> findAll(@ParameterObject Pageable pageable);
 
     @Operation(
             summary = "Finding one Role by ID",
@@ -52,7 +48,8 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<RoleResponseDto> findById(@PathVariable("id") UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<RoleResponseDto> findById(UUID id);
 
     @Operation(
             summary = "Finding one Role by title",
@@ -67,7 +64,8 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<RoleResponseDto> findByTitle(@RequestParam String title);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<RoleResponseDto> findByTitle(String title);
 
     @Operation(
             summary = "Add a new Role",
@@ -81,7 +79,8 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<RoleResponseDto> create(@RequestBody @Valid RoleCreateDto dto);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<RoleResponseDto> create(RoleCreateDto dto);
 
     @Operation(
             summary = "Update one Role",
@@ -96,8 +95,9 @@ public interface RoleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
+    @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<RoleResponseDto> update(
-            @PathVariable("id") UUID id,
-            @RequestBody @Valid RoleUpdateDto dto
+            UUID id,
+            RoleUpdateDto dto
     );
 }

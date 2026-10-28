@@ -3,24 +3,22 @@ package br.com.springecommerce.customer.customer.presentation.docs;
 import br.com.springecommerce.customer.customer.application.dto.CustomerCreateDto;
 import br.com.springecommerce.customer.customer.application.dto.CustomerResponseDto;
 import br.com.springecommerce.customer.customer.application.dto.CustomerUpdateDto;
-import br.com.springecommerce.shared.exception.response.ExceptionResponse;
 import br.com.springecommerce.iam.security.principal.AuthenticatedUser;
+import br.com.springecommerce.shared.exception.response.ExceptionResponse;
 import br.com.springecommerce.shared.pagination.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.UUID;
 
+@Tag(name = "Customers", description = "Endpoints for Customers management")
 public interface CustomerControllerDocs {
 
     @Operation(
@@ -34,10 +32,8 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<CustomerResponseDto>> findAll(
-            @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
-            Pageable pageable
-    );
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<PageResponse<CustomerResponseDto>> findAll(@ParameterObject Pageable pageable);
 
     @Operation(
             summary = "Fetching one Customer",
@@ -52,7 +48,8 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CustomerResponseDto> findById(@PathVariable("id") UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<CustomerResponseDto> findById(UUID id);
 
     @Operation(
             summary = "Get current authenticated Customer",
@@ -66,7 +63,8 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CustomerResponseDto> me(@AuthenticationPrincipal AuthenticatedUser auth);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<CustomerResponseDto> me(AuthenticatedUser auth);
 
     @Operation(
             summary = "Add a new Customer",
@@ -77,10 +75,12 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<CustomerResponseDto> create(
-            @AuthenticationPrincipal AuthenticatedUser auth,
-            @RequestBody @Valid CustomerCreateDto dto
+            AuthenticatedUser auth,
+            CustomerCreateDto dto
     );
 
     @Operation(
@@ -94,8 +94,13 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<CustomerResponseDto> update(@PathVariable("id") UUID id, @RequestBody @Valid CustomerUpdateDto dto);
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<CustomerResponseDto> update(
+            UUID id,
+            CustomerUpdateDto dto
+    );
 
     @Operation(
             summary = "Delete one Customer",
@@ -108,6 +113,8 @@ public interface CustomerControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<Void> delete(@PathVariable("id") UUID id);
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> delete(UUID id);
 }

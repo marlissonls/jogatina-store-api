@@ -1,12 +1,10 @@
 package br.com.springecommerce.catalog.brand.application.dto;
 
 import br.com.springecommerce.catalog.brand.domain.model.Brand;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Schema(name = "BrandPublicDto")
 public record BrandPublicDto(
     UUID id,
     String title,

@@ -9,16 +9,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Tag(name = "Products", description = "Endpoints for Products management")
 public interface ProductControllerDocs {
 
     @Operation(
@@ -32,8 +31,8 @@ public interface ProductControllerDocs {
             }
     )
     ResponseEntity<PageResponse<ProductPublicResponseDto>> searchPublicViewProducts(
-            @ParameterObject @ModelAttribute ProductPublicFilter filter,
-            @PageableDefault(size = 12, sort = "title") Pageable pageable
+            @ParameterObject ProductPublicFilter filter,
+            @ParameterObject Pageable pageable
     );
 
     @Operation(
@@ -47,7 +46,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductPublicResponseDto> findBySlug(@PathVariable("slug") String slug);
+    ResponseEntity<ProductPublicResponseDto> findBySlug(String slug);
 
     @Operation(
             summary = "Searching manager Products",
@@ -61,9 +60,10 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
+    @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<PageResponse<ProductWithStockResponseDto>> searchManagerViewProducts(
-            @ParameterObject @ModelAttribute ProductManagerFilter filter,
-            @PageableDefault(size = 12, sort = "title") Pageable pageable
+            @ParameterObject ProductManagerFilter filter,
+            @ParameterObject Pageable pageable
     );
 
     @Operation(
@@ -79,7 +79,8 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDto> findById(@PathVariable("id") UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<ProductWithStockResponseDto> findById(UUID id);
 
     @Operation(
             summary = "Fetching Product by barcode",
@@ -94,7 +95,8 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDto> findByBarcode(@PathVariable("barcode") String barcode);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<ProductWithStockResponseDto> findByBarcode(String barcode);
 
     @Operation(
             summary = "Fetching Product by SKU",
@@ -109,7 +111,8 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductWithStockResponseDto> findBySku(@PathVariable("sku") String sku);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<ProductWithStockResponseDto> findBySku(String sku);
 
     @Operation(
             summary = "Creating a Product",
@@ -123,7 +126,8 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ProductResponseDto> create(@RequestBody @Valid ProductCreateDto dto);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<ProductResponseDto> create(ProductCreateDto dto);
 
     @Operation(
             summary = "Updating a Product",
@@ -138,9 +142,11 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
+    @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<ProductResponseDto> update(
-            @PathVariable("id") @NotNull UUID id,
-            @RequestBody @Valid ProductUpdateDto dto);
+            UUID id,
+            ProductUpdateDto dto
+    );
 
     @Operation(
             summary = "Deactivating a Product",
@@ -155,7 +161,8 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> deactivate(@PathVariable("id") @NotNull UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> deactivate(UUID id);
 
     @Operation(
             summary = "Activating a Product",
@@ -170,6 +177,7 @@ public interface ProductControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> activate(@PathVariable("id") @NotNull UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> activate(UUID id);
 }
 

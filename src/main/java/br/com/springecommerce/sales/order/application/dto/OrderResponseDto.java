@@ -3,14 +3,12 @@ package br.com.springecommerce.sales.order.application.dto;
 import br.com.springecommerce.sales.order.domain.model.Order;
 import br.com.springecommerce.sales.order.domain.status.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Schema(name = "OrderResponseDto")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record OrderResponseDto(
         UUID id,

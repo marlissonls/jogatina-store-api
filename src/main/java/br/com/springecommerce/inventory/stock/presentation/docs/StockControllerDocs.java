@@ -11,15 +11,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+
+@Tag(name = "Stocks", description = "Endpoints for Stocks management")
+@SecurityRequirement(name = "bearerAuth")
 public interface StockControllerDocs {
 
     @Operation(
@@ -38,9 +40,7 @@ public interface StockControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<StockResponseDto> create(
-            @RequestBody @Valid StockCreateDto dto
-    );
+    ResponseEntity<StockResponseDto> create(StockCreateDto dto);
 
 
     @Operation(
@@ -60,10 +60,8 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<PageResponse<StockResponseDto>> findAll(
-            @ParameterObject
-            @ModelAttribute StockManagerFilter filter,
-            @PageableDefault(size = 12, sort = "availableQuantity")
-            Pageable pageable
+            @ParameterObject StockManagerFilter filter,
+            @ParameterObject Pageable pageable
     );
 
 
@@ -84,9 +82,7 @@ public interface StockControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<StockResponseDto> findById(
-            @PathVariable("id") UUID id
-    );
+    ResponseEntity<StockResponseDto> findById(UUID id);
 
 
     @Operation(
@@ -107,8 +103,8 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> updateMinimumQuantity(
-            @PathVariable("id") UUID id,
-            @RequestBody @Valid StockMinimumQuantityUpdateDto dto
+            UUID id,
+            StockMinimumQuantityUpdateDto dto
     );
 
 
@@ -130,8 +126,8 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> increase(
-            @PathVariable("id") UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDto dto
+            UUID id,
+            StockAvailableQuantityUpdateDto dto
     );
 
 
@@ -153,8 +149,8 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> writeOff(
-            @PathVariable("id") UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDto dto
+            UUID id,
+            StockAvailableQuantityUpdateDto dto
     );
 
 
@@ -176,8 +172,8 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> reserve(
-            @PathVariable("id") UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDto dto
+            UUID id,
+            StockAvailableQuantityUpdateDto dto
     );
 
 
@@ -199,8 +195,8 @@ public interface StockControllerDocs {
             }
     )
     ResponseEntity<Void> release(
-            @PathVariable("id") UUID id,
-            @RequestBody @Valid StockAvailableQuantityUpdateDto dto
+            UUID id,
+            StockAvailableQuantityUpdateDto dto
     );
 }
 

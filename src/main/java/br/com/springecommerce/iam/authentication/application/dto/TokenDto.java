@@ -1,10 +1,7 @@
 package br.com.springecommerce.iam.authentication.application.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.Date;
 
-@Schema(name = "TokenDto")
 public record TokenDto(
    String email,
    Boolean authenticated,

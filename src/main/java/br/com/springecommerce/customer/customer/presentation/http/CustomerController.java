@@ -1,14 +1,12 @@
 package br.com.springecommerce.customer.customer.presentation.http;
 
-import br.com.springecommerce.customer.customer.presentation.docs.CustomerControllerDocs;
 import br.com.springecommerce.customer.customer.application.dto.CustomerCreateDto;
 import br.com.springecommerce.customer.customer.application.dto.CustomerResponseDto;
 import br.com.springecommerce.customer.customer.application.dto.CustomerUpdateDto;
 import br.com.springecommerce.customer.customer.application.service.CustomerService;
+import br.com.springecommerce.customer.customer.presentation.docs.CustomerControllerDocs;
 import br.com.springecommerce.iam.security.principal.AuthenticatedUser;
 import br.com.springecommerce.shared.pagination.PageResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,7 +23,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/customers")
-@Tag(name = "Customers", description = "Endpoints for Customers management")
 public class CustomerController implements CustomerControllerDocs {
 
     private final CustomerService service;
@@ -37,7 +34,6 @@ public class CustomerController implements CustomerControllerDocs {
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<PageResponse<CustomerResponseDto>> findAll(
             @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable
@@ -48,7 +44,6 @@ public class CustomerController implements CustomerControllerDocs {
     @Override
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CustomerResponseDto> findById(@PathVariable("id") UUID id) {
 
         return ResponseEntity.ok().body(service.findById(id));
@@ -57,7 +52,6 @@ public class CustomerController implements CustomerControllerDocs {
     @Override
     @GetMapping(path = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CUSTOMER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CustomerResponseDto> me(@AuthenticationPrincipal AuthenticatedUser auth) {
 
         return ResponseEntity.ok().body(service.me(auth.getId()));
@@ -83,7 +77,6 @@ public class CustomerController implements CustomerControllerDocs {
     @Override
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CustomerResponseDto> update(
             @PathVariable("id") UUID id,
             @RequestBody @Valid CustomerUpdateDto dto)
@@ -94,7 +87,6 @@ public class CustomerController implements CustomerControllerDocs {
     @Override
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
 
         service.delete(id);

@@ -5,8 +5,6 @@ import br.com.springecommerce.catalog.brand.application.dto.BrandRequestDto;
 import br.com.springecommerce.catalog.brand.application.dto.BrandResponseDto;
 import br.com.springecommerce.catalog.brand.application.service.BrandService;
 import br.com.springecommerce.catalog.brand.presentation.docs.BrandControllerDocs;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +18,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/brands")
-@Tag(name = "Brands", description = "Endpoints for Brands management")
 public class BrandController implements BrandControllerDocs {
 
     private final BrandService service;
@@ -44,7 +41,6 @@ public class BrandController implements BrandControllerDocs {
     @Override
     @GetMapping(path = "/manager/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<BrandResponseDto>> findAll() {
         return ResponseEntity.ok().body(service.findAll());
     }
@@ -52,7 +48,6 @@ public class BrandController implements BrandControllerDocs {
     @Override
     @PostMapping(path = "/manager", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<BrandResponseDto> create(@RequestBody @Valid BrandRequestDto dto) {
         BrandResponseDto response = service.create(dto);
 
@@ -67,7 +62,6 @@ public class BrandController implements BrandControllerDocs {
     @Override
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<BrandResponseDto> findById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
@@ -75,7 +69,6 @@ public class BrandController implements BrandControllerDocs {
     @Override
     @PutMapping(path = "/manager/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<BrandResponseDto> update(
             @PathVariable("id") UUID id,
             @RequestBody @Valid BrandRequestDto dto) {
@@ -85,7 +78,6 @@ public class BrandController implements BrandControllerDocs {
     @Override
     @PatchMapping(path = "/manager/{id}/deactivate")
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deactivate(@PathVariable("id") UUID id) {
 
         service.deactivate(id);
@@ -95,7 +87,6 @@ public class BrandController implements BrandControllerDocs {
     @Override
     @PatchMapping(path = "/manager/{id}/activate")
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> activate(@PathVariable("id") UUID id) {
 
         service.activate(id);
