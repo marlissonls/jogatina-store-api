@@ -1,7 +1,7 @@
 package br.com.springecommerce.iam.user.presentation.docs;
 
-import br.com.springecommerce.iam.user.application.dto.UserEmployeeCreateDto;
 import br.com.springecommerce.iam.user.application.dto.UserCreateDto;
+import br.com.springecommerce.iam.user.application.dto.UserEmployeeCreateDto;
 import br.com.springecommerce.iam.user.application.dto.UserResponseDto;
 import br.com.springecommerce.iam.user.application.dto.UserUpdateRoleDto;
 import br.com.springecommerce.shared.exception.response.ExceptionResponse;
@@ -10,17 +10,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.UUID;
 
+@Tag(name = "Users", description = "Endpoints for Users management")
 public interface UserControllerDocs {
 
     @Operation(
@@ -35,10 +33,8 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PageResponse<UserResponseDto>> findAll(
-            @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
-            Pageable pageable
-    );
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<PageResponse<UserResponseDto>> findAll(@ParameterObject Pageable pageable);
 
     @Operation(
             summary = "Finding one User",
@@ -53,9 +49,9 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<UserResponseDto> findById(@PathVariable("id") UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<UserResponseDto> findById(UUID id);
 
-    @PostMapping
     @Operation(
             summary = "Add a new User",
             description = "Adds a new User by passing a JSON representation of the User.",
@@ -64,10 +60,10 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Created", responseCode = "201"),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<UserResponseDto> create(@RequestBody @Valid UserCreateDto dto);
+            }
+    )
+    ResponseEntity<UserResponseDto> create(UserCreateDto dto);
 
-    @PostMapping
     @Operation(
             summary = "Add a new User Employee",
             description = "Adds a new User Employee by passing a JSON representation of the User Employee.",
@@ -79,8 +75,10 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<UserResponseDto> createEmployee(@RequestBody @Valid UserEmployeeCreateDto dto);
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<UserResponseDto> createEmployee(UserEmployeeCreateDto dto);
 
     @Operation(
             summary = "Assign role to User",
@@ -93,8 +91,10 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UserUpdateRoleDto dto);
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> assignRoleToUser(UserUpdateRoleDto dto);
 
     @Operation(
             summary = "Remove role from User",
@@ -107,8 +107,10 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UserUpdateRoleDto dto);
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> removeRoleFromUser(UserUpdateRoleDto dto);
 
     @Operation(
             summary = "Delete one User",
@@ -121,8 +123,10 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<Void> delete(@PathVariable("id") UUID id);
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> delete(UUID id);
 
     @Operation(
             summary = "Deactivate user",
@@ -135,8 +139,10 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<Void> deactivate(@PathVariable("id") UUID id);
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> deactivate(UUID id);
 
     @Operation(
             summary = "Activate user",
@@ -149,6 +155,8 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            })
-    ResponseEntity<Void> activate(@PathVariable("id") UUID id);
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> activate(UUID id);
 }

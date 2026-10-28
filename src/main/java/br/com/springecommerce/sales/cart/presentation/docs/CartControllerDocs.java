@@ -8,13 +8,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Tag(name = "Carts", description = "Endpoints for Carts management")
+@SecurityRequirement(name = "bearerAuth")
 public interface CartControllerDocs {
 
     @Operation(
@@ -32,9 +33,7 @@ public interface CartControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CartResponseDto> getCart(
-            @AuthenticationPrincipal AuthenticatedUser auth
-    );
+    ResponseEntity<CartResponseDto> getCart(AuthenticatedUser auth);
 
 
     @Operation(
@@ -55,8 +54,8 @@ public interface CartControllerDocs {
             }
     )
     ResponseEntity<Void> addProduct(
-            @AuthenticationPrincipal AuthenticatedUser auth,
-            @RequestBody @Valid CartAddProductRequestDto dto
+            AuthenticatedUser auth,
+            CartAddProductRequestDto dto
     );
 
 
@@ -78,8 +77,8 @@ public interface CartControllerDocs {
             }
     )
     ResponseEntity<Void> removeProduct(
-            @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable("productId") UUID productId
+            AuthenticatedUser auth,
+            UUID productId
     );
 }
 

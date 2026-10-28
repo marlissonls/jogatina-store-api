@@ -7,9 +7,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+@Tag(name = "Checkout", description = "Endpoints for Checkout management")
+@SecurityRequirement(name = "bearerAuth")
 public interface CheckoutControllerDocs {
 
     @Operation(
@@ -30,7 +33,5 @@ public interface CheckoutControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<OrderResponseDto> checkout(
-            @AuthenticationPrincipal AuthenticatedUser auth
-    );
+    ResponseEntity<OrderResponseDto> checkout(AuthenticatedUser auth);
 }

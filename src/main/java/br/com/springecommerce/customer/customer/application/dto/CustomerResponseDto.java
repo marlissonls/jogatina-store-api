@@ -1,11 +1,8 @@
 package br.com.springecommerce.customer.customer.application.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Schema(name = "CustomerResponseDto")
 public record CustomerResponseDto(
     UUID id,
     String name,

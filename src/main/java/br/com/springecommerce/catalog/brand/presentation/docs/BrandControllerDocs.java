@@ -8,13 +8,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Tag(name = "Brands", description = "Endpoints for Brands management")
 public interface BrandControllerDocs {
 
     @Operation(
@@ -38,7 +39,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandPublicDto> findBySlug(@PathVariable("slug") String slug);
+    ResponseEntity<BrandPublicDto> findBySlug(String slug);
 
     @Operation(
             summary = "Fetching all Brands",
@@ -51,6 +52,7 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
+    @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<List<BrandResponseDto>> findAll();
 
     @Operation(
@@ -65,7 +67,8 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandResponseDto> create(@RequestBody @Valid BrandRequestDto dto);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<BrandResponseDto> create(BrandRequestDto dto);
 
     @Operation(
             summary = "Fetching Brand by ID",
@@ -80,7 +83,8 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<BrandResponseDto> findById(@PathVariable("id") UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<BrandResponseDto> findById(UUID id);
 
     @Operation(
             summary = "Updating a Brand",
@@ -95,9 +99,10 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
+    @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<BrandResponseDto> update(
-            @PathVariable("id") UUID id,
-            @RequestBody @Valid BrandRequestDto dto);
+            UUID id,
+            BrandRequestDto dto);
 
     @Operation(
             summary = "Deactivating a Brand",
@@ -112,7 +117,8 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> deactivate(@PathVariable("id") UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> deactivate(UUID id);
 
     @Operation(
             summary = "Activating a Brand",
@@ -127,5 +133,6 @@ public interface BrandControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> activate(@PathVariable("id") UUID id);
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> activate(UUID id);
 }

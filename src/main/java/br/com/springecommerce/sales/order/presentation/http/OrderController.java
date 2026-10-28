@@ -3,6 +3,7 @@ package br.com.springecommerce.sales.order.presentation.http;
 import br.com.springecommerce.sales.order.application.dto.OrderResponseDto;
 import br.com.springecommerce.sales.order.application.service.OrderService;
 import br.com.springecommerce.iam.security.principal.AuthenticatedUser;
+import br.com.springecommerce.sales.order.presentation.docs.OrderControllerDocs;
 import br.com.springecommerce.shared.pagination.PageResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,9 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/orders")
-@SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Orders", description = "Endpoints for Orders management")
-public class OrderController implements br.com.springecommerce.sales.order.presentation.docs.OrderControllerDocs {
+public class OrderController implements OrderControllerDocs {
     private final OrderService service;
 
     public OrderController(OrderService service) {

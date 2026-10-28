@@ -1,11 +1,9 @@
 package br.com.springecommerce.iam.role.application.dto;
 
 import br.com.springecommerce.iam.role.domain.model.Role;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.UUID;
 
-@Schema(name = "RoleResponseDto")
 public record RoleResponseDto(
         UUID id,
         String title,

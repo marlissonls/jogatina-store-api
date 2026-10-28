@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
+@Tag(name = "Orders", description = "Endpoints for Orders management")
+@SecurityRequirement(name = "bearerAuth")
 public interface OrderControllerDocs {
 
     @Operation(
@@ -37,8 +42,8 @@ public interface OrderControllerDocs {
             }
     )
     ResponseEntity<OrderResponseDto> getOrder(
-            @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable("id") UUID id
+            AuthenticatedUser auth,
+            UUID id
     );
 
 
@@ -59,13 +64,8 @@ public interface OrderControllerDocs {
             }
     )
     ResponseEntity<PageResponse<OrderResponseDto>> getOrders(
-            @AuthenticationPrincipal AuthenticatedUser auth,
-            @PageableDefault(
-                    size = 12,
-                    sort = "createdAt",
-                    direction = Sort.Direction.DESC
-            )
-            Pageable pageable
+            AuthenticatedUser auth,
+            @ParameterObject Pageable pageable
     );
 
 
@@ -88,7 +88,7 @@ public interface OrderControllerDocs {
             }
     )
     ResponseEntity<Void> cancelOrder(
-            @AuthenticationPrincipal AuthenticatedUser auth,
-            @PathVariable("id") UUID id
+            AuthenticatedUser auth,
+            UUID id
     );
 }

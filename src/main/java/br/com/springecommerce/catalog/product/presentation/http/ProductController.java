@@ -1,16 +1,13 @@
 package br.com.springecommerce.catalog.product.presentation.http;
 
 import br.com.springecommerce.catalog.product.application.dto.*;
+import br.com.springecommerce.catalog.product.application.service.ProductService;
 import br.com.springecommerce.catalog.product.presentation.docs.ProductControllerDocs;
 import br.com.springecommerce.catalog.product.presentation.filter.ProductManagerFilter;
 import br.com.springecommerce.catalog.product.presentation.filter.ProductPublicFilter;
-import br.com.springecommerce.catalog.product.application.service.ProductService;
 import br.com.springecommerce.shared.pagination.PageResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -24,7 +21,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/products")
-@Tag(name = "Products", description = "Endpoints for Products management")
 public class ProductController implements ProductControllerDocs {
 
     private final ProductService service;
@@ -39,7 +35,7 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PageResponse<ProductPublicResponseDto>> searchPublicViewProducts(
-            @ParameterObject @ModelAttribute ProductPublicFilter filter,
+            @ModelAttribute ProductPublicFilter filter,
             @PageableDefault(size = 12, sort = "title") Pageable pageable
     ) {
         return ResponseEntity.ok().body(
@@ -59,9 +55,8 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @GetMapping(path = "/manager", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<PageResponse<ProductWithStockResponseDto>> searchManagerViewProducts(
-            @ParameterObject @ModelAttribute ProductManagerFilter filter,
+            @ModelAttribute ProductManagerFilter filter,
             @PageableDefault(size = 12, sort = "title") Pageable pageable
     ) {
         return ResponseEntity.ok().body(
@@ -73,7 +68,6 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @GetMapping(path = "/manager/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ProductWithStockResponseDto> findById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
@@ -82,7 +76,6 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @GetMapping(path = "/manager/barcode/{barcode}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ProductWithStockResponseDto> findByBarcode(@PathVariable("barcode") String barcode) {
         return ResponseEntity.ok().body(service.findByBarcode(barcode));
     }
@@ -91,7 +84,6 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @GetMapping(path = "/manager/sku/{sku}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ProductWithStockResponseDto> findBySku(@PathVariable("sku") String sku) {
         return ResponseEntity.ok().body(service.findBySku(sku));
     }
@@ -100,7 +92,6 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @PostMapping(path = "/manager", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ProductResponseDto> create(@RequestBody @Valid ProductCreateDto dto) {
         ProductResponseDto response = service.create(dto);
 
@@ -117,7 +108,6 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @PutMapping(path = "/manager/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ProductResponseDto> update(
             @PathVariable("id") @NotNull UUID id,
             @RequestBody @Valid ProductUpdateDto dto) {
@@ -128,7 +118,6 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @PatchMapping(path = "/manager/{id}/deactivate")
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deactivate(@PathVariable("id") @NotNull UUID id) {
         service.deactivate(id);
         return ResponseEntity.noContent().build();
@@ -138,7 +127,6 @@ public class ProductController implements ProductControllerDocs {
     @Override
     @PatchMapping(path = "/manager/{id}/activate")
     @PreAuthorize("hasRole('MANAGER')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> activate(@PathVariable("id") @NotNull UUID id) {
         service.activate(id);
         return ResponseEntity.noContent().build();

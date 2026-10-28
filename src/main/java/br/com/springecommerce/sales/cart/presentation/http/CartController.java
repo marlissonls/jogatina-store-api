@@ -1,11 +1,10 @@
 package br.com.springecommerce.sales.cart.presentation.http;
 
+import br.com.springecommerce.iam.security.principal.AuthenticatedUser;
 import br.com.springecommerce.sales.cart.application.dto.CartAddProductRequestDto;
 import br.com.springecommerce.sales.cart.application.dto.CartResponseDto;
 import br.com.springecommerce.sales.cart.application.service.CartService;
-import br.com.springecommerce.iam.security.principal.AuthenticatedUser;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import br.com.springecommerce.sales.cart.presentation.docs.CartControllerDocs;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/carts")
-@SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Carts", description = "Endpoints for Carts management")
-public class CartController implements br.com.springecommerce.sales.cart.presentation.docs.CartControllerDocs {
+public class CartController implements CartControllerDocs {
     private final CartService service;
 
     public CartController(CartService service) {

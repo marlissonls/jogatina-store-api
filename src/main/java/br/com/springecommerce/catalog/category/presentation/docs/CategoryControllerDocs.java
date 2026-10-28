@@ -8,13 +8,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Tag(name = "Categories", description = "Endpoints for Categories management")
 public interface CategoryControllerDocs {
 
     // PUBLIC ENDPOINTS
@@ -51,10 +52,7 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CategoryPublicDto> findBySlug(
-            @PathVariable("slug") String slug
-    );
-
+    ResponseEntity<CategoryPublicDto> findBySlug(String slug);
 
     // MANAGER ENDPOINTS
 
@@ -74,8 +72,8 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
+    @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<List<CategoryResponseDto>> findAll();
-
 
     @Operation(
             summary = "Find one category",
@@ -94,10 +92,8 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CategoryResponseDto> findById(
-            @PathVariable("id") UUID id
-    );
-
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<CategoryResponseDto> findById(UUID id);
 
     @Operation(
             summary = "Add a new category",
@@ -116,10 +112,8 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CategoryResponseDto> create(
-            @RequestBody @Valid CategoryRequestDto dto
-    );
-
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<CategoryResponseDto> create(CategoryRequestDto dto);
 
     @Operation(
             summary = "Update a category",
@@ -139,11 +133,11 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
+    @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<CategoryResponseDto> update(
-            @PathVariable("id") UUID id,
-            @RequestBody @Valid CategoryRequestDto dto
+            UUID id,
+            CategoryRequestDto dto
     );
-
 
     @Operation(
             summary = "Deactivate a category",
@@ -163,10 +157,8 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> deactivate(
-            @PathVariable("id") UUID id
-    );
-
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> deactivate(UUID id);
 
     @Operation(
             summary = "Activate a category",
@@ -186,7 +178,6 @@ public interface CategoryControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<Void> activate(
-            @PathVariable("id") UUID id
-    );
+    @SecurityRequirement(name = "bearerAuth")
+    ResponseEntity<Void> activate(UUID id);
 }

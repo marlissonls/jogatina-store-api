@@ -1,13 +1,11 @@
 package br.com.springecommerce.iam.role.presentation.http;
 
-import br.com.springecommerce.iam.role.presentation.docs.RoleControllerDocs;
 import br.com.springecommerce.iam.role.application.dto.RoleCreateDto;
 import br.com.springecommerce.iam.role.application.dto.RoleResponseDto;
 import br.com.springecommerce.iam.role.application.dto.RoleUpdateDto;
 import br.com.springecommerce.iam.role.application.service.RoleService;
+import br.com.springecommerce.iam.role.presentation.docs.RoleControllerDocs;
 import br.com.springecommerce.shared.pagination.PageResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,7 +21,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/roles")
 @PreAuthorize("hasRole('ADMIN')")
-@Tag(name = "Roles", description = "Endpoints for Roles management")
 public class RoleController implements RoleControllerDocs {
 
     private final RoleService service;
@@ -34,7 +31,6 @@ public class RoleController implements RoleControllerDocs {
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<PageResponse<RoleResponseDto>> findAll(
             @PageableDefault(size = 12, sort = "title", direction = Sort.Direction.ASC)
             Pageable pageable
@@ -44,14 +40,12 @@ public class RoleController implements RoleControllerDocs {
 
     @Override
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<RoleResponseDto> findById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
     @Override
     @GetMapping(value = "/title/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<RoleResponseDto> findByTitle(
             @PathVariable("title") String title
     ) {
@@ -60,7 +54,6 @@ public class RoleController implements RoleControllerDocs {
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<RoleResponseDto> create(
             @Valid @RequestBody RoleCreateDto dto
     ) {
@@ -70,7 +63,6 @@ public class RoleController implements RoleControllerDocs {
 
     @Override
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<RoleResponseDto> update(
             @PathVariable("id") UUID id,
             @Valid @RequestBody RoleUpdateDto dto

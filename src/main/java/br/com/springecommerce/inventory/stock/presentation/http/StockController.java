@@ -1,18 +1,15 @@
 package br.com.springecommerce.inventory.stock.presentation.http;
 
-import br.com.springecommerce.inventory.stock.application.dto.StockCreateDto;
-import br.com.springecommerce.inventory.stock.application.dto.StockResponseDto;
-import br.com.springecommerce.inventory.stock.application.dto.StockMinimumQuantityUpdateDto;
 import br.com.springecommerce.inventory.stock.application.dto.StockAvailableQuantityUpdateDto;
-import br.com.springecommerce.inventory.stock.presentation.docs.StockControllerDocs;
-import br.com.springecommerce.inventory.stock.presentation.filter.StockManagerFilter;
+import br.com.springecommerce.inventory.stock.application.dto.StockCreateDto;
+import br.com.springecommerce.inventory.stock.application.dto.StockMinimumQuantityUpdateDto;
+import br.com.springecommerce.inventory.stock.application.dto.StockResponseDto;
 import br.com.springecommerce.inventory.stock.application.service.StockCommandService;
 import br.com.springecommerce.inventory.stock.application.service.StockQueryService;
+import br.com.springecommerce.inventory.stock.presentation.docs.StockControllerDocs;
+import br.com.springecommerce.inventory.stock.presentation.filter.StockManagerFilter;
 import br.com.springecommerce.shared.pagination.PageResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -27,8 +24,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/stocks")
 @PreAuthorize("hasRole('MANAGER')")
-@SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Stocks", description = "Endpoints for Stocks management")
 public class StockController implements StockControllerDocs {
 
     private final StockCommandService commandService;
@@ -58,7 +53,7 @@ public class StockController implements StockControllerDocs {
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PageResponse<StockResponseDto>> findAll(
-            @ParameterObject @ModelAttribute StockManagerFilter filter,
+            @ModelAttribute StockManagerFilter filter,
             @PageableDefault(size = 12, sort = "availableQuantity") Pageable pageable
     ) {
         return ResponseEntity.ok().body(queryService.findAll(

@@ -1,14 +1,12 @@
 package br.com.springecommerce.iam.user.presentation.http;
 
-import br.com.springecommerce.iam.user.application.dto.UserEmployeeCreateDto;
 import br.com.springecommerce.iam.user.application.dto.UserCreateDto;
+import br.com.springecommerce.iam.user.application.dto.UserEmployeeCreateDto;
 import br.com.springecommerce.iam.user.application.dto.UserResponseDto;
-import br.com.springecommerce.iam.user.presentation.docs.UserControllerDocs;
 import br.com.springecommerce.iam.user.application.dto.UserUpdateRoleDto;
-import br.com.springecommerce.shared.pagination.PageResponse;
 import br.com.springecommerce.iam.user.application.service.UserService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import br.com.springecommerce.iam.user.presentation.docs.UserControllerDocs;
+import br.com.springecommerce.shared.pagination.PageResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,7 +22,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@Tag(name = "Users", description = "Endpoints for Users management")
 public class UserController implements UserControllerDocs {
 
     private final UserService service;
@@ -36,7 +33,6 @@ public class UserController implements UserControllerDocs {
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<PageResponse<UserResponseDto>> findAll(
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.ASC)
             Pageable pageable
@@ -48,7 +44,6 @@ public class UserController implements UserControllerDocs {
     @Override
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserResponseDto> findById(@PathVariable("id") UUID id) {
 
         return ResponseEntity.ok().body(service.findById(id));
@@ -72,7 +67,6 @@ public class UserController implements UserControllerDocs {
     @Override
     @PostMapping(path = "/employee", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserResponseDto> createEmployee(@RequestBody @Valid UserEmployeeCreateDto dto) {
 
         UserResponseDto response = service.createEmployee(dto);
@@ -89,7 +83,6 @@ public class UserController implements UserControllerDocs {
     @Override
     @PutMapping(path = "/assignRole", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> assignRoleToUser(@RequestBody @Valid UserUpdateRoleDto dto) {
 
         service.assignRoleToUser(dto);
@@ -99,7 +92,6 @@ public class UserController implements UserControllerDocs {
     @Override
     @PutMapping(path = "/removeRole", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> removeRoleFromUser(@RequestBody @Valid UserUpdateRoleDto dto) {
 
         service.removeRoleFromUser(dto);
@@ -109,7 +101,6 @@ public class UserController implements UserControllerDocs {
     @Override
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('ADMIN') or authentication.principal.getId().equals(#id)")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
 
         service.delete(id);
@@ -119,7 +110,6 @@ public class UserController implements UserControllerDocs {
     @Override
     @PatchMapping(path = "/{id}/deactivate")
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deactivate(@PathVariable("id") UUID id) {
 
         service.deactivate(id);
@@ -130,7 +120,6 @@ public class UserController implements UserControllerDocs {
     @Override
     @PatchMapping(path = "/{id}/activate")
     @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> activate(@PathVariable("id") UUID id) {
 
         service.activate(id);
